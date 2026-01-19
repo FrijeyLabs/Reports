@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sondeo Lectura Bíblica - Amor a Quisqueya</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #e94560, #f39422, #e94560);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.02);
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        .legend-container {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.85rem;
+        }
+
+        .legend-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+
+        .legend-label {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .legend-value {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .legend-percent {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+        }
+
+        footer a {
+            color: #e94560;
+            text-decoration: none;
+        }
+
+        .note {
+            margin-top: 15px;
+            padding: 12px 15px;
+            background: rgba(251, 191, 36, 0.15);
+            border-radius: 10px;
+            border-left: 3px solid #fbbf24;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .note-icon {
+            font-size: 1rem;
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #e94560, #f39422);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+        }
+
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #e94560, #f39422);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            line-height: 28px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sondeo de Lectura Bíblica</h1>
+            <p>Iglesia Amor a Quisqueya - Enero 2026</p>
+        </header>
+
+        <div class="stats-summary">
+            <div class="stat-card">
+                <div class="stat-number">147</div>
+                <div class="stat-label">Respuestas Totales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Servicios</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">66</div>
+                <div class="stat-label">1er Culto</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">81</div>
+                <div class="stat-label">2do Culto</div>
+            </div>
+        </div>
+
+        <!-- Pregunta 1 -->
+        <div class="chart-card">
+            <h3 class="chart-title">
+                <span class="question-number">1</span>
+                ¿Has leído la Biblia entera al menos una vez en tu vida?
+            </h3>
+            <div class="toggle-container" data-question="1">
+                <button class="toggle-btn active" data-filter="ambos">Ambos Cultos</button>
+                <button class="toggle-btn" data-filter="1er">1er Culto</button>
+                <button class="toggle-btn" data-filter="2do">2do Culto</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart1"></canvas>
+            </div>
+            <div class="legend-container" id="legend1"></div>
+        </div>
+
+        <!-- Pregunta 2 -->
+        <div class="chart-card">
+            <h3 class="chart-title">
+                <span class="question-number">2</span>
+                ¿Con qué frecuencia lees la Biblia en una semana?
+            </h3>
+            <div class="toggle-container" data-question="2">
+                <button class="toggle-btn active" data-filter="ambos">Ambos Cultos</button>
+                <button class="toggle-btn" data-filter="1er">1er Culto</button>
+                <button class="toggle-btn" data-filter="2do">2do Culto</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart2"></canvas>
+            </div>
+            <div class="legend-container" id="legend2"></div>
+        </div>
+
+        <!-- Pregunta 3 -->
+        <div class="chart-card">
+            <h3 class="chart-title">
+                <span class="question-number">3</span>
+                ¿Leíste la Biblia entera en el año 2025?
+            </h3>
+            <div class="toggle-container" data-question="3">
+                <button class="toggle-btn active" data-filter="ambos">Ambos Cultos</button>
+                <button class="toggle-btn" data-filter="1er">1er Culto</button>
+                <button class="toggle-btn" data-filter="2do">2do Culto</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart3"></canvas>
+            </div>
+            <div class="legend-container" id="legend3"></div>
+        </div>
+
+        <!-- Pregunta 4 -->
+        <div class="chart-card">
+            <h3 class="chart-title">
+                <span class="question-number">4</span>
+                ¿Has participado en el grupo de Biblia de Amor a Quisqueya?
+            </h3>
+            <div class="toggle-container" data-question="4">
+                <button class="toggle-btn active" data-filter="ambos">Ambos Cultos</button>
+                <button class="toggle-btn" data-filter="1er">1er Culto</button>
+                <button class="toggle-btn" data-filter="2do">2do Culto</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart4"></canvas>
+            </div>
+            <div class="legend-container" id="legend4"></div>
+        </div>
+
+        <!-- Pregunta 5 -->
+        <div class="chart-card">
+            <h3 class="chart-title">
+                <span class="question-number">5</span>
+                En el grupo, ¿has logrado terminar la Biblia en un año?
+            </h3>
+            <div class="toggle-container" data-question="5">
+                <button class="toggle-btn active" data-filter="ambos">Ambos Cultos</button>
+                <button class="toggle-btn" data-filter="1er">1er Culto</button>
+                <button class="toggle-btn" data-filter="2do">2do Culto</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart5"></canvas>
+            </div>
+            <div class="legend-container" id="legend5"></div>
+            <div class="note" id="note5">
+                <span class="note-icon">ℹ️</span>
+                <span id="note5-text">36 personas no respondieron esta pregunta</span>
+            </div>
+        </div>
+
+        <footer>
+            <p>Datos recopilados el 18 de enero de 2026</p>
+            <p>Iglesia Amor a Quisqueya</p>
+        </footer>
+    </div>
+
+    <script>
+        // Color palettes
+        const colors = {
+            green: '#10b981',
+            red: '#ef4444',
+            blue: '#3b82f6',
+            purple: '#8b5cf6',
+            orange: '#f59e0b',
+            pink: '#ec4899',
+            gray: '#6b7280'
+        };
+
+        // Data organized by question and service
+        const questionData = {
+            1: {
+                labels: ['Sí', 'No'],
+                colors: [colors.green, colors.red],
+                values: {
+                    'ambos': [103, 44],
+                    '1er': [47, 19],
+                    '2do': [56, 25]
+                }
+            },
+            2: {
+                labels: ['Todos los días', '4 veces/semana o más', 'Menos de 3 veces', 'No la estoy leyendo'],
+                colors: [colors.green, colors.blue, colors.orange, colors.red],
+                values: {
+                    'ambos': [62, 35, 28, 22],
+                    '1er': [33, 15, 12, 6],
+                    '2do': [29, 20, 16, 16]
+                }
+            },
+            3: {
+                labels: ['Sí', 'No'],
+                colors: [colors.green, colors.red],
+                values: {
+                    'ambos': [47, 100],
+                    '1er': [25, 41],
+                    '2do': [22, 59]
+                }
+            },
+            4: {
+                labels: ['Sí', 'No'],
+                colors: [colors.green, colors.red],
+                values: {
+                    'ambos': [103, 44],
+                    '1er': [52, 14],
+                    '2do': [51, 30]
+                }
+            },
+            5: {
+                labels: ['Sí', 'No'],
+                colors: [colors.green, colors.red],
+                values: {
+                    'ambos': [62, 49],
+                    '1er': [35, 25],
+                    '2do': [27, 24]
+                },
+                noResponse: {
+                    'ambos': 36,
+                    '1er': 6,
+                    '2do': 30
+                }
+            }
+        };
+
+        // Store chart instances
+        const charts = {};
+
+        // Register the datalabels plugin
+        Chart.register(ChartDataLabels);
+
+        function createChart(questionNum, filter = 'ambos') {
+            const canvasId = `chart${questionNum}`;
+            const legendId = `legend${questionNum}`;
+            const data = questionData[questionNum];
+            const values = data.values[filter];
+            const total = values.reduce((a, b) => a + b, 0);
+
+            // Destroy existing chart if it exists
+            if (charts[questionNum]) {
+                charts[questionNum].destroy();
+            }
+
+            const ctx = document.getElementById(canvasId).getContext('2d');
+
+            charts[questionNum] = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: data.colors,
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '55%',
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return ` ${value} (${percentage}%)`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            color: '#fff',
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            },
+                            formatter: (value) => {
+                                const percentage = ((value / total) * 100).toFixed(0);
+                                return percentage + '%';
+                            },
+                            anchor: 'center',
+                            align: 'center',
+                            offset: 0,
+                            display: function(context) {
+                                const value = context.dataset.data[context.dataIndex];
+                                const percentage = (value / total) * 100;
+                                return percentage > 8;
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update legend
+            updateLegend(legendId, data.labels, values, data.colors);
+
+            // Update note for question 5
+            if (questionNum === 5 && data.noResponse) {
+                const noteText = document.getElementById('note5-text');
+                if (noteText) {
+                    noteText.textContent = `${data.noResponse[filter]} personas no respondieron esta pregunta`;
+                }
+            }
+        }
+
+        function updateLegend(legendId, labels, values, chartColors) {
+            const legendContainer = document.getElementById(legendId);
+            const total = values.reduce((a, b) => a + b, 0);
+
+            legendContainer.innerHTML = '';
+
+            labels.forEach((label, index) => {
+                const value = values[index];
+                const percentage = ((value / total) * 100).toFixed(1);
+
+                const legendItem = document.createElement('div');
+                legendItem.className = 'legend-item';
+                legendItem.innerHTML = `
+                    <div class="legend-left">
+                        <span class="legend-color" style="background: ${chartColors[index]}"></span>
+                        <span class="legend-label">${label}</span>
+                    </div>
+                    <div>
+                        <span class="legend-value">${value}</span>
+                        <span class="legend-percent">(${percentage}%)</span>
+                    </div>
+                `;
+                legendContainer.appendChild(legendItem);
+            });
+        }
+
+        // Initialize all charts
+        for (let i = 1; i <= 5; i++) {
+            createChart(i, 'ambos');
+        }
+
+        // Handle toggle buttons
+        document.querySelectorAll('.toggle-container').forEach(container => {
+            const questionNum = container.dataset.question;
+
+            container.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active state
+                    container.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Update chart
+                    const filter = this.dataset.filter;
+                    createChart(parseInt(questionNum), filter);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
