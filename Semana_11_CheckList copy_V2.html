@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist: Correcciones Semana 11</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --accent: #4CAF50;
+            --border: #e0e0e0;
+            --link-color: #0066cc;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .day-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .day-title {
+            margin-top: 0;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            color: #2c3e50;
+        }
+        .audio-section {
+            margin-top: 15px;
+        }
+        .audio-title {
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .badge {
+            background-color: #eee;
+            color: #555;
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .task-item:hover {
+            background-color: #f9f9f9;
+        }
+        .task-checkbox {
+            margin-top: 4px;
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .task-text {
+            flex: 1;
+            line-height: 1.4;
+        }
+        .completed .task-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+        .reference {
+            color: var(--link-color);
+            font-size: 0.9em;
+            margin-left: 5px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .reference:hover {
+            text-decoration: underline;
+        }
+        .ok-status {
+            color: var(--accent);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Correcciones Semana 11</h1>
+
+    <div class="day-card">
+        <h2 class="day-title">Día 1</h2>
+        <div class="audio-section">
+            <div class="audio-title">Audio 1</div>
+            <ul class="task-list">
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d1-a1-1">
+                    <label class="task-text" for="d1-a1-1"><strong>min 1:13:</strong> "puso a los fariseos" (añadir) <a href="https://www.biblegateway.com/passage/?search=Hechos+23%3A7&version=NVI" target="_blank" class="reference">(Hch 23:7)</a></label>
+                </li>
+            </ul>
+        </div>
+        <div class="audio-section">
+            <div class="audio-title">Audio 2</div>
+            <ul class="task-list">
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d1-a2-1">
+                    <label class="task-text" for="d1-a2-1"><strong>min 2:53:</strong> tenía(n) algo que ver... (añadir "n") <a href="https://www.biblegateway.com/passage/?search=Hechos+25%3A19&version=NVI" target="_blank" class="reference">(Hechos 25:19)</a></label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d1-a2-2">
+                    <label class="task-text" for="d1-a2-2"><strong>min 3:10:</strong> para que (se) resuelva (quitar "se") <a href="https://www.biblegateway.com/passage/?search=Hechos+25%3A21&version=NVI" target="_blank" class="reference">(Hechos 25:21)</a></label>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="day-card">
+        <h2 class="day-title">Día 2</h2>
+        <div class="audio-section">
+            <div class="audio-title">Audio 1 <span class="badge">Enhance / Pequeños ruidos</span></div>
+            <ul class="task-list">
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d2-a1-1">
+                    <label class="task-text" for="d2-a1-1"><strong>min 5:02:</strong> "tierra seca", debe decir "cerca" <a href="https://www.biblegateway.com/passage/?search=Hechos+27%3A27&version=NVI" target="_blank" class="reference">(Hechos 27:27)</a></label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d2-a1-2">
+                    <label class="task-text" for="d2-a1-2"><strong>min 5:51:</strong> "bote salvavida(s)" (añadir "s") <a href="https://www.biblegateway.com/passage/?search=Hechos+27%3A32&version=NVI" target="_blank" class="reference">(Hechos 27:32)</a></label>
+                </li>
+            </ul>
+        </div>
+        <div class="audio-section">
+            <div class="audio-title">Audio 2 <span class="badge">Enhance / Volumen</span></div>
+            <ul class="task-list">
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d2-a2-1">
+                    <label class="task-text" for="d2-a2-1"><strong>min 5:01:</strong> "recibía a todos los que (lo) visitaban" (añadir "lo") <a href="https://www.biblegateway.com/passage/?search=Hechos+28%3A30&version=NVI" target="_blank" class="reference">(Hechos 28:30)</a></label>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="day-card">
+        <h2 class="day-title">Día 3</h2>
+        <div class="audio-section">
+            <div class="audio-title">Audio 1 <span class="badge">8:42 / Enhance</span></div>
+            <ul class="task-list">
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d3-a1-1">
+                    <label class="task-text" for="d3-a1-1"><strong>min 8:20:</strong> "¡no pruebes esto!", debe decir "eso" <a href="https://www.biblegateway.com/passage/?search=Colosenses+2%3A21&version=NVI" target="_blank" class="reference">(Col 2:21)</a></label>
+                </li>
+            </ul>
+        </div>
+        <div class="audio-section">
+            <div class="audio-title">Audio 2</div>
+            <p class="ok-status">✓ Audio OK</p>
+        </div>
+    </div>
+
+    <div class="day-card">
+        <h2 class="day-title">Día 4</h2>
+        <div class="audio-section">
+            <div class="audio-title">Audio 1 <span class="badge">11:15</span></div>
+            <ul class="task-list">
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d4-a1-1">
+                    <label class="task-text" for="d4-a1-1"><strong>min 4:49:</strong> dice "salvados", debe decir "salvar" <a href="https://www.biblegateway.com/passage/?search=Efesios+2%3A5&version=NVI" target="_blank" class="reference">(Ef 2:5)</a></label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d4-a1-2">
+                    <label class="task-text" for="d4-a1-2"><strong>min 5:03:</strong> "ejemplo(s)" (añadir la "s") <a href="https://www.biblegateway.com/passage/?search=Efesios+2%3A7&version=NVI" target="_blank" class="reference">(Ef 2:7)</a></label>
+                </li>
+            </ul>
+        </div>
+        <div class="audio-section">
+            <div class="audio-title">Audio 2</div>
+            <p class="ok-status">✓ Audio OK</p>
+        </div>
+    </div>
+
+    <div class="day-card">
+        <h2 class="day-title">Día 5</h2>
+        <div class="audio-section">
+            <div class="audio-title">Audio 1</div>
+            <p class="ok-status">✓ Audio OK</p>
+        </div>
+        <div class="audio-section">
+            <div class="audio-title">Audio 2</div>
+            <ul class="task-list">
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d5-a2-1">
+                    <label class="task-text" for="d5-a2-1"><strong>min 1:57:</strong> "ha(n) aumentado su confianza y anuncia(n)" (añadir "n") <a href="https://www.biblegateway.com/passage/?search=Filipenses+1%3A14&version=NVI" target="_blank" class="reference">(Fil 1:14)</a></label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d5-a2-2">
+                    <label class="task-text" for="d5-a2-2"><strong>min 2:49:</strong> "de que jamás" (añadir) <a href="https://www.biblegateway.com/passage/?search=Efesios+2%3A20&version=NVI" target="_blank" class="reference">(Ef 2:20)</a></label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d5-a2-3">
+                    <label class="task-text" for="d5-a2-3"><strong>min 5:42:</strong> "lo elevó al lugar", dice "a un lugar" <a href="https://www.biblegateway.com/passage/?search=Filipenses+2%3A9&version=NVI" target="_blank" class="reference">(Fil 2:9)</a></label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d5-a2-4">
+                    <label class="task-text" for="d5-a2-4"><strong>min 7:45-46:</strong> "lo que me sucederá aquí" (cambio de tono) <a href="https://www.biblegateway.com/passage/?search=Filipenses+2%3A23&version=NVI" target="_blank" class="reference">(Fil 2:23)</a></label>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="day-card">
+        <h2 class="day-title">Día 6</h2>
+        <div class="audio-section">
+            <div class="audio-title">Audio 1 <span class="badge">Enhance</span></div>
+            <ul class="task-list">
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d6-a1-1">
+                    <label class="task-text" for="d6-a1-1"><strong>min 3:03:</strong> "y aprender de lo(s) que siguen" (añadir la "s") <a href="https://www.biblegateway.com/passage/?search=Filipenses+3%3A17&version=NVI" target="_blank" class="reference">(Fil 3:17)</a></label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d6-a1-2">
+                    <label class="task-text" for="d6-a1-2"><strong>min 3:05:</strong> "pues ya le(s) dije" (añadir "s") <a href="https://www.biblegateway.com/passage/?search=Filipenses+3%3A18&version=NVI" target="_blank" class="reference">(Fil 3:18)</a></label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d6-a1-3">
+                    <label class="task-text" for="d6-a1-3"><strong>min 3:07:</strong> "se lo(s) repito" (añadir "s")</label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d6-a1-4">
+                    <label class="task-text" for="d6-a1-4"><strong>min 5:39:</strong> "no es que haya pasado" (añadir) <a href="https://www.biblegateway.com/passage/?search=Filipenses+4%3A11&version=NVI" target="_blank" class="reference">(Fil 4:11)</a></label>
+                </li>
+            </ul>
+        </div>
+        <div class="audio-section">
+            <div class="audio-title">Audio 2</div>
+            <p class="ok-status">✓ Audio OK</p>
+        </div>
+    </div>
+
+    <div class="day-card">
+        <h2 class="day-title">Día 7 <span class="badge" style="background-color: #d1ecf1; color: #0c5460;">Un solo audio</span></h2>
+        <div class="audio-section">
+            <div class="audio-title">Audio Único <span class="badge">13:14 minutos</span></div>
+            <ul class="task-list">
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d7-a1-1">
+                    <label class="task-text" for="d7-a1-1"><strong>min 1:18:</strong> (Cambio de tono) "tener integridad" <a href="https://www.biblegateway.com/passage/?search=1+Timoteo+3%3A8&version=NVI" target="_blank" class="reference">(1 Tim 3:8)</a></label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d7-a1-2">
+                    <label class="task-text" for="d7-a1-2"><strong>min 2:15:</strong> quitar la palabra "con" las personas <a href="https://www.biblegateway.com/passage/?search=1+Timoteo+3%3A15&version=NVI" target="_blank" class="reference">(1 Tim 3:15)</a></label>
+                </li>
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox" id="d7-a1-3">
+                    <label class="task-text" for="d7-a1-3"><strong>min 11:34:</strong> "quien da vida a otros", debe decir "a todos" <a href="https://www.biblegateway.com/passage/?search=1+Timoteo+6%3A13&version=NVI" target="_blank" class="reference">(1 Tim 6:13)</a></label>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+
+            // Cargar el estado guardado al iniciar
+            checkboxes.forEach(checkbox => {
+                const savedState = localStorage.getItem(checkbox.id);
+                if (savedState === 'true') {
+                    checkbox.checked = true;
+                    checkbox.parentElement.classList.add('completed');
+                }
+
+                // Guardar el estado cada vez que se hace clic
+                checkbox.addEventListener('change', (e) => {
+                    localStorage.setItem(e.target.id, e.target.checked);
+                    if (e.target.checked) {
+                        e.target.parentElement.classList.add('completed');
+                    } else {
+                        e.target.parentElement.classList.remove('completed');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
