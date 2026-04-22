@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Livestream | Equipo Técnico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0b1120;
+            --bg-gradient: radial-gradient(ellipse at top, #1e293b 0%, #0b1120 60%);
+            --bg-card: #111c30;
+            --bg-card-soft: #162238;
+            --bg-subcard: #1a2742;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --accent: #38bdf8;
+            --accent-2: #818cf8;
+            --accent-hover: #0284c7;
+            --capacitado-bg: rgba(52, 211, 153, 0.12);
+            --capacitado-text: #34d399;
+            --capacitado-border: rgba(52, 211, 153, 0.3);
+            --capacitacion-bg: rgba(167, 139, 250, 0.12);
+            --capacitacion-text: #a78bfa;
+            --capacitacion-border: rgba(167, 139, 250, 0.3);
+            --sombra-bg: rgba(251, 191, 36, 0.1);
+            --sombra-text: #fbbf24;
+            --sombra-border: rgba(251, 191, 36, 0.28);
+            --border: #1e2e4a;
+            --border-strong: #2a3b5c;
+            --thu-accent: #60a5fa;
+            --sun-accent: #f472b6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 2.5rem 1rem 4rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 1rem;
+        }
+
+        header h1 {
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        header h1 .emoji {
+            -webkit-text-fill-color: initial;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            border: 1px solid var(--border-strong);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.capacitado { background: var(--capacitado-text); }
+        .legend-dot.capacitacion { background: var(--capacitacion-text); }
+        .legend-dot.sombra { background: var(--sombra-text); }
+
+        .month-section {
+            margin-bottom: 3rem;
+        }
+
+        .month-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .month-title h2 {
+            color: var(--text-main);
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .month-title .line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, var(--border-strong), transparent);
+        }
+
+        .month-title .count {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .weeks-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .week-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: border-color 0.25s ease, transform 0.25s ease;
+        }
+
+        .week-card:hover {
+            border-color: var(--border-strong);
+        }
+
+        .week-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0.08), transparent);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .week-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .week-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            padding: 0 8px;
+            border-radius: 8px;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+
+        .week-range {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .service {
+            background: var(--bg-card);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .day-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .day-pill.thursday {
+            background: rgba(96, 165, 250, 0.12);
+            color: var(--thu-accent);
+        }
+
+        .day-pill.sunday {
+            background: rgba(244, 114, 182, 0.12);
+            color: var(--sun-accent);
+        }
+
+        .service-date {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .roles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+        }
+
+        .role {
+            background: var(--bg-subcard);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.75rem 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .role:hover {
+            background: #1f2d4a;
+            border-color: var(--border-strong);
+        }
+
+        .role:active {
+            transform: scale(0.98);
+        }
+
+        .role:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .role-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .person {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .person .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .person.capacitado { color: var(--capacitado-text); }
+        .person.capacitado .dot { background: var(--capacitado-text); }
+        .person.capacitacion { color: var(--capacitacion-text); }
+        .person.capacitacion .dot { background: var(--capacitacion-text); }
+        .person.sombra { color: var(--sombra-text); }
+        .person.sombra .dot { background: var(--sombra-text); }
+
+        .notes {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.06), rgba(129, 140, 248, 0.04));
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            padding: 1.5rem 1.75rem;
+            border-radius: 0 12px 12px 0;
+            margin-top: 2.5rem;
+        }
+
+        .notes h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notes ul {
+            list-style: none;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .notes li {
+            padding-left: 1.25rem;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.55;
+        }
+
+        .notes li::before {
+            content: "›";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .notes li strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* ───── Tablet ───── */
+        @media (max-width: 900px) {
+            .container { max-width: 720px; }
+            header { margin-bottom: 2rem; }
+        }
+
+        /* ───── Mobile ───── */
+        @media (max-width: 640px) {
+            body {
+                padding: 1.25rem 0.75rem 2.5rem;
+            }
+
+            header {
+                margin-bottom: 1.75rem;
+                padding: 0.5rem 0;
+            }
+
+            header h1 {
+                font-size: 1.7rem;
+                gap: 8px;
+                margin-bottom: 0.5rem;
+            }
+
+            header p {
+                font-size: 0.92rem;
+                padding: 0 0.5rem;
+            }
+
+            .legend {
+                gap: 0.5rem;
+                margin-top: 1.1rem;
+            }
+
+            .legend-item {
+                font-size: 0.75rem;
+                padding: 0.35rem 0.7rem;
+            }
+
+            .month-section {
+                margin-bottom: 2rem;
+            }
+
+            .month-title {
+                margin-bottom: 1rem;
+                padding: 0 0.25rem;
+                gap: 0.5rem;
+            }
+
+            .month-title h2 {
+                font-size: 1.1rem;
+            }
+
+            .month-title .count {
+                font-size: 0.75rem;
+            }
+
+            .weeks-grid {
+                gap: 1rem;
+            }
+
+            .week-card {
+                border-radius: 14px;
+            }
+
+            .week-header {
+                padding: 0.85rem 1rem;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .week-label {
+                font-size: 0.88rem;
+                gap: 0.55rem;
+            }
+
+            .week-number {
+                min-width: 26px;
+                height: 24px;
+                font-size: 0.7rem;
+            }
+
+            .week-range {
+                font-size: 0.78rem;
+                white-space: nowrap;
+            }
+
+            .services {
+                grid-template-columns: 1fr;
+                gap: 1px;
+            }
+
+            .service {
+                padding: 1rem 1rem 1.1rem;
+                gap: 0.85rem;
+            }
+
+            .service-header {
+                gap: 0.55rem;
+                padding-bottom: 0.6rem;
+                border-bottom: 1px dashed var(--border);
+            }
+
+            .day-pill {
+                font-size: 0.72rem;
+                padding: 0.3rem 0.65rem;
+            }
+
+            .service-date {
+                font-size: 0.8rem;
+            }
+
+            .roles {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+            }
+
+            .role {
+                padding: 0.6rem 0.7rem;
+                gap: 0.3rem;
+                border-radius: 8px;
+            }
+
+            .role-label {
+                font-size: 0.62rem;
+                letter-spacing: 0.06em;
+            }
+
+            .person {
+                font-size: 0.82rem;
+                gap: 0.4rem;
+            }
+
+            .person .dot {
+                width: 5px;
+                height: 5px;
+            }
+
+            .notes {
+                padding: 1.1rem 1rem;
+                margin-top: 1.75rem;
+                border-radius: 0 10px 10px 0;
+            }
+
+            .notes h3 {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .notes ul {
+                gap: 0.55rem;
+            }
+
+            .notes li {
+                font-size: 0.85rem;
+                padding-left: 1rem;
+                line-height: 1.5;
+            }
+        }
+
+        /* ───── Small phones ───── */
+        @media (max-width: 380px) {
+            body {
+                padding: 1rem 0.5rem 2rem;
+            }
+
+            header h1 {
+                font-size: 1.45rem;
+            }
+
+            .legend {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .legend-item {
+                justify-content: center;
+            }
+
+            .week-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.3rem;
+            }
+
+            .roles {
+                grid-template-columns: 1fr;
+            }
+
+            .role {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0.55rem 0.75rem;
+            }
+
+            .role-label {
+                font-size: 0.6rem;
+            }
+        }
+
+        /* ───── Touch / no-hover devices ───── */
+        @media (hover: none) {
+            .week-card:hover {
+                border-color: var(--border);
+            }
+        }
+
+        /* ───── Click hint ───── */
+        .click-hint {
+            margin-top: 1rem;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 0.9rem;
+            border-radius: 9999px;
+            background: rgba(56, 189, 248, 0.05);
+            border: 1px dashed var(--border-strong);
+        }
+
+        .click-hint-icon {
+            font-size: 0.9rem;
+        }
+
+        .person {
+            user-select: none;
+        }
+
+        /* ───── Modal ───── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 7, 18, 0.75);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-strong);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 80vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(10px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .modal-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-title.capacitado { color: var(--capacitado-text); }
+        .modal-title.capacitacion { color: var(--capacitacion-text); }
+        .modal-title.sombra { color: var(--sombra-text); }
+
+        .modal-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: 1px solid var(--border-strong);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s ease, color 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .modal-body {
+            padding: 1rem 1.5rem 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .modal-stat {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-subcard);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.3rem;
+            font-size: 0.82rem;
+        }
+
+        .modal-stat-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .modal-stat-value {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .modal-service {
+            background: var(--bg-subcard);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.8rem 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .modal-service-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            min-width: 0;
+        }
+
+        .modal-service-date {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .modal-service-role {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .modal-day-pill {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        .modal-day-pill.thursday {
+            background: rgba(96, 165, 250, 0.12);
+            color: var(--thu-accent);
+        }
+
+        .modal-day-pill.sunday {
+            background: rgba(244, 114, 182, 0.12);
+            color: var(--sun-accent);
+        }
+
+        .modal-empty {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding: 1rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .click-hint {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.75rem;
+                margin-top: 0.9rem;
+            }
+
+            .modal-overlay { padding: 1rem; }
+            .modal-header { padding: 1rem 1.15rem; }
+            .modal-body { padding: 0.85rem 1.15rem 1.15rem; }
+            .modal-title { font-size: 1rem; }
+            .modal-service-date { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1><span class="emoji">🎥</span> Producción Livestream</h1>
+            <p>Calendario oficial de rotación técnica y capacitación.</p>
+            <div class="legend">
+                <span class="legend-item"><span class="legend-dot capacitado"></span> Capacitado · responsable del flujo</span>
+                <span class="legend-item"><span class="legend-dot capacitacion"></span> En capacitación · promovido en entrenamiento</span>
+                <span class="legend-item"><span class="legend-dot sombra"></span> Sombra · observador / aprendiz</span>
+            </div>
+            <p class="click-hint"><span class="click-hint-icon">👆</span> Haz clic en cualquier nombre para ver todos sus servicios asignados.</p>
+        </header>
+
+        <section class="month-section">
+            <div class="month-title">
+                <h2>Abril 2026</h2>
+                <div class="line"></div>
+                <span class="count">2 semanas</span>
+            </div>
+
+            <div class="weeks-grid">
+
+                <article class="week-card">
+                    <div class="week-header">
+                        <div class="week-label">
+                            <span class="week-number">S1</span>
+                            <span>Semana 1</span>
+                        </div>
+                        <div class="week-range">20 – 26 Abr</div>
+                    </div>
+                    <div class="services">
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill thursday">Jueves</span>
+                                <span class="service-date">23 de abril</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitado"><span class="dot"></span>Jerdlin</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person sombra"><span class="dot"></span>Yankaury</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Producción</span>
+                                    <span class="person sombra"><span class="dot"></span>Christopher</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill sunday">Domingo</span>
+                                <span class="service-date">26 de abril</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitado"><span class="dot"></span>Herly</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person capacitado"><span class="dot"></span>Jerdlin</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Dir.</span>
+                                    <span class="person sombra"><span class="dot"></span>Yordany</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Cám.</span>
+                                    <span class="person sombra"><span class="dot"></span>Yankaury</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="week-card">
+                    <div class="week-header">
+                        <div class="week-label">
+                            <span class="week-number">S2</span>
+                            <span>Semana 2</span>
+                        </div>
+                        <div class="week-range">27 Abr – 3 May</div>
+                    </div>
+                    <div class="services">
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill thursday">Jueves</span>
+                                <span class="service-date">30 de abril</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitado"><span class="dot"></span>Laura</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person sombra"><span class="dot"></span>Micaela</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Producción</span>
+                                    <span class="person sombra"><span class="dot"></span>Christopher</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill sunday">Domingo</span>
+                                <span class="service-date">3 de mayo</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitado"><span class="dot"></span>Laura</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person capacitado"><span class="dot"></span>Jeudy</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Dir.</span>
+                                    <span class="person sombra"><span class="dot"></span>Micaela</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Cám.</span>
+                                    <span class="person sombra"><span class="dot"></span>Melanie</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <section class="month-section">
+            <div class="month-title">
+                <h2>Mayo 2026</h2>
+                <div class="line"></div>
+                <span class="count">4 semanas</span>
+            </div>
+
+            <div class="weeks-grid">
+
+                <article class="week-card">
+                    <div class="week-header">
+                        <div class="week-label">
+                            <span class="week-number">S3</span>
+                            <span>Semana 3</span>
+                        </div>
+                        <div class="week-range">4 – 10 May</div>
+                    </div>
+                    <div class="services">
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill thursday">Jueves</span>
+                                <span class="service-date">7 de mayo</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitado"><span class="dot"></span>Jerdlin</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person sombra"><span class="dot"></span>Javier</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Producción</span>
+                                    <span class="person sombra"><span class="dot"></span>Christopher</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill sunday">Domingo</span>
+                                <span class="service-date">10 de mayo</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitado"><span class="dot"></span>Jerdlin</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person capacitacion"><span class="dot"></span>Javier</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Dir.</span>
+                                    <span class="person sombra"><span class="dot"></span>Yordany</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="week-card">
+                    <div class="week-header">
+                        <div class="week-label">
+                            <span class="week-number">S4</span>
+                            <span>Semana 4</span>
+                        </div>
+                        <div class="week-range">11 – 17 May</div>
+                    </div>
+                    <div class="services">
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill thursday">Jueves</span>
+                                <span class="service-date">14 de mayo</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitado"><span class="dot"></span>Laura</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person sombra"><span class="dot"></span>Micaela</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Producción</span>
+                                    <span class="person sombra"><span class="dot"></span>Christopher</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill sunday">Domingo</span>
+                                <span class="service-date">17 de mayo</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitacion"><span class="dot"></span>Micaela</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person capacitado"><span class="dot"></span>Laura</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Cám.</span>
+                                    <span class="person sombra"><span class="dot"></span>Melanie</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="week-card">
+                    <div class="week-header">
+                        <div class="week-label">
+                            <span class="week-number">S5</span>
+                            <span>Semana 5</span>
+                        </div>
+                        <div class="week-range">18 – 24 May</div>
+                    </div>
+                    <div class="services">
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill thursday">Jueves</span>
+                                <span class="service-date">21 de mayo</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitado"><span class="dot"></span>Jeudy</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person sombra"><span class="dot"></span>Yankaury</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Producción</span>
+                                    <span class="person sombra"><span class="dot"></span>Christopher</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill sunday">Domingo</span>
+                                <span class="service-date">24 de mayo</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitacion"><span class="dot"></span>Yordany</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person capacitado"><span class="dot"></span>Jeudy</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Cám.</span>
+                                    <span class="person sombra"><span class="dot"></span>David</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="week-card">
+                    <div class="week-header">
+                        <div class="week-label">
+                            <span class="week-number">S6</span>
+                            <span>Semana 6</span>
+                        </div>
+                        <div class="week-range">25 – 31 May</div>
+                    </div>
+                    <div class="services">
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill thursday">Jueves</span>
+                                <span class="service-date">28 de mayo</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitado"><span class="dot"></span>Jeudy</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person sombra"><span class="dot"></span>Yankaury</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Producción</span>
+                                    <span class="person sombra"><span class="dot"></span>Christopher</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="service">
+                            <div class="service-header">
+                                <span class="day-pill sunday">Domingo</span>
+                                <span class="service-date">31 de mayo</span>
+                            </div>
+                            <div class="roles">
+                                <div class="role">
+                                    <span class="role-label">Dirección</span>
+                                    <span class="person capacitado"><span class="dot"></span>Herly</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Cámara</span>
+                                    <span class="person capacitacion"><span class="dot"></span>Yankaury</span>
+                                </div>
+                                <div class="role">
+                                    <span class="role-label">Sombra Dir.</span>
+                                    <span class="person sombra"><span class="dot"></span>David</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal" role="document">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span class="modal-title" id="modalTitle"></span>
+                    <span class="modal-subtitle" id="modalSubtitle"></span>
+                </div>
+                <button class="modal-close" id="modalClose" aria-label="Cerrar">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const overlay = document.getElementById('modalOverlay');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalSubtitle = document.getElementById('modalSubtitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalClose = document.getElementById('modalClose');
+
+            // Build index: personName -> [{date, day, dayClass, role, type}]
+            const index = {};
+            document.querySelectorAll('.service').forEach(service => {
+                const pill = service.querySelector('.day-pill');
+                const dateEl = service.querySelector('.service-date');
+                if (!pill || !dateEl) return;
+                const day = pill.textContent.trim();
+                const dayClass = pill.classList.contains('sunday') ? 'sunday' : 'thursday';
+                const date = dateEl.textContent.trim();
+
+                service.querySelectorAll('.role').forEach(role => {
+                    const label = role.querySelector('.role-label');
+                    const person = role.querySelector('.person');
+                    if (!label || !person) return;
+                    const name = person.textContent.trim();
+                    const type = person.classList.contains('capacitado') ? 'capacitado'
+                        : person.classList.contains('capacitacion') ? 'capacitacion'
+                        : 'sombra';
+                    if (!index[name]) index[name] = { type, services: [] };
+                    index[name].services.push({
+                        date,
+                        day,
+                        dayClass,
+                        role: label.textContent.trim()
+                    });
+                });
+            });
+
+            function openModalFor(name) {
+                const data = index[name];
+                if (!data) return;
+
+                modalTitle.textContent = name;
+                modalTitle.className = 'modal-title ' + data.type;
+                const subtitles = {
+                    capacitado: 'Capacitado · responsable del flujo',
+                    capacitacion: 'En capacitación · promovido en entrenamiento',
+                    sombra: 'Sombra · observador / aprendiz'
+                };
+                modalSubtitle.textContent = subtitles[data.type] || '';
+
+                const total = data.services.length;
+                const thuCount = data.services.filter(s => s.dayClass === 'thursday').length;
+                const sunCount = data.services.filter(s => s.dayClass === 'sunday').length;
+
+                let html = '';
+                html += `<div class="modal-stat"><span class="modal-stat-label">Total de servicios</span><span class="modal-stat-value">${total}</span></div>`;
+                html += `<div class="modal-stat"><span class="modal-stat-label">Jueves · Domingos</span><span class="modal-stat-value">${thuCount} · ${sunCount}</span></div>`;
+
+                if (!data.services.length) {
+                    html += '<div class="modal-empty">Sin servicios asignados.</div>';
+                } else {
+                    data.services.forEach(s => {
+                        html += `
+                            <div class="modal-service">
+                                <div class="modal-service-left">
+                                    <span class="modal-service-date">${s.date}</span>
+                                    <span class="modal-service-role">${s.role}</span>
+                                </div>
+                                <span class="modal-day-pill ${s.dayClass}">${s.day}</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                modalBody.innerHTML = html;
+                overlay.classList.add('active');
+                overlay.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                overlay.classList.remove('active');
+                overlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            document.querySelectorAll('.role').forEach(role => {
+                const person = role.querySelector('.person');
+                if (!person) return;
+                const name = person.textContent.trim();
+                role.setAttribute('role', 'button');
+                role.setAttribute('tabindex', '0');
+                role.setAttribute('aria-label', `Ver servicios de ${name}`);
+                role.addEventListener('click', () => openModalFor(name));
+                role.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openModalFor(name);
+                    }
+                });
+            });
+
+            modalClose.addEventListener('click', closeModal);
+            overlay.addEventListener('click', e => {
+                if (e.target === overlay) closeModal();
+            });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+            });
+        })();
+    </script>
+
+</body>
+</html>
