@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Camp Conecta2 Kids 2026 — Información de campistas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#FBF6EC;--paper:#FFFFFF;--ink:#16243C;--muted:#71809A;--faint:#9AA7BC;
+    --sun:#FF8A3D;--sun-soft:#FFE7D2;--sky:#1F8FB0;--sky-soft:#D8EEF3;
+    --green:#1FA971;--green-soft:#D7F1E5;--wa:#25D366;--wa-dk:#1DB458;
+    --pending:#E4572E;--pending-soft:#FBE0D7;
+    --amber:#C77A06;--amber-soft:#FBEFD0;
+    --violet:#6B57C9;--violet-soft:#E9E3FA;
+    --line:#EFE6D6;--line2:#E6DCCB;
+    --shadow:0 1px 2px rgba(22,36,60,.05), 0 8px 24px -12px rgba(22,36,60,.18);
+    --radius:18px;
+    --surface-dark:#16243C;
+    --surface-dark-text:#FFFFFF;
+    --wa-disabled-bg:#E4E8EE;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --canvas:#15171C;--paper:#1E222B;--ink:#ECEFF4;--muted:#9AA6B8;--faint:#6F7B8E;
+      --sun:#FF9B57;--sun-soft:#3A2A1B;--sky:#46B7D8;--sky-soft:#16303A;
+      --green:#37C089;--green-soft:#123227;--wa:#25D366;--wa-dk:#1DB458;
+      --pending:#FF7E57;--pending-soft:#3B2018;
+      --amber:#E7A73E;--amber-soft:#33280F;--violet:#9E8BF2;--violet-soft:#241F3A;
+      --line:#2B2F39;--line2:#373C48;
+      --shadow:0 1px 2px rgba(0,0,0,.35), 0 8px 24px -12px rgba(0,0,0,.6);
+      --surface-dark:#E9ECF2;--surface-dark-text:#161A20;
+      --wa-disabled-bg:#2A2F3A;
+    }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--canvas);color:var(--ink);line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(820px 420px at 86% -8%, rgba(255,138,61,.16), transparent 60%),radial-gradient(680px 420px at -6% 4%, rgba(31,143,176,.12), transparent 60%)}
+  .wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 16px 48px}
+  header{padding:30px 2px 16px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+  .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--sun);box-shadow:0 0 0 4px var(--sun-soft)}
+  h1{font-family:'Fredoka',sans-serif;font-weight:700;font-size:clamp(30px,8vw,46px);line-height:1.02;letter-spacing:-.01em;margin:10px 0 6px}
+  h1 .yr{color:var(--sun)}
+  .sub{color:var(--muted);font-size:15px;max-width:52ch}
+  .sub b{font-weight:700}
+  .sub b.alg{color:var(--pending)}
+  .sub b.med{color:var(--violet)}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0 6px}
+  .stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:14px 14px 12px;box-shadow:var(--shadow)}
+  .stat .num{font-family:'Fredoka',sans-serif;font-weight:700;font-size:30px;line-height:1}
+  .stat .lbl{font-size:11.5px;font-weight:600;color:var(--muted);margin-top:5px;letter-spacing:.02em}
+  .stat.tot .num{color:var(--ink)}.stat.alg .num{color:var(--pending)}.stat.med .num{color:var(--violet)}
+
+  .controls{position:sticky;top:0;z-index:20;margin:18px -16px 0;padding:12px 16px 12px;background:linear-gradient(var(--canvas) 78%, rgba(251,246,236,0))}
+  .search{position:relative}
+  .search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--faint)}
+  .search input{width:100%;border:1px solid var(--line2);background:var(--paper);border-radius:14px;padding:13px 14px 13px 42px;font:inherit;font-size:15px;color:var(--ink);box-shadow:var(--shadow);outline:none;transition:border-color .15s, box-shadow .15s}
+  .search input:focus{border-color:var(--sun);box-shadow:0 0 0 4px var(--sun-soft)}
+  .search input::placeholder{color:var(--faint)}
+  .filters{display:flex;gap:8px;margin-top:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;border:1px solid var(--line2);background:var(--paper);color:var(--muted);font:inherit;font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .14s;white-space:nowrap}
+  .chip .c{font-size:11px;font-weight:700;background:var(--canvas);color:var(--muted);padding:1px 7px;border-radius:999px}
+  .chip[aria-pressed="true"]{background:var(--surface-dark);color:var(--surface-dark-text);border-color:var(--surface-dark)}
+  .chip[aria-pressed="true"] .c{background:rgba(127,127,127,.25);color:inherit}
+  .chip.alg[aria-pressed="true"]{background:var(--pending);border-color:var(--pending)}
+  .chip.diet[aria-pressed="true"]{background:var(--amber);border-color:var(--amber)}
+  .chip.med[aria-pressed="true"]{background:var(--violet);border-color:var(--violet)}
+
+  .count{font-size:12.5px;font-weight:600;color:var(--faint);margin:14px 2px 0}
+  .list{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+  .card{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow);transition:transform .12s ease, box-shadow .12s ease}
+  .row1{display:flex;align-items:flex-start;gap:12px}
+  .idx{flex:0 0 auto;width:34px;height:34px;border-radius:11px;background:var(--canvas);border:1px solid var(--line2);display:grid;place-items:center;font-family:'Fredoka',sans-serif;font-weight:600;font-size:14px;color:var(--muted);margin-top:1px}
+  .who{flex:1 1 auto;min-width:0}
+  .name{font-weight:700;font-size:16.5px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .meta{font-size:13px;color:var(--muted);margin-top:3px;display:flex;flex-wrap:wrap;gap:4px 12px}
+  .meta b{color:var(--ink);font-weight:600}
+
+  .badges{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+  .badge{font-size:11px;font-weight:700;letter-spacing:.02em;padding:5px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+  .badge.alg{background:var(--pending-soft);color:var(--pending)}
+  .badge.med{background:var(--violet-soft);color:var(--violet)}
+  .badge.diet{background:var(--amber-soft);color:var(--amber)}
+
+  .more{display:none;margin-top:13px;padding-top:13px;border-top:1px dashed var(--line2);grid-template-columns:1fr 1fr;gap:10px 16px}
+  .card.open .more{display:grid}
+  .fact{font-size:13px;min-width:0}
+  .fact .k{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);margin-bottom:2px}
+  .fact .v{color:var(--ink);word-wrap:break-word}
+  .fact.flag .v{color:var(--pending);font-weight:600}
+  .fact.wide{grid-column:1 / -1}
+  .fact .v.phone{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .wa-mini{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;background:var(--wa);color:#fff;text-decoration:none;font-weight:700;font-size:11.5px;line-height:1;padding:5px 9px;border-radius:8px;transition:filter .14s, transform .1s}
+  .wa-mini:hover{filter:brightness(1.05)}
+  .wa-mini:active{transform:translateY(1px)}
+  .v.contacts{display:flex;flex-direction:column;gap:0}
+  .contact-row{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:8px 0}
+  .contact-row + .contact-row{border-top:1px dashed var(--line2)}
+  .contact-row .ci{min-width:0;flex:1 1 auto}
+  .contact-row .cn{font-weight:600;color:var(--ink)}
+  .contact-row .cr{color:var(--muted);font-weight:500}
+  .contact-row .cph{font-size:12.5px;color:var(--muted);margin-top:1px}
+
+  .actions{display:flex;align-items:center;gap:8px;margin-top:13px;flex-wrap:wrap}
+  .btn{appearance:none;border:none;font:inherit;font-weight:600;font-size:14px;cursor:pointer;padding:11px 15px;border-radius:12px;display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:filter .14s, transform .1s}
+  .btn:active{transform:translateY(1px)}
+  .btn.wa{background:var(--wa);color:#fff}
+  .btn.wa:hover{filter:brightness(1.04)}
+  .btn.wa:disabled{background:var(--wa-disabled-bg);color:var(--faint);cursor:not-allowed}
+  .expand{margin-left:auto;background:none;border:none;color:var(--faint);cursor:pointer;font:inherit;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:4px;padding:6px}
+  .expand svg{transition:transform .2s}
+  .card.open .expand svg{transform:rotate(180deg)}
+  .empty{text-align:center;color:var(--muted);padding:54px 20px;font-size:15px}
+  .empty .big{font-size:38px;margin-bottom:8px}
+  footer{text-align:center;color:var(--faint);font-size:12px;margin-top:28px;line-height:1.6}
+
+  @media (max-width: 600px){
+    .wrap{padding:0 14px 40px}
+    header{padding:24px 2px 12px}
+    h1{margin:8px 0 6px}
+    .sub{font-size:14.5px}
+    .stats{gap:8px;margin:20px 0 4px}
+    .stat{padding:13px 11px 12px;border-radius:15px}
+    .stat .num{font-size:27px}
+    .stat .lbl{font-size:10.5px;line-height:1.25}
+    .list{gap:14px}
+    .card{padding:16px 15px;border-radius:16px}
+    .name{font-size:16px}
+    .more{grid-template-columns:1fr;gap:15px 0;margin-top:14px;padding-top:15px}
+    .fact .k{margin-bottom:3px}
+    .fact .v{font-size:14px}
+    .contact-row{padding:10px 0;gap:12px}
+    .wa-mini{padding:7px 11px;font-size:12px}
+    .actions{gap:10px}
+    .actions .btn.wa{flex:1 1 160px;justify-content:center}
+    .expand{order:10;margin-left:auto;padding:8px 4px}
+    .badge{font-size:10.5px;padding:4px 8px}
+  }
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow"><span class="dot"></span>Campistas · Verano 2026</span>
+    <h1>Camp Conecta2 <span class="yr">Kids</span></h1>
+    <p class="sub">Ficha de cada campista para el equipo: edad, <b class="alg">alergias</b>, <b class="med">condiciones médicas</b> y contactos de emergencia. Usa el buscador para encontrar a un niño, su tutor o un teléfono.</p>
+
+    <div class="stats">
+      <div class="stat tot"><div class="num" id="s-tot">0</div><div class="lbl">Campistas</div></div>
+      <div class="stat alg"><div class="num" id="s-alg">0</div><div class="lbl">Con alergias</div></div>
+      <div class="stat med"><div class="num" id="s-med">0</div><div class="lbl">Con nota médica</div></div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="Buscar por nombre, tutor o teléfono…" autocomplete="off">
+    </div>
+    <div class="filters" id="filters">
+      <button class="chip" data-f="all" aria-pressed="true">Todos <span class="c" id="c-all">0</span></button>
+      <button class="chip alg" data-f="allergy" aria-pressed="false">Alergias <span class="c" id="c-alg">0</span></button>
+      <button class="chip diet" data-f="diet" aria-pressed="false">Dieta especial <span class="c" id="c-diet">0</span></button>
+      <button class="chip med" data-f="medical" aria-pressed="false">Nota médica <span class="c" id="c-med">0</span></button>
+    </div>
+  </div>
+
+  <div class="count" id="count"></div>
+  <div class="list" id="list"></div>
+
+  <footer>
+    Camp Conecta2 Kids 2026 · 22 y 23 de junio · 9:00 a 3:00 · Edad 4 a 12 años<br>
+    Información confidencial — contiene datos médicos y de contacto. Úsala solo para el cuidado de los campistas.
+  </footer>
+</div>
+
+<script>
+const DATA = [{"n": 1, "name": "Yeicob Alexandre de la Cruz", "age": "10", "parent": "Lady de la Cruz", "phone": "809-399-3765", "form": {"name": "Yeicob Alexandre de la Cruz", "dob": "4/3/2016", "age": "10", "sex": "Masculino", "parent": "Lady de la Cruz", "relation": "Madre", "phone": "809-399-3765", "phone2": "849-360-3206", "address": "Barrio tavito, medina 2", "allergy": "No", "allergy_d": "", "diet": "Sí", "diet_d": "Cualquier alimento que contenga cerdo", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Lorenzo Alexandre", "Padre", "849-360-3206"], ["Naomi de la cruz", "Tía", "809-399-3765"]]}}, {"n": 2, "name": "Isabella Rojas De Los Santoa", "age": "9 años", "parent": "Rissy De Los Santos", "phone": "809-816-9295", "form": {"name": "Isabella Rojas De Los Santoa", "dob": "6/3/2016", "age": "9 años", "sex": "Femenino", "parent": "Rissy De Los Santos", "relation": "Madre", "phone": "809-816-9295", "phone2": "809-873-8915", "address": "Calle Penetración, sector Hoyo de Guelín, apartamento Balcones del Yaque 1, 4D", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "Es mañoso ya, no le gusta el huevo, berenjenas, víveres en general menos plátano maduro.", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Roberto Rojas", "Padre", "809-873-8915"]]}}, {"n": 3, "name": "Daniel Rojas De Los Santos", "age": "4", "parent": "Rissy De Los Santos", "phone": "809-816-9295", "form": {"name": "Daniel Rojas De Los Santos", "dob": "3/24/2022", "age": "4", "sex": "Masculino", "parent": "Rissy De Los Santos", "relation": "Madre", "phone": "809-816-9295", "phone2": "809-873-8915", "address": "Calle Penetración, sector Hoyo de Guelín, apartamentos Balcón del Yaque 1, 4d", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "No le gustan los víveres salvo el plátano maduro, las papas y si es plátano verde en tostones", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Roberto Rojas", "Padre", "809-873-8915"]]}}, {"n": 4, "name": "Daviell García Báez", "age": "7 años", "parent": "Yojhaira Báez", "phone": "809 917 5602", "form": {"name": "Daviell García Báez", "dob": "5/22/2019", "age": "7 años", "sex": "Masculino", "parent": "Yojhaira Báez", "relation": "Madre", "phone": "809 917 5602", "phone2": "809 975 3553", "address": "Hato Viejo entrada de hatillo", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Daniel García", "Padre", "809 975 3553"], ["Yojhaira Báez", "Madre", "809 917 5602"], ["Amy García", "Hermana", "849 270 6619"]]}}, {"n": 5, "name": "Yosmell Daniel Peña Valdez", "age": "10", "parent": "Alicia Valdez", "phone": "8492203871", "form": {"name": "Yosmell Daniel Peña Valdez", "dob": "9/27/2015", "age": "10", "sex": "Masculino", "parent": "Alicia Valdez", "relation": "Madre", "phone": "8492203871", "phone2": "8492203871", "address": "Altos del yaque", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Yoanka", "Tía", "8098424819"], ["Ruddy", "Padre", "+1 (849) 579-3871"], ["Ricky", "Amigo", "=+1 (809) 249-3408"]]}}, {"n": 6, "name": "Allyson Daniela Peña Valdez", "age": "7", "parent": "Alicia Valdez", "phone": "8492203871", "form": {"name": "Allyson Daniela Peña Valdez", "dob": "12/14/2018", "age": "7", "sex": "Femenino", "parent": "Alicia Valdez", "relation": "Madre", "phone": "8492203871", "phone2": "8492203871", "address": "Altos del yaque", "allergy": "Sí", "allergy_d": "Asma", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Yoanka", "Tía", "8098424819"], ["Ricky", "Amigo", "+1 (809) 249-3408"], ["Ruddy", "Padre", "=+1 (849) 579-3871"]]}}, {"n": 7, "name": "Jean Carlos capellán Abreu", "age": "9 años", "parent": "Miguelly Abreu", "phone": "8296018981", "form": {"name": "Jean Carlos capellán Abreu", "dob": "9/22/2016", "age": "9 años", "sex": "Masculino", "parent": "Miguelly Abreu", "relation": "Madre", "phone": "8296018981", "phone2": "8298411850", "address": "Proyecto yerba buena calle 3 casa 79 segundo nivel", "allergy": "Sí", "allergy_d": "Picaduras de insectos", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Juan Carlos capellán", "Padre", "8297411850"], ["Miguel Abreu", "Tío", "8298800513"]]}}, {"n": 8, "name": "Shadday Capellán Abreu", "age": "4 años", "parent": "Miguelly abreu", "phone": "8296018981", "form": {"name": "Shadday Capellán Abreu", "dob": "9/1/2021", "age": "4 años", "sex": "Femenino", "parent": "Miguelly abreu", "relation": "Madre", "phone": "8296018981", "phone2": "8297411850", "address": "Proyecto Yerba buena calle 3 casa 79 segundo nivel", "allergy": "Sí", "allergy_d": "Picaduras de insectos", "diet": "Sí", "diet_d": "Embutidos(salami). Colorantes artificiales específicos color rojo si consume en exceso le provoca vomito y dolor de estómago", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Juan Carlos capellán", "Padre", "8297411850"], ["Miguel Antonio Abreu", "Tío", "8298800513"]]}}, {"n": 9, "name": "Jonas Deen Escalante Ecklund", "age": "11", "parent": "Leo y Elizabeth Escalante", "phone": "8292921539", "form": {"name": "Jonas Deen Escalante Ecklund", "dob": "11/15/2014", "age": "11", "sex": "Masculino", "parent": "Leo y Elizabeth Escalante", "relation": "Padres", "phone": "8292921539", "phone2": "8097054514", "address": "Pinar dorado", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Leo y eli", "Padres", "8097054514"]]}}, {"n": 10, "name": "Eliot Rafael Escalante Ecklund", "age": "10", "parent": "Leo y Elizabeth Escalante", "phone": "8097054514", "form": {"name": "Eliot Rafael Escalante Ecklund", "dob": "11/15/2015", "age": "10", "sex": "Masculino", "parent": "Leo y Elizabeth Escalante", "relation": "Padres", "phone": "8097054514", "phone2": "", "address": "Pinar dorado", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Leo y eli", "Padres", "8097054514"]]}}, {"n": 11, "name": "Victoria De los Santos", "age": "10", "parent": "Alfonso De los Santos", "phone": "809-428-0591", "form": {"name": "Victoria De los Santos", "dob": "3/9/2016", "age": "10", "sex": "Femenino", "parent": "Alfonso De los Santos", "relation": "Padre", "phone": "809-428-0591", "phone2": "", "address": "Avenida la confluencia, calle monseñor Panal, edificios Pedro Valerio.", "allergy": "No", "allergy_d": "", "diet": "Sí", "diet_d": "Dulces, nos gusta regular la ingesta.", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Rosmery", "Madre", "8295145848"]]}}, {"n": 12, "name": "Juan Esteban Pérez", "age": "7 años", "parent": "Dilenia Lamar", "phone": "8098402941", "form": {"name": "Juan Esteban Pérez", "dob": "2/16/2019", "age": "7 años", "sex": "Masculino", "parent": "Dilenia Lamar", "relation": "Madre", "phone": "8098402941", "phone2": "8296787778", "address": "Hato Viejo c/Hatillo #96", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Dilenia Lamar", "Padres", "8098402941"], ["Juan José Pérez", "Padre", "8296787778"], ["José Fco. Lamar", "Tío", "8295400940"]]}}, {"n": 13, "name": "Fernando A. De los Santos", "age": "8", "parent": "Alfonso De los Santos", "phone": "809-428-0591", "form": {"name": "Fernando A. De los Santos", "dob": "5/30/2018", "age": "8", "sex": "Masculino", "parent": "Alfonso De los Santos", "relation": "Padre", "phone": "809-428-0591", "phone2": "", "address": "Avenida la confluencia, calle monseñor Panal, edificios Pedro Valerio", "allergy": "Sí", "allergy_d": "A comer piña, le da sarpullido al comen denaciada.", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Rosmery Baez", "Madre", "8295145848"]]}}, {"n": 14, "name": "Sander de los Santos Fernández", "age": "8 años", "parent": "Rosimely Fernández", "phone": "829-990-5814", "form": {"name": "Sander de los Santos Fernández", "dob": "4/28/2018", "age": "8 años", "sex": "Masculino", "parent": "Rosimely Fernández", "relation": "Madre", "phone": "829-990-5814", "phone2": "829-935-7695", "address": "La Trinchera", "allergy": "Sí", "allergy_d": "Al polvo", "diet": "No", "diet_d": "N/A", "medical": "No", "medical_d": "N\\A", "meds": "No", "meds_d": "N/A", "meds_camp": "No", "meds_camp_d": "N/A", "contacts": [["Rosimely Fernández", "Madre", "829-990-5814"]]}}, {"n": 15, "name": "Emma de los Santos Fernández", "age": "5 años", "parent": "Rosimely Fernández", "phone": "829-990-5814", "form": {"name": "Emma de los Santos Fernández", "dob": "7/16/2020", "age": "5 años", "sex": "Femenino", "parent": "Rosimely Fernández", "relation": "Madre", "phone": "829-990-5814", "phone2": "829-935-7695", "address": "La trinchera", "allergy": "No", "allergy_d": "N/A", "diet": "No", "diet_d": "N/A", "medical": "No", "medical_d": "N/A", "meds": "No", "meds_d": "N/A", "meds_camp": "No", "meds_camp_d": "N/A", "contacts": [["Rosa Durán Valdez", "Abuela", "809-875-0335"], ["José Alberto de los Santos", "Padre", "829-935-7695"]]}}, {"n": 16, "name": "Mateo Rogelio Abreu Vargas", "age": "6 años", "parent": "Ginnette Genao (Abuela)", "phone": "8093301516", "form": {"name": "Mateo Rogelio Abreu Vargas", "dob": "2/17/2020", "age": "6 años", "sex": "Masculino", "parent": "Ginnette Genao (Abuela)", "relation": "Abuela", "phone": "8093301516", "phone2": "8093544216", "address": "Independencia 43, altos, Jarabacoa.", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Melissa Vargas / Rogers Abreu", "Padres", "8093544216"], ["Ginnette Genao", "Abuela", "8093301516"]]}}, {"n": 17, "name": "Eithan Aracena Hernández", "age": "7 años", "parent": "Jeniffer Hernández", "phone": "8093301516", "form": {"name": "Eithan Aracena Hernández", "dob": "10/28/2018", "age": "7 años", "sex": "Masculino", "parent": "Jeniffer Hernández", "relation": "Madre", "phone": "8093301516", "phone2": "8098615372", "address": "Ave La Confluencia, Jarabacoa", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Melissa Vargas", "Tía", "8093544216"], ["Samuel Abreu", "Padrastro", "8294713279"]]}}, {"n": 18, "name": "Alice Ortega Valdez", "age": "4", "parent": "María Raquel Valdez Tiburcio", "phone": "849-344-4515", "form": {"name": "Alice Ortega Valdez", "dob": "9/23/2021", "age": "4", "sex": "Femenino", "parent": "María Raquel Valdez Tiburcio", "relation": "Madre", "phone": "849-344-4515", "phone2": "809-704-3687", "address": "Hatillo", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["María Raquel Valdez Tiburcio", "Madre", "849-344-4515"], ["Faustino Valdez", "Abuelo", "809-510-5038"], ["Héctor Luis de la Cruz Solares", "Padrastro", "800-980-4883"]]}}, {"n": 19, "name": "Johanna Baez", "age": "11", "parent": "Carmen Abreu", "phone": "8097784298", "form": {"name": "Johanna Baez", "dob": "5/14/2015", "age": "11", "sex": "Femenino", "parent": "Carmen Abreu", "relation": "Madre", "phone": "8097784298", "phone2": "", "address": "Residencial jarabacoa Dreams.", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Carmen", "Madre", "809 778 4298"], ["Juan baez", "Padre", "8097570280"]]}}, {"n": 20, "name": "Benjamín Marte", "age": "10 años", "parent": "Floralba Abreur", "phone": "8298167801", "form": {"name": "Benjamín Marte", "dob": "6/9/2016", "age": "10 años", "sex": "Masculino", "parent": "Floralba Abreur", "relation": "Madre", "phone": "8298167801", "phone2": "8498167801", "address": "Calle General Liperon #4. 2do nivel. Constanza", "allergy": "Sí", "allergy_d": "A todos los colorantes artificiales", "diet": "Sí", "diet_d": "Alimentos con alto contenido de colorante. Por ejemplo las galletas Ritz con queso.", "medical": "No", "medical_d": "NO", "meds": "No", "meds_d": "Sólo antialérgico en casos muy necesarios.", "meds_camp": "No", "meds_camp_d": "NO", "contacts": [["Catalina de la Torre", "Tutora", "8493602680"], ["Fray Marte", "Padre", "8498167801"]]}}, {"n": 21, "name": "Lucas Eduardo Ramírez Tiburcio", "age": "8años", "parent": "Esperanza Tiburcio", "phone": "8299612963", "form": {"name": "Lucas Eduardo Ramírez Tiburcio", "dob": "5/28/2018", "age": "8años", "sex": "Masculino", "parent": "Esperanza Tiburcio", "relation": "Hijo", "phone": "8299612963", "phone2": "8092231962", "address": "Residencial La Z. Avenida la confluencia", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "Sí", "medical_d": "TDAH", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Luis Eduardo Ramírez", "Tía y hermano", "=+1 (829) 961-2964"], ["Keyla Canela", "Tia", "=+1 (829) 584-6587"], ["Luis Ramírez", "Padre", "8092231962"]]}}, {"n": 22, "name": "Emanuel José Duarte", "age": "9", "parent": "Williana Elizabeth Genao Duran", "phone": "8298846910", "form": {"name": "Emanuel José Duarte", "dob": "10/18/2016", "age": "9", "sex": "Masculino", "parent": "Williana Elizabeth Genao Duran", "relation": "Mama", "phone": "8298846910", "phone2": "8092225745", "address": "Av. Confluencia #116", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "Sí", "medical_d": "Migrañas, puede tener algún dolor de cabeza o sangrado nasal", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Emanuel Duarte", "Papá", "8092225745"], ["Rebeca Durán", "Abuela", "8098761022"]]}}, {"n": 23, "name": "Sarai Elisabet Guzmán De La Cruz", "age": "11 años", "parent": "Kenia De La Cruz", "phone": "8095774943", "form": {"name": "Sarai Elisabet Guzmán De La Cruz", "dob": "9/12/2014", "age": "11 años", "sex": "Femenino", "parent": "Kenia De La Cruz", "relation": "Madre", "phone": "8095774943", "phone2": "8094478847", "address": "Urb. Tabito, C/principal", "allergy": "Sí", "allergy_d": "Mani y mucha exposición al polvo (por causa de adenoides)", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Edwin Antonio. Guzmán Sanchez", "Padre", "809 447-8847"]]}}, {"n": 24, "name": "Jaasiel Isaac Guzmán De La Cruz", "age": "10 años", "parent": "Kenia De La Cruz", "phone": "829 577-4943", "form": {"name": "Jaasiel Isaac Guzmán De La Cruz", "dob": "3/7/2016", "age": "10 años", "sex": "Masculino", "parent": "Kenia De La Cruz", "relation": "Madre", "phone": "829 577-4943", "phone2": "809-447-8847", "address": "Urb.Tabito C/1ra", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Edwin Ant. Guzmán Sanchez", "Padre", "809 -447-8847"]]}}, {"n": 25, "name": "Ernesto Manuel Duarte", "age": "4", "parent": "Williana Elizabeth Genao Duran", "phone": "8092225745", "form": {"name": "Ernesto Manuel Duarte", "dob": "8/25/2021", "age": "4", "sex": "Masculino", "parent": "Williana Elizabeth Genao Duran", "relation": "Mamá", "phone": "8092225745", "phone2": "8298846910", "address": "Av lanConfluencia # 116", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Emanuel Duarte", "Papá", "8092225746"], ["Rebeca Duran", "Abuela", "8098761022"]]}}, {"n": 26, "name": "Marjorie Abreu", "age": "10", "parent": "Floralba Abreu", "phone": "8298167801", "form": {"name": "Marjorie Abreu", "dob": "5/21/2016", "age": "10", "sex": "Femenino", "parent": "Floralba Abreu", "relation": "Tía", "phone": "8298167801", "phone2": "8492651496 (solo WhatsApp)", "address": "Calle General Luperón #4. 2do nivel, Constanza.", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Catalina de la Torre", "Amiga de la familia", "8493602680"], ["Fray Marte", "Esposo de la tía", "8498167801"]]}}, {"n": 27, "name": "Florianna Marte", "age": "4 años", "parent": "Floralba Abreu", "phone": "8298167801", "form": {"name": "Florianna Marte", "dob": "12/9/2021", "age": "4 años", "sex": "Femenino", "parent": "Floralba Abreu", "relation": "Madre", "phone": "8298167801", "phone2": "8498167801", "address": "Calle General Luperón #4. 2do nivel, Constanza.", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Catalina de la Torre", "Amiga de la familia", "8493602680"], ["Fray Marte", "Padre", "8498167801"]]}}, {"n": 28, "name": "Abril Báez De La Cruz", "age": "4", "parent": "Jorge Luis Báez", "phone": "8296495544", "form": {"name": "Abril Báez De La Cruz", "dob": "2/19/2022", "age": "4", "sex": "Femenino", "parent": "Jorge Luis Báez", "relation": "Padre", "phone": "8296495544", "phone2": "8296652124", "address": "La Joya, c/5ta, #03, Jarabacoa, La Vega", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Jennifer De La Cruz", "Madre", "8296652124"], ["Angelita Báez", "Tia Abuela", "=+1 (809) 712-5115"], ["Layra Placencia", "Tia", "=+1 (829) 664-7647"]]}}, {"n": 29, "name": "Elena Grace Clifford Aguilar", "age": "10 años", "parent": "Frederick Roy Clifford", "phone": "809 850 0067", "form": {"name": "Elena Grace Clifford Aguilar", "dob": "2/26/2016", "age": "10 años", "sex": "Femenino", "parent": "Frederick Roy Clifford", "relation": "Padre", "phone": "809 850 0067", "phone2": "", "address": "Monte Bonito", "allergy": "Sí", "allergy_d": "Tiene alergia al calor, en realidad no le pasa nada pero si ha sudado mucho es posible que le brote urticaria.", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Frederick Roy Clifford", "Padre", "809 850 0067"]]}}, {"n": 30, "name": "Engel Durán silverio", "age": "12", "parent": "zoraida silverio", "phone": "8098484542", "form": {"name": "Engel Durán silverio", "dob": "6/24/2013", "age": "12", "sex": "Masculino", "parent": "zoraida silverio", "relation": "madre", "phone": "8098484542", "phone2": "", "address": "urbanización dilone", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Francisco duran", "su padre", "8299153875"]]}}, {"n": 31, "name": "Arlin Paulino Victoriano", "age": "5 años", "parent": "Arleny Victoriano", "phone": "8294635765", "form": {"name": "Arlin Paulino Victoriano", "dob": "9/14/2020", "age": "5 años", "sex": "Femenino", "parent": "Arleny Victoriano", "relation": "Medre", "phone": "8294635765", "phone2": "8299748964", "address": "Los solares La Joya", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Xavier o. Paulino", "Padre", "8299748964"]]}}, {"n": 32, "name": "Kaylee colon horn", "age": "6", "parent": "Kimberly horn sanchez", "phone": "8099397509", "form": {"name": "Kaylee colon horn", "dob": "5/1/2020", "age": "6", "sex": "Femenino", "parent": "Kimberly horn sanchez", "relation": "Madre", "phone": "8099397509", "phone2": "8093220652", "address": "Mirador", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Alexandra sanchex", "Abuela", "8292619034"], ["Octavio Colón", "Abuelo", "8097508161"]]}}, {"n": 33, "name": "Lenier Paulino Victoriano", "age": "8", "parent": "Xavier Omar Paulino Vasquez", "phone": "829-974-8964", "form": {"name": "Lenier Paulino Victoriano", "dob": "5/28/2018", "age": "8", "sex": "Masculino", "parent": "Xavier Omar Paulino Vasquez", "relation": "Padre", "phone": "829-974-8964", "phone2": "8294635764", "address": "La Joya", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Xavier Omar Paulino", "Padre", "829-974-8964"], ["Arleny Victoriano", "Madre", "8294635765"]]}}, {"n": 34, "name": "Lía Fernanda Guzmán Capellan", "age": "6 años", "parent": "Luis Miguel Guzmán barreras", "phone": "=+1 (809) 883-1196", "form": {"name": "Lía Fernanda Guzmán Capellan", "dob": "12/30/2019", "age": "6 años", "sex": "Femenino", "parent": "Luis Miguel Guzmán barreras", "relation": "Padre", "phone": "=+1 (809) 883-1196", "phone2": "", "address": "Sabaneta,piedra blanca", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Samantha capellán peña", "Madre", "8299643352"]]}}, {"n": 35, "name": "Karla Abreu", "age": "9 años", "parent": "Samantha capellán peña", "phone": "8299643352", "form": {"name": "Karla Abreu", "dob": "9/16/2016", "age": "9 años", "sex": "Femenino", "parent": "Samantha capellán peña", "relation": "Tutora", "phone": "8299643352", "phone2": "", "address": "Sabaneta, piedra blanca", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Samantha capellán", "Tutora", "8299643352"]]}}, {"n": 36, "name": "Darelys Saraí Gutiérrez Moncion", "age": "6", "parent": "Divina María Gutierrez Valdez", "phone": "8096085207", "form": {"name": "Darelys Saraí Gutiérrez Moncion", "dob": "5/2/2019", "age": "6", "sex": "Femenino", "parent": "Divina María Gutierrez Valdez", "relation": "Tia", "phone": "8096085207", "phone2": "", "address": "Avenida la confluencia, #69", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["María Oria calles", "Tía postiza", "(829) 355-7170"]]}}, {"n": 37, "name": "Joel zaith escalante", "age": "12", "parent": "Yokaira escalante belen", "phone": "829-802-3620", "form": {"name": "Joel zaith escalante", "dob": "4/17/2014", "age": "12", "sex": "Masculino", "parent": "Yokaira escalante belen", "relation": "Madre", "phone": "829-802-3620", "phone2": "829-268-5685", "address": "Pedregal abajo", "allergy": "Sí", "allergy_d": "Alergia al polvo", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["José escalante adamez", "Abuelo", "829-802-3620"], ["Alexandra escalante", "Tia", "809-678-7313"], ["Joel mena", "Padrastro", "809-618-3577"]]}}, {"n": 38, "name": "Lizbeth Alexandra Flete Luna", "age": "12", "parent": "Marlene Luna de Flete", "phone": "8099410532", "form": {"name": "Lizbeth Alexandra Flete Luna", "dob": "7/3/2014", "age": "12", "sex": "Femenino", "parent": "Marlene Luna de Flete", "relation": "Madre", "phone": "8099410532", "phone2": "8099285133", "address": "Residencial Miranda frente a la UAFAM", "allergy": "Sí", "allergy_d": "Salchichas, colorantes, polvo", "diet": "Sí", "diet_d": "Salchichas, colorantes", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Irving Flete", "Padre", "8099285133"], ["Sara Luna", "Tia", "8297296159"]]}}, {"n": 39, "name": "Lissette Alexandra Flete Luna", "age": "10", "parent": "Marlene Luna de Flete", "phone": "8099410532", "form": {"name": "Lissette Alexandra Flete Luna", "dob": "6/9/2015", "age": "10", "sex": "Femenino", "parent": "Marlene Luna de Flete", "relation": "Madre", "phone": "8099410532", "phone2": "8099285133", "address": "Residencial Miranda Frente a la UAFAM", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["iRVING FLETE THOMAS", "PADRE", "8099285133"], ["SARA LUNA", "TIA", "8297296159"]]}}, {"n": 40, "name": "Amalia Flores Cruz", "age": "6 años", "parent": "Yesica Cruz", "phone": "8293911943", "form": {"name": "Amalia Flores Cruz", "dob": "4/27/2020", "age": "6 años", "sex": "Femenino", "parent": "Yesica Cruz", "relation": "madre", "phone": "8293911943", "phone2": "8296492081", "address": "Sector el Mirador", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Luisa Benzant", "Abuela", "8296492081"], ["Yesica Cruz", "Madre", "8293911943"]]}}, {"n": 41, "name": "Lía Grace Vargas Núñez", "age": "6", "parent": "Herllin Núñez", "phone": "8098831792", "form": {"name": "Lía Grace Vargas Núñez", "dob": "10/7/2019", "age": "6", "sex": "Femenino", "parent": "Herllin Núñez", "relation": "Mamá", "phone": "8098831792", "phone2": "8298916359", "address": "Barrio tavito", "allergy": "Sí", "allergy_d": "Mani", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Leo Vargas", "Papá", "8298916359"], ["Herllin Núñez", "Mamá", "8098831702"]]}}, {"n": 42, "name": "VALENTINA GARCIA", "age": "11", "parent": "Hipolito Antonio Garcia", "phone": "8292920988", "form": {"name": "VALENTINA GARCIA", "dob": "4/6/2015", "age": "11", "sex": "Femenino", "parent": "Hipolito Antonio Garcia", "relation": "Padre", "phone": "8292920988", "phone2": "", "address": "Pinar dorado", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Catalina Ospina", "Madre", "829 292 0988"], ["Hipolito", "Padre", "=+1 (829) 638-0209"], ["Nany", "Amiga de la familia", "=+1 (829) 747-5120"]]}}, {"n": 43, "name": "Amaia Perez Ramos", "age": "11 años", "parent": "Lixania Ramos Jimenez De Perez", "phone": "809-891-2740", "form": {"name": "Amaia Perez Ramos", "dob": "12/14/2014", "age": "11 años", "sex": "Femenino", "parent": "Lixania Ramos Jimenez De Perez", "relation": "Madre", "phone": "809-891-2740", "phone2": "809-496-0643", "address": "Piedra Blanca Carretera Salto de Jimenoa Después de Vacacional La Planta casa #32", "allergy": "Sí", "allergy_d": "Dermatitis Atopica", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Lisaura Ramos Jimenez", "Tia", "829-641-3719"], ["Santos Ramos", "Abuelo", "829-549-5599"], ["Luis Miguel Perez Ramos", "Padre", "808-496-0643"]]}}, {"n": 44, "name": "Alejandro Garcia", "age": "8", "parent": "Hipolito Antonio", "phone": "=+1 (829) 638-0209", "form": {"name": "Alejandro Garcia", "dob": "12/8/2017", "age": "8", "sex": "Masculino", "parent": "Hipolito Antonio", "relation": "Padre", "phone": "=+1 (829) 638-0209", "phone2": "8292920988", "address": "Pinar Dorado", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Hipolito", "Padre", "=+1 (829) 638-0209"], ["Catalina", "Madre", "8292920988"], ["Rosanny", "Amiga de la Familia", "=+1 (829) 747-5120"]]}}, {"n": 45, "name": "Jhulian Adel Rodriguez Batista", "age": "6", "parent": "Fanny Yulisa Batista", "phone": "809-707-7141", "form": {"name": "Jhulian Adel Rodriguez Batista", "dob": "2/29/2020", "age": "6", "sex": "Masculino", "parent": "Fanny Yulisa Batista", "relation": "Madre", "phone": "809-707-7141", "phone2": "849-505-7420", "address": "Palo blanco, La Yautia", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Juan Javier Rodríguez", "Padre", "829- 989-9335"], ["Fanny Yulisa Batista", "Madre", "809-707-7141"], ["Katherine Batista", "Tia", "809- 283-7957"]]}}, {"n": 46, "name": "Nathan Adiel Rodriguez Batista", "age": "4", "parent": "Fanny Yulisa Batista", "phone": "8097077141", "form": {"name": "Nathan Adiel Rodriguez Batista", "dob": "10/25/2021", "age": "4", "sex": "Masculino", "parent": "Fanny Yulisa Batista", "relation": "Madre", "phone": "8097077141", "phone2": "8495057420", "address": "Palo blanco, La Yautia", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Juan Rodríguez Batista", "Padre", "8299899335"], ["Fanny Yulisa Batista", "Madre", "8097077141"], ["Katherine Batista", "Tia", "8092837957"]]}}, {"n": 47, "name": "Angelica Ramírez Vicioso", "age": "13", "parent": "Luz Del Carmen Vicioso", "phone": "(809) 983-3441", "form": {"name": "Angelica Ramírez Vicioso", "dob": "7/23/2012", "age": "13", "sex": "Femenino", "parent": "Luz Del Carmen Vicioso", "relation": "Madre", "phone": "(809) 983-3441", "phone2": "", "address": "Calle Pepino Reyes #4, Jarabacoa, La Vega", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Juan Ariel Ramírez", "Padre", "(809) 904-7220"]]}}, {"n": 48, "name": "Atalie Ramírez Vicioso", "age": "10", "parent": "Luz Del Carmen Vicioso", "phone": "(809)983-3441", "form": {"name": "Atalie Ramírez Vicioso", "dob": "2/8/2016", "age": "10", "sex": "Femenino", "parent": "Luz Del Carmen Vicioso", "relation": "Madre", "phone": "(809)983-3441", "phone2": "", "address": "Calle Pepino Reyes #4, Calle principal Obdulio Jiménez, Jarabacoa", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Juan Ariel Ramirez", "Padre", "(809) 904-7220"]]}}, {"n": 49, "name": "Gabriella Taveras Capellán", "age": "7", "parent": "Juan Bautista Taveras Pichardo", "phone": "6315225007", "form": {"name": "Gabriella Taveras Capellán", "dob": "5/7/2019", "age": "7", "sex": "Femenino", "parent": "Juan Bautista Taveras Pichardo", "relation": "Padre", "phone": "6315225007", "phone2": "8098702911", "address": "Avenida Víctor Méndez Capellán, Residencial Miranda 1, Jarabacoa, La Vega", "allergy": "Sí", "allergy_d": "Polvo, mosquito, perros, gatos", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Melania Jiménez Rodriguez", "Abuela", "8098702911"], ["Melissa Gabriela Capellán Jiménez", "Madre", "6317829437"]]}}, {"n": 50, "name": "Engell Adriel Bonilla Abreu", "age": "8", "parent": "Marianela Abreu Marte", "phone": "8294230841", "form": {"name": "Engell Adriel Bonilla Abreu", "dob": "4/2/2018", "age": "8", "sex": "Masculino", "parent": "Marianela Abreu Marte", "relation": "Madre", "phone": "8294230841", "phone2": "849 430-0326", "address": "Paso Bajito, #53", "allergy": "No", "allergy_d": "", "diet": "Sí", "diet_d": "No come carne en salsa", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Mariano Abreu", "Abuelo", "=+1 (849) 517-0126"]]}}, {"n": 51, "name": "Fabián Durán Silverio", "age": "10", "parent": "zoraida silverio reyes", "phone": "809 848 4542", "form": {"name": "Fabián Durán Silverio", "dob": "11/6/2016", "age": "10", "sex": "Masculino", "parent": "zoraida silverio reyes", "relation": "madre", "phone": "809 848 4542", "phone2": "", "address": "urbanización dilone", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Francisco Duran", "padre", "829 915 3875"]]}}, {"n": 52, "name": "Brianny Payano Plasencia", "age": "6", "parent": "Layra Plasencia", "phone": "829-664-7647", "form": {"name": "Brianny Payano Plasencia", "dob": "7/9/2020", "age": "6", "sex": "Femenino", "parent": "Layra Plasencia", "relation": "Madre", "phone": "829-664-7647", "phone2": "809-868-2565", "address": "Calle monseñor panal, los corralitos", "allergy": "No", "allergy_d": "", "diet": "No", "diet_d": "", "medical": "No", "medical_d": "", "meds": "No", "meds_d": "", "meds_camp": "No", "meds_camp_d": "", "contacts": [["Layra plasencia", "Madre", "809-868-2565"]]}}, {"n": 53, "name": "Gabriela", "age": "", "parent": "Marlene Luna", "phone": "809-941-0532", "form": null}, {"n": 54, "name": "Abigail Duran (Auspicio)", "age": "12", "parent": "Rafa y Rosa", "phone": "829-375-4545", "form": null}, {"n": 55, "name": "Elias Duran (Auspicio)", "age": "9", "parent": "Rafa y Rosa", "phone": "829-375-4545", "form": null}, {"n": 56, "name": "Sebastian Hernández", "age": "8", "parent": "Rosanny Adamez", "phone": "829-747-5120", "form": null}, {"n": 57, "name": "Sofía Abreu (Auspicio)", "age": "10", "parent": "Yankaury", "phone": "809-863-4546", "form": null}];
+
+const $ = s => document.querySelector(s);
+const esc = s => (s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---- WhatsApp helpers (Rep. Dom. / EE.UU. comparten el código 1) ---- */
+const WA_PATH = "M.06 24l1.69-6.16A11.87 11.87 0 0 1 .14 11.9C.14 5.34 5.5 0 12.08 0a11.82 11.82 0 0 1 8.41 3.49 11.74 11.74 0 0 1 3.48 8.41c0 6.56-5.36 11.9-11.95 11.9a12 12 0 0 1-5.7-1.45L.06 24Zm6.6-3.8c1.68.99 3.28 1.59 5.41 1.59 5.45 0 9.9-4.42 9.9-9.88a9.8 9.8 0 0 0-2.9-7 9.74 9.74 0 0 0-6.99-2.9c-5.46 0-9.9 4.43-9.9 9.88 0 2.24.66 3.92 1.76 5.68l-1 3.65 3.72-.97Zm11.3-5.6c-.07-.12-.27-.2-.56-.34-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.47-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.44-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47 0 1.46 1.06 2.87 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.69.25-1.28.17-1.41Z";
+const waIcon = sz => `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="currentColor"><path d="${WA_PATH}"/></svg>`;
+function waNumber(raw){ if(!raw) return ''; let d=(raw.match(/\d/g)||[]).join(''); if(d.length===10) d='1'+d; return d; }
+function waChatLink(raw){ const num=waNumber(raw); return (num && num.length>=11) ? `https://wa.me/${num}` : null; }
+function waMini(raw){
+  const link = waChatLink(raw);
+  if(!link) return '';
+  return `<a class="wa-mini" href="${link}" target="_blank" rel="noopener" title="Enviar WhatsApp" aria-label="Enviar WhatsApp">${waIcon(13)}WhatsApp</a>`;
+}
+
+/* ---- normalización: una sola vista por campista ---- */
+function stripParen(s){ return (s||'').replace(/\s*\([^)]*\)\s*$/,'').trim(); }
+// nombres escritos por los padres llegan en MAYÚSCULAS o minúsculas: los uniformamos para la lista
+function titleCase(s){
+  return (s||'').toLowerCase().replace(/\b([\p{L}])([\p{L}'’]*)/gu, (m,a,b)=>a.toUpperCase()+b);
+}
+function cleanAge(a){ const m=String(a||'').match(/\d+/); return m ? m[0] : ''; }
+function fmtDOB(dob){ if(!dob) return ''; const p=String(dob).split('/'); const yr=+p[p.length-1]; if(yr && yr>2025) return ''; return dob; }
+
+const ITEMS = DATA.map(k=>{
+  const f = k.form || {};
+  const v = {
+    n: k.n,
+    name: titleCase(stripParen(k.name) || f.name) || '(sin nombre)',
+    age: cleanAge(k.age || f.age),
+    sex: f.sex || '',
+    dob: fmtDOB(f.dob),
+    parent: f.parent || k.parent || '',
+    relation: f.relation || '',
+    phone: f.phone || k.phone || '',
+    phone2: f.phone2 || '',
+    address: f.address || '',
+    allergy: f.allergy === 'Sí',  allergy_d: f.allergy_d || '',
+    diet: f.diet === 'Sí',        diet_d: f.diet_d || '',
+    medical: f.medical === 'Sí',  medical_d: f.medical_d || '',
+    meds: f.meds === 'Sí',        meds_d: f.meds_d || '',
+    meds_camp: f.meds_camp === 'Sí', meds_camp_d: f.meds_camp_d || '',
+    contacts: f.contacts || [],
+    hasForm: !!k.form
+  };
+  // buscador: nombre, tutor, dirección, alergias, contactos… todo
+  const parts = [k.name, k.parent, k.phone, v.name, v.parent, v.relation, v.phone, v.phone2,
+                 v.address, v.sex, v.dob, v.age, v.allergy_d, v.diet_d, v.medical_d, v.meds_d, v.meds_camp_d];
+  (v.contacts||[]).forEach(c=>{ parts.push(c[0], c[1], c[2]); });
+  // versión solo-dígitos de cada teléfono para buscar números
+  [k.phone, v.phone, v.phone2, ...((v.contacts||[]).map(c=>c[2]))].forEach(p=>{
+    const d=((p||'').match(/\d/g)||[]).join(''); if(d) parts.push(d);
+  });
+  const hay = parts.filter(Boolean).join(' ').toLowerCase();
+  return { v, hay };
+});
+
+let filter = 'all', query = '';
+
+function counts(){
+  const alg  = ITEMS.filter(i=>i.v.allergy).length;
+  const diet = ITEMS.filter(i=>i.v.diet).length;
+  const med  = ITEMS.filter(i=>i.v.medical||i.v.meds||i.v.meds_camp).length;
+  $('#s-tot').textContent = ITEMS.length;
+  $('#s-alg').textContent = alg;
+  $('#s-med').textContent = med;
+  $('#c-all').textContent  = ITEMS.length;
+  $('#c-alg').textContent  = alg;
+  $('#c-diet').textContent = diet;
+  $('#c-med').textContent  = med;
+}
+
+function matches(item){
+  const v = item.v;
+  if(filter==='allergy' && !v.allergy) return false;
+  if(filter==='diet'    && !v.diet) return false;
+  if(filter==='medical' && !(v.medical||v.meds||v.meds_camp)) return false;
+  if(query){
+    for(const t of query.split(/\s+/).filter(Boolean)){ if(!item.hay.includes(t)) return false; }
+  }
+  return true;
+}
+
+function detailHTML(v){
+  const facts = [];
+  const add = (key,val,flag,wide)=>{
+    if(val && String(val).trim() && val!=='No')
+      facts.push(`<div class="fact${flag?' flag':''}${wide?' wide':''}"><div class="k">${key}</div><div class="v">${esc(val)}</div></div>`);
+  };
+  const addPhone = (key,val)=>{
+    if(val && String(val).trim())
+      facts.push(`<div class="fact"><div class="k">${key}</div><div class="v phone">${esc(val)}${waMini(val)}</div></div>`);
+  };
+
+  if(v.hasForm){
+    // seguridad primero
+    if(v.allergy)   add('Alergias', v.allergy_d||'Sí', true, true);
+    if(v.diet)      add('Dieta especial', v.diet_d||'Sí', true, true);
+    if(v.medical)   add('Condición médica', v.medical_d||'Sí', true, true);
+    if(v.meds)      add('Medicamentos', v.meds_d||'Sí', true, true);
+    if(v.meds_camp) add('Medicamentos en el campamento', v.meds_camp_d||'Sí', true, true);
+    // datos
+    if(v.dob) add('Nacimiento', v.dob);
+    add('Sexo', v.sex);
+    addPhone('Teléfono', v.phone);
+    addPhone('Tel. alterno', v.phone2);
+    const tutor = v.parent + (v.relation ? ` · ${v.relation}` : '');
+    if(v.parent)  facts.push(`<div class="fact wide"><div class="k">Padre / tutor</div><div class="v">${esc(tutor)}</div></div>`);
+    if(v.address) facts.push(`<div class="fact wide"><div class="k">Dirección</div><div class="v">${esc(v.address)}</div></div>`);
+    if(v.contacts && v.contacts.length){
+      const rows = v.contacts.map(x=>{
+        const nm  = esc(x[0]||'');
+        const rel = x[1] ? `<span class="cr">${esc(x[1])}</span>` : '';
+        const ph  = x[2] ? `<div class="cph">${esc(x[2])}</div>` : '';
+        return `<div class="contact-row"><div class="ci"><div class="cn">${nm} ${rel}</div>${ph}</div>${waMini(x[2])}</div>`;
+      }).join('');
+      facts.push(`<div class="fact wide"><div class="k">Contactos de emergencia</div><div class="v contacts">${rows}</div></div>`);
+    }
+  } else {
+    if(v.age) add('Edad', v.age+' años');
+    addPhone('Teléfono', v.phone);
+    if(v.parent) add('Padre / tutor', v.parent);
+    facts.push(`<div class="fact wide"><div class="v" style="color:var(--faint)">Información detallada no disponible todavía.</div></div>`);
+  }
+  return facts.join('') || '<div class="fact wide"><div class="v" style="color:var(--faint)">Sin datos adicionales.</div></div>';
+}
+
+function cardHTML(item){
+  const v = item.v;
+  const meta = [];
+  if(v.age) meta.push(`<span>${esc(v.age)} años</span>`);
+  if(v.sex) meta.push(`<span>${esc(v.sex)}</span>`);
+  if(v.parent) meta.push(`<span><b>Tutor:</b> ${esc(v.parent)}</span>`);
+
+  const badges = [];
+  if(v.allergy) badges.push(`<span class="badge alg">⚠ Alergias</span>`);
+  if(v.medical||v.meds||v.meds_camp) badges.push(`<span class="badge med">✚ Médico</span>`);
+  if(v.diet) badges.push(`<span class="badge diet">● Dieta</span>`);
+  const badgeHTML = badges.length ? `<div class="badges">${badges.join('')}</div>` : '';
+
+  const waP = waChatLink(v.phone);
+  const waBtn = waP
+    ? `<a class="btn wa" href="${waP}" target="_blank" rel="noopener">${waIcon(17)} WhatsApp</a>`
+    : `<button class="btn wa" disabled>Sin teléfono</button>`;
+
+  return `<div class="card" data-id="${v.n}">
+    <div class="row1">
+      <div class="idx">${v.n}</div>
+      <div class="who">
+        <div class="name">${esc(v.name)}</div>
+        <div class="meta">${meta.join('')}</div>
+      </div>
+      ${badgeHTML}
+    </div>
+    <div class="actions">
+      ${waBtn}
+      <button class="expand" data-act="toggle">Detalles
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+    <div class="more">${detailHTML(v)}</div>
+  </div>`;
+}
+
+function render(){
+  const rows = ITEMS.filter(matches);
+  $('#count').textContent = rows.length===ITEMS.length
+    ? `${ITEMS.length} campistas`
+    : `${rows.length} de ${ITEMS.length} campistas`;
+  const list = $('#list');
+  list.innerHTML = rows.length
+    ? rows.map(cardHTML).join('')
+    : `<div class="empty"><div class="big">🔍</div>No hay campistas que coincidan.</div>`;
+}
+
+$('#list').addEventListener('click', e=>{
+  const t = e.target.closest('[data-act="toggle"]');
+  if(t){ t.closest('.card').classList.toggle('open'); }
+});
+$('#q').addEventListener('input', e=>{ query = e.target.value.trim().toLowerCase(); render(); });
+$('#filters').addEventListener('click', e=>{
+  const chip = e.target.closest('.chip[data-f]');
+  if(!chip) return;
+  filter = chip.dataset.f;
+  document.querySelectorAll('.chip[data-f]').forEach(c=>c.setAttribute('aria-pressed', c===chip));
+  render();
+});
+
+counts();
+render();
+</script>
+</body>
+</html>
