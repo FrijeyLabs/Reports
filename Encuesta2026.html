@@ -63,6 +63,28 @@
   .veredicto .lectura{margin-top:26px;font-size:15px;color:#C6D2F5;max-width:760px}
   .veredicto .lectura b{color:#fff}
 
+  .btn-resp{
+    display:inline-flex;align-items:center;gap:10px;
+    margin-top:26px;padding:13px 22px;
+    background:rgba(255,255,255,.08);
+    border:1.5px solid rgba(255,255,255,.45);
+    border-radius:10px;color:#fff;cursor:pointer;
+    font-family:inherit;font-size:14.5px;font-weight:700;letter-spacing:.01em;
+    transition:background .18s, border-color .18s;
+  }
+  .btn-resp:hover{background:rgba(255,255,255,.16);border-color:#fff}
+  .btn-resp .chev{transition:transform .25s;flex-shrink:0}
+  .btn-resp[aria-expanded="true"] .chev{transform:rotate(180deg)}
+  .resp-zona{margin-top:30px;padding-top:28px;border-top:1px solid rgba(255,255,255,.18)}
+  .resp-intro{font-size:14px;color:#C6D2F5;margin-bottom:20px;max-width:640px}
+  .resp-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .resp-grid .panel{border:none}
+  .p1-visual{padding:14px 0 8px}
+  .p1-barra{height:30px;border-radius:8px;background:var(--azul-suave);overflow:hidden;margin-bottom:12px}
+  .p1-relleno{height:100%;width:100%;border-radius:8px;background:var(--rojo)}
+  .p1-dato{font-size:13.5px;color:var(--gris)}
+  .p1-dato b{color:var(--tinta);font-weight:800;font-stretch:80%;font-size:20px}
+
   section{padding:56px 0}
   .sec-head{margin-bottom:30px}
   .sec-head .eyebrow{color:var(--azul-med)}
@@ -117,6 +139,9 @@
     .banda,.leyenda{display:none}
     .banda-movil{display:block}
     .veredicto .lectura{margin-top:24px;font-size:14px}
+    .btn-resp{width:100%;justify-content:center;margin-top:22px;padding:14px 18px}
+    .resp-grid{grid-template-columns:1fr;gap:14px}
+    .resp-zona{margin-top:24px;padding-top:22px}
     section{padding:40px 0}
     .sec-head{margin-bottom:22px}
     .sec-head p{font-size:14px}
@@ -201,6 +226,85 @@
       con quienes aún no están seguros, <b>3 de cada 4 encuestados (75 %)</b> están abiertos
       a la posibilidad de un tercer servicio.
     </p>
+
+    <button id="btnRespuestas" class="btn-resp" aria-expanded="false" aria-controls="panelRespuestas">
+      <span class="btn-txt">Ver las respuestas de la encuesta</span>
+      <svg class="chev" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div id="panelRespuestas" class="resp-zona" hidden>
+      <p class="resp-intro">Las 10 preguntas del formulario, con la distribución completa de las 102 respuestas.</p>
+      <div class="resp-grid">
+
+        <div class="panel">
+          <span class="q">Pregunta 1</span>
+          <h3>¿Se congrega regularmente en Amor a Quisqueya?</h3>
+          <div class="p1-visual">
+            <div class="p1-barra"><div class="p1-relleno"></div></div>
+            <div class="p1-dato"><b>100&nbsp;%</b> respondió «Sí» — las 102 personas se congregan regularmente.</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <span class="q">Pregunta 2</span>
+          <h3>¿Qué edad tiene?</h3>
+          <div class="ch h-260"><canvas id="rEdad"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <span class="q">Pregunta 3</span>
+          <h3>¿Qué tiempo tiene congregándose en Amor a Quisqueya, aproximadamente?</h3>
+          <div class="ch h-300 ch-tiempo"><canvas id="rTiempo"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <span class="q">Pregunta 4</span>
+          <h3>¿A cuál célula pertenece? (Si aplica)</h3>
+          <div class="ch h-340"><canvas id="rCelula"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <span class="q">Pregunta 5</span>
+          <h3>Incluyéndose usted, ¿cuántas personas de su hogar suelen congregarse en Amor a Quisqueya?</h3>
+          <div class="ch h-260"><canvas id="rHogar"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <span class="q">Pregunta 6</span>
+          <h3>Definamos las personas incluidas en el conteo anterior que se congregan en Amor a Quisqueya:</h3>
+          <p class="nota">Menciones totales; cada hogar podía marcar varias opciones.</p>
+          <div class="ch h-260"><canvas id="rComp"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <span class="q">Pregunta 7</span>
+          <h3>¿Cuántos niños entre 4 y 12 años lo acompañan? (Si aplica)</h3>
+          <p class="nota">35 hogares asisten con niños de esa edad; suman 76 niños en total.</p>
+          <div class="ch h-260"><canvas id="rNinos"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <span class="q">Pregunta 8</span>
+          <h3>¿Considera usted que la congregación debería habilitar un tercer servicio?</h3>
+          <div class="ch h-260"><canvas id="rP8"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <span class="q">Pregunta 9</span>
+          <h3>Si se habilitara un tercer servicio, ¿cuál horario preferiría?</h3>
+          <div class="ch h-260"><canvas id="rHorario"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <span class="q">Pregunta 10</span>
+          <h3>Si se habilitara un servicio los sábados, ¿cree que se congregaría regularmente a este servicio en lugar de nuestros servicios habituales los domingos?</h3>
+          <div class="ch h-260 ch-sabado"><canvas id="rSabado"></canvas></div>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
 
@@ -435,7 +539,8 @@ const etiquetasPastel = {
       const p = arco.getProps(['x','y','startAngle','endAngle','innerRadius','outerRadius'], true);
       const ang = (p.startAngle+p.endAngle)/2;
       const r = (p.innerRadius+p.outerRadius)/2 * (p.innerRadius===0 ? 0.62 : 1);
-      ctx.fillStyle = i===2 ? '#5B6072' : '#fff';
+      const colorRebanada = chart.data.datasets[0].backgroundColor[i];
+      ctx.fillStyle = colorRebanada === '#D9DDE8' ? '#5B6072' : '#fff';
       ctx.fillText(Math.round(v/total*100)+' %', p.x+Math.cos(ang)*r, p.y+Math.sin(ang)*r);
     });
     ctx.restore();
@@ -678,6 +783,124 @@ new Chart(chComp, {
     indexAxis:'y', maintainAspectRatio:false,
     plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.x} menciones`}}},
     scales:{x:{...ejeLimpio}, y:{...ejeSinGrid, ticks:{...tickY, font:{size: M ? 11 : 12}}}}
+  }
+});
+
+/* ============================================================
+   Panel expandible: «Ver las respuestas de la encuesta»
+   Los gráficos se crean la primera vez que se abre.
+   ============================================================ */
+function barraV(id, labels, data, colores, unidad){
+  new Chart(document.getElementById(id), {
+    type:'bar',
+    data:{labels, datasets:[{data, backgroundColor:colores, borderRadius:6, maxBarThickness: M ? 28 : 40}]},
+    options:{
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.y} ${unidad} (${pct(c.parsed.y,N)})`}}},
+      scales:{y:{...ejeLimpio}, x:{...ejeSinGrid, ticks:{font:{size: M ? 10 : 11.5}, maxRotation: M ? 45 : 0}}}
+    }
+  });
+}
+function barraH(id, labels, data, colores, unidad, grosor){
+  new Chart(document.getElementById(id), {
+    type:'bar',
+    data:{labels, datasets:[{data, backgroundColor:colores, borderRadius:5, maxBarThickness: grosor}]},
+    options:{
+      indexAxis:'y', maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.x} ${unidad} (${pct(c.parsed.x,N)})`}}},
+      scales:{x:{...ejeLimpio}, y:{...ejeSinGrid, ticks:tickY}}
+    }
+  });
+}
+function pastelR(id, labels, data, colores){
+  new Chart(document.getElementById(id), {
+    type:'pie',
+    data:{labels, datasets:[{data, backgroundColor:colores, borderColor:'#fff', borderWidth:3, hoverOffset:8}]},
+    options:{
+      maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom'}, tooltip:{callbacks:{label:c=>` ${c.parsed} personas (${pct(c.parsed,N)})`}}}
+    },
+    plugins:[etiquetasPastel]
+  });
+}
+
+let respuestasCreadas = false;
+function crearRespuestas(){
+  if (respuestasCreadas) return;
+  respuestasCreadas = true;
+
+  barraV('rEdad', ['12–19','20–29','30–39','40–49','50–59','60–69','70+'],
+    [3,13,34,32,10,9,1],
+    [C.azulClaro,C.azulClaro,C.rojo,C.rojo,C.azulClaro,C.azulClaro,C.azulClaro], 'personas');
+
+  barraH('rTiempo',
+    M ? ['< 1 año','1 año','2 años','3 años','4 años','5 años','6–10 años','11–15 años','16–20 años','21–25 años','> 25 años']
+      : ['Menos de 1 año','1 año','2 años','3 años','4 años','5 años','6–10 años','11–15 años','16–20 años','21–25 años','Más de 25 años'],
+    [5,8,6,7,5,4,23,19,10,5,10], C.azulMed, 'personas', M ? 16 : 20);
+
+  barraH('rCelula',
+    M ? ['Cristo Rey','No indicó','La Z','Pelegrina H.','P. Yerba Buena','Don Bosco','La Javilla','La Colonia','Los Pinos','Venecia','Sabaneta','Paso Bajito','Pedregal','Puente Amarillo']
+      : ['Cristo Rey','No indicó','La Z','Pelegrina Herrera','Proyecto Yerba Buena','Don Bosco','La Javilla','La Colonia','Los Pinos','Venecia','Sabaneta','Paso Bajito','Pedregal','Puente Amarillo'],
+    [22,19,16,9,6,5,5,5,4,4,3,2,1,1],
+    ['#C8102E','#D9DDE8','#C8102E','#2749B5','#2749B5','#2749B5','#2749B5','#2749B5','#2749B5','#2749B5','#2749B5','#2749B5','#2749B5','#2749B5'],
+    'personas', M ? 14 : 18);
+
+  barraV('rHogar',
+    M ? ['Solo yo','2','3','4','5','6','7','10']
+      : ['Solo yo','2 personas','3 personas','4 personas','5 personas','6 personas','7 personas','10 personas'],
+    [21,21,28,17,12,1,1,1], C.azul, 'hogares');
+
+  new Chart(document.getElementById('rComp'), {
+    type:'bar',
+    data:{
+      labels: M
+        ? ['Cónyuge','Adultos 18+','Niños 4–12','Adolesc. 13–18','Infantes < 4']
+        : ['Mi cónyuge','Adultos (18+)','Niños (4–12)','Adolescentes (13–18)','Infantes (<4)'],
+      datasets:[{data:[53,33,32,19,16],
+        backgroundColor:[C.rojo,C.azulMed,C.azulMed,C.azulMed,C.azulMed],
+        borderRadius:5, maxBarThickness: M ? 20 : 24}]
+    },
+    options:{
+      indexAxis:'y', maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.x} menciones`}}},
+      scales:{x:{...ejeLimpio}, y:{...ejeSinGrid, ticks:tickY}}
+    }
+  });
+
+  barraV('rNinos',
+    M ? [['Sin niños /','no respondió'],'1 niño','2 niños','3 niños','5 niños','7 niños','8 niños']
+      : ['Sin niños / no respondió','1 niño','2 niños','3 niños','5 niños','7 niños','8 niños'],
+    [67,11,18,3,1,1,1],
+    [C.neutro,C.azulMed,C.azulMed,C.azulMed,C.azulMed,C.azulMed,C.azulMed], 'hogares');
+
+  pastelR('rP8', ['Sí','No estoy seguro(a)','No'], [48,28,26], [C.rojo,'#3D57B8','#0C1E52']);
+
+  pastelR('rHorario',
+    M ? ['Sáb. 7:00 p.m.','Cualquiera de las dos','Sáb. 8:00 p.m.']
+      : ['Sábado 7:00 p.m.','Cualquiera de las dos','Sábado 8:00 p.m.'],
+    [50,37,15], [C.rojo,C.azulMed,C.neutro]);
+
+  barraH('rSabado',
+    M ? [['A veces, variaría entre','sábado y domingo'],['No, preferiría','el domingo'],['Sí, preferiría','el sábado'],'Probablemente no',['No estoy','seguro(a)']]
+      : ['A veces, variaría entre sábado y domingo','No, mi preferencia sería el domingo','Sí, mi preferencia sería el sábado','Probablemente no','No estoy seguro(a)'],
+    [52,28,15,5,2],
+    [C.azulMed,C.tinta,C.rojo,C.neutro,C.neutro], 'personas', M ? 22 : 30);
+}
+
+const btnResp = document.getElementById('btnRespuestas');
+const panelResp = document.getElementById('panelRespuestas');
+btnResp.addEventListener('click', () => {
+  const abierto = !panelResp.hidden;
+  if (abierto){
+    panelResp.hidden = true;
+    btnResp.setAttribute('aria-expanded','false');
+    btnResp.querySelector('.btn-txt').textContent = 'Ver las respuestas de la encuesta';
+  } else {
+    panelResp.hidden = false;
+    btnResp.setAttribute('aria-expanded','true');
+    btnResp.querySelector('.btn-txt').textContent = 'Ocultar las respuestas de la encuesta';
+    crearRespuestas();
+    panelResp.scrollIntoView({behavior:'smooth', block:'nearest'});
   }
 });
 </script>
