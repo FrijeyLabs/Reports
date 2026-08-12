@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Carnets 2026 · FCAQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F7F9;
+  --card:#FFFFFF;
+  --ink:#171A21;
+  --muted:#6C7280;
+  --line:#E5E8EE;
+  --accent:#2B50E8;
+  --accent-soft:#EEF1FE;
+
+  --g-pastores:#2B50E8;
+  --g-ancianos:#7A4FD6;
+  --g-voluntarios:#12946B;
+  --g-equipo:#E0713A;
+
+  --ok:#12946B;
+  --warn:#C98A15;
+  --miss:#D8503F;
+
+  --r:14px;
+  --shadow:0 1px 2px rgba(23,26,33,.05), 0 8px 24px -12px rgba(23,26,33,.18);
+  --shadow-lift:0 2px 4px rgba(23,26,33,.06), 0 22px 40px -18px rgba(23,26,33,.30);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+
+/* ---------- Encabezado ---------- */
+.top{
+  background:
+    radial-gradient(900px 380px at 88% -12%, #E7ECFF 0%, rgba(231,236,255,0) 62%),
+    linear-gradient(180deg,#FFFFFF 0%, #FBFCFD 100%);
+  border-bottom:1px solid var(--line);
+}
+.top-inner{padding:34px 0 26px}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+}
+.eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+h1{
+  font-family:"Space Grotesk",sans-serif;
+  font-size:clamp(30px,5.2vw,46px);
+  letter-spacing:-.032em;line-height:1.02;font-weight:700;
+  margin:12px 0 0;
+}
+h1 em{font-style:normal;color:var(--muted);font-weight:500}
+
+.headline-row{display:flex;gap:34px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;margin-top:22px}
+
+.meter-block{flex:1 1 340px;min-width:280px;max-width:560px}
+.meter-top{display:flex;align-items:baseline;gap:10px;margin-bottom:9px}
+.meter-num{font-family:"Space Grotesk",sans-serif;font-size:26px;font-weight:700;letter-spacing:-.02em}
+.meter-label{font-size:13px;color:var(--muted)}
+.meter{
+  height:12px;border-radius:99px;background:#EAEDF3;overflow:hidden;display:flex;
+  box-shadow:inset 0 1px 2px rgba(23,26,33,.06);
+}
+.meter span{height:100%;display:block;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.meter .s-listas{background:var(--accent)}
+.meter .s-edicion{background:#F0C24B}
+.meter-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;color:var(--muted)}
+.meter-legend i{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}
+
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat{
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:11px 15px;min-width:92px;
+}
+.stat b{display:block;font-family:"Space Grotesk",sans-serif;font-size:23px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.stat small{font-size:11px;color:var(--muted);letter-spacing:.02em}
+.stat.is-miss b{color:var(--miss)}
+.stat.is-ok b{color:var(--ok)}
+
+/* ---------- Controles ---------- */
+.controls{
+  position:sticky;top:0;z-index:40;
+  background:rgba(246,247,249,.86);
+  backdrop-filter:saturate(180%) blur(12px);
+  -webkit-backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.controls-inner{padding:12px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search{position:relative;flex:1 1 240px;max-width:340px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search input{
+  width:100%;padding:10px 12px 10px 36px;border-radius:10px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);
+  font-family:inherit;font-size:14px;outline:none;transition:border-color .15s, box-shadow .15s;
+}
+.search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+
+/* ---------- Combobox de filtros ---------- */
+.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.combo{position:relative}
+.combo-btn{
+  display:inline-flex;align-items:center;gap:10px;min-height:44px;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:6px 11px;cursor:pointer;font-family:inherit;color:var(--ink);
+  transition:border-color .16s, box-shadow .16s, background .16s;
+}
+.combo-btn:hover{border-color:#CFD5E0}
+.combo-btn:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.combo-btn[aria-expanded="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.combo-dot{
+  width:9px;height:9px;border-radius:3px;background:var(--dot,var(--accent));flex:none;
+  transition:background .25s, transform .25s;
+}
+.combo-btn[aria-expanded="true"] .combo-dot{transform:scale(1.25)}
+.combo-txt{display:flex;flex-direction:column;line-height:1.18;text-align:left;min-width:0}
+.combo-txt small{
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--muted);
+}
+.combo-txt b{
+  font-size:13.5px;font-weight:500;white-space:nowrap;max-width:180px;
+  overflow:hidden;text-overflow:ellipsis;
+}
+.combo-count{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;background:var(--ink);color:#fff;
+  border-radius:99px;padding:2px 7px;line-height:1.4;
+}
+.combo-chev{color:var(--muted);flex:none;transition:transform .24s cubic-bezier(.2,.8,.2,1)}
+.combo-btn[aria-expanded="true"] .combo-chev{transform:rotate(180deg)}
+
+.combo-panel{
+  position:absolute;top:calc(100% + 8px);left:0;z-index:70;width:266px;
+  background:var(--card);border:1px solid var(--line);border-radius:15px;padding:7px;
+  box-shadow:0 26px 52px -18px rgba(23,26,33,.30), 0 2px 6px rgba(23,26,33,.05);
+  opacity:0;transform:translateY(-6px) scale(.97);transform-origin:top left;pointer-events:none;
+  transition:opacity .15s ease, transform .2s cubic-bezier(.2,.85,.25,1);
+}
+.combo.open .combo-panel{opacity:1;transform:none;pointer-events:auto}
+.combo-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:5px 9px 9px;border-bottom:1px solid var(--line);margin-bottom:6px;
+}
+.combo-head span{
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--muted);
+}
+.combo-head button{
+  border:0;background:none;font-family:inherit;font-size:12px;color:var(--accent);
+  cursor:pointer;padding:3px 6px;border-radius:7px;transition:background .14s;
+}
+.combo-head button:hover{background:var(--accent-soft)}
+.combo-head button[disabled]{color:#B6BCC8;cursor:default;background:none}
+
+.opt{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;
+  cursor:pointer;user-select:none;transition:background .12s;
+}
+.opt.cursor{background:#F3F5F9}
+.opt[aria-selected="true"]{background:var(--accent-soft)}
+.tick{
+  width:19px;height:19px;border-radius:6px;border:1.5px solid #CFD5E0;flex:none;color:#fff;
+  display:flex;align-items:center;justify-content:center;transition:background .16s, border-color .16s;
+}
+.opt[aria-selected="true"] .tick{background:var(--accent);border-color:var(--accent)}
+.tick svg{opacity:0;transform:scale(.5);transition:opacity .16s, transform .2s cubic-bezier(.2,1.4,.4,1)}
+.opt[aria-selected="true"] .tick svg{opacity:1;transform:none}
+.opt-label{flex:1;min-width:0;font-size:13.5px;display:flex;align-items:center;gap:8px}
+.opt-label .swatch{width:8px;height:8px;border-radius:2px;flex:none}
+.opt-label span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opt-n{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);
+  background:#F1F3F7;border-radius:99px;padding:2px 7px;flex:none;transition:background .14s;
+}
+.opt[aria-selected="true"] .opt-n{background:#fff;color:var(--accent)}
+.opt.vacio{opacity:.38}
+
+.combo-backdrop{
+  position:fixed;inset:0;z-index:65;background:rgba(23,26,33,.30);
+  opacity:0;pointer-events:none;transition:opacity .18s;
+}
+.combo-backdrop.show{opacity:1;pointer-events:auto}
+
+.reset{
+  border:0;background:none;font-family:inherit;font-size:13px;color:var(--muted);
+  cursor:pointer;padding:8px 10px;border-radius:9px;transition:.14s;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.reset:hover{background:#EDF0F5;color:var(--ink)}
+.reset[hidden]{display:none}
+
+/* ---------- Secciones ---------- */
+main{padding:28px 0 80px}
+.group{margin-bottom:38px;scroll-margin-top:80px}
+.group-head{display:flex;align-items:center;gap:12px;margin:0 0 16px}
+.group-head h2{
+  font-family:"Space Grotesk",sans-serif;font-size:15px;font-weight:600;
+  letter-spacing:.02em;margin:0;display:flex;align-items:center;gap:9px;
+}
+.group-head .bar{width:4px;height:18px;border-radius:2px;background:var(--accent)}
+.group-head .count{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted)}
+.group-head .rule{flex:1;height:1px;background:var(--line)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:16px}
+
+/* ---------- Tarjeta = carnet ---------- */
+.badge{
+  position:relative;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r);overflow:hidden;cursor:pointer;text-align:left;
+  padding:0;font-family:inherit;color:inherit;width:100%;
+  box-shadow:var(--shadow);
+  transition:transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s, border-color .22s;
+  animation:rise .5s cubic-bezier(.2,.8,.2,1) backwards;
+}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (hover:hover){
+  .badge:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift);border-color:#D7DCE6}
+  .badge:hover .photo img{transform:scale(1.035);filter:saturate(1.03)}
+}
+.badge:active{transform:scale(.975)}
+.badge:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* cinta del lanyard: color por grupo */
+.badge .strap{height:5px;width:100%;background:var(--gc,var(--accent))}
+.badge .punch{
+  position:absolute;top:15px;left:50%;transform:translateX(-50%);
+  width:34px;height:7px;border-radius:99px;background:#EDF0F5;
+  box-shadow:inset 0 1px 1px rgba(23,26,33,.12);z-index:3;
+}
+.photo{
+  position:relative;aspect-ratio:1/1.12;background:#F1F3F7;overflow:hidden;
+  border-bottom:1px solid var(--line);
+}
+.photo img{
+  width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block;
+  filter:saturate(.94);transition:transform .35s cubic-bezier(.2,.8,.2,1), filter .3s;
+}
+.slot{
+  position:absolute;inset:14px;border:1.5px dashed #C7CDDA;border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  color:#9AA2B2;
+}
+.slot .ini{
+  font-family:"Space Grotesk",sans-serif;font-size:27px;font-weight:600;
+  letter-spacing:.02em;color:#AEB6C4;
+}
+.slot small{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase}
+.flag{
+  position:absolute;left:9px;bottom:9px;z-index:2;
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;
+  padding:4px 8px;border-radius:6px;background:rgba(255,255,255,.94);
+  box-shadow:0 1px 3px rgba(23,26,33,.14);display:inline-flex;align-items:center;gap:5px;
+}
+.flag i{width:6px;height:6px;border-radius:50%}
+.flag.lista{color:var(--ok)} .flag.lista i{background:var(--ok)}
+.flag.edicion{color:var(--warn)} .flag.edicion i{background:var(--warn)}
+.flag.falta{color:var(--miss)} .flag.falta i{background:var(--miss)}
+.deliv{
+  position:absolute;right:9px;top:9px;z-index:2;width:22px;height:22px;border-radius:50%;
+  background:var(--ok);color:#fff;display:none;align-items:center;justify-content:center;
+  box-shadow:0 2px 6px rgba(18,148,107,.4);
+}
+.badge.entregado .deliv{display:flex}
+
+.meta{padding:12px 13px 13px}
+.meta .name{
+  font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:15px;
+  letter-spacing:-.012em;line-height:1.2;
+}
+.meta .role{
+  font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:31px;
+}
+.meta .id{
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:#A3A9B6;
+  letter-spacing:.07em;margin-top:9px;display:flex;justify-content:space-between;align-items:center;
+}
+.meta .id .grp{color:var(--gc,var(--accent));font-weight:500}
+
+.empty{
+  text-align:center;padding:64px 20px;color:var(--muted);
+  border:1.5px dashed var(--line);border-radius:var(--r);background:var(--card);
+}
+.empty strong{display:block;font-family:"Space Grotesk",sans-serif;font-size:17px;color:var(--ink);margin-bottom:6px}
+
+/* ---------- Modal ---------- */
+.overlay{
+  position:fixed;inset:0;z-index:100;background:rgba(23,26,33,.42);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.overlay.open{display:flex;animation:fade .18s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{
+  background:var(--card);border-radius:18px;width:100%;max-width:660px;
+  max-height:90vh;overflow:auto;box-shadow:0 40px 80px -20px rgba(23,26,33,.4);
+  animation:pop .26s cubic-bezier(.2,.8,.2,1);position:relative;
+}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.sheet .strap{height:6px;border-radius:18px 18px 0 0}
+.close{
+  position:absolute;right:14px;top:18px;z-index:5;width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--line);background:rgba(255,255,255,.92);color:var(--muted);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.close:hover{color:var(--ink);border-color:#CFD5E0}
+.sheet-body{display:flex;gap:22px;padding:24px;flex-wrap:wrap}
+.sheet-photo{
+  flex:0 0 210px;width:210px;aspect-ratio:1/1.2;border-radius:12px;overflow:hidden;
+  background:#F1F3F7;border:1px solid var(--line);position:relative;
+}
+.sheet-photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%}
+.sheet-info{flex:1 1 260px;min-width:230px}
+.sheet-info .kicker{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gc,var(--accent))}
+.sheet-info h3{font-family:"Space Grotesk",sans-serif;font-size:25px;font-weight:700;letter-spacing:-.025em;margin:7px 0 3px;line-height:1.12}
+.sheet-info .full{color:var(--muted);font-size:13.5px}
+.sheet-info .cargo{margin-top:10px;font-size:14px}
+.kv{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;display:grid;gap:9px}
+.kv div{display:flex;justify-content:space-between;gap:14px;font-size:13px;align-items:center}
+.kv span:first-child{color:var(--muted)}
+.kv .val{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+.state{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500}
+.state i{width:7px;height:7px;border-radius:50%}
+.state.lista{color:var(--ok)} .state.lista i{background:var(--ok)}
+.state.edicion{color:var(--warn)} .state.edicion i{background:var(--warn)}
+.state.falta{color:var(--miss)} .state.falta i{background:var(--miss)}
+.state.no{color:var(--muted)} .state.no i{background:#C7CDDA}
+
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.btn{
+  border-radius:10px;padding:10px 14px;font-family:inherit;font-size:13.5px;font-weight:500;
+  cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);
+  display:inline-flex;align-items:center;gap:7px;text-decoration:none;transition:.15s;
+}
+.btn:hover{border-color:#CFD5E0;background:#FAFBFC}
+.btn.pri{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.pri:hover{background:#000}
+.btn.wa{background:#12946B;border-color:#12946B;color:#fff}
+.btn.wa:hover{background:#0E7C58}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);font-size:12.5px}
+.foot-row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:#fff;padding:11px 18px;border-radius:10px;font-size:13.5px;
+  opacity:0;pointer-events:none;transition:.25s;z-index:200;box-shadow:0 12px 30px -8px rgba(0,0,0,.4);
+}
+.toast.show{opacity:1;transform:translateX(-50%)}
+
+/* ---------- Móvil ---------- */
+@media (max-width:760px){
+  body{font-size:15px}
+  .wrap{padding:0 14px}
+
+  .top-inner{padding:20px 0 16px}
+  h1{font-size:27px;letter-spacing:-.028em}
+  h1 em{display:block;font-size:15px;margin-top:5px}
+  .eyebrow{font-size:10px;letter-spacing:.13em;gap:7px}
+  .headline-row{margin-top:16px;gap:18px}
+  .meter-block{max-width:100%;flex:1 1 100%}
+  .meter-num{font-size:22px}
+  .meter-label{font-size:12.5px}
+  .meter-legend{gap:12px;font-size:11.5px}
+
+  /* stats: fila deslizable, sin apilarse */
+  .stats{
+    width:calc(100% + 28px);margin:0 -14px;padding:2px 14px 4px;
+    flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .stats::-webkit-scrollbar{display:none}
+  .stat{flex:0 0 auto;min-width:98px;scroll-snap-align:start;padding:9px 13px}
+  .stat b{font-size:20px}
+
+  /* controles: dos carriles horizontales */
+  .controls-inner{padding:9px 0 8px;gap:8px;flex-direction:column;align-items:stretch}
+  .search{max-width:none;flex:1 1 auto}
+  .search input{font-size:16px;padding:11px 12px 11px 36px}
+  .filters{gap:7px}
+  .combo{position:static;flex:1 1 0;min-width:0}
+  .combo-btn{width:100%;justify-content:flex-start}
+  .combo-txt{flex:1;min-width:0}
+  .combo-txt b{max-width:none}
+  .combo-panel{
+    position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;
+    border-radius:20px 20px 0 0;border-bottom:0;transform-origin:bottom;
+    transform:translateY(26px);padding:10px 12px calc(12px + env(safe-area-inset-bottom));
+    box-shadow:0 -20px 50px -14px rgba(23,26,33,.34);
+    max-height:76dvh;max-height:76vh;overflow:auto;
+  }
+  .combo-panel::before{
+    content:"";display:block;width:38px;height:4px;border-radius:99px;
+    background:rgba(23,26,33,.16);margin:2px auto 8px;
+  }
+  .combo-head{padding:2px 6px 10px}
+  .opt{padding:12px 10px}
+  .opt-label{font-size:14.5px}
+  .reset{align-self:center;padding:6px 12px}
+
+  main{padding:20px 0 40px}
+  .group{margin-bottom:28px}
+  .group-head{margin-bottom:12px}
+
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+  .meta{padding:10px 11px 11px}
+  .meta .name{font-size:14px}
+  .meta .role{font-size:11px;-webkit-line-clamp:2;min-height:29px}
+  .meta .id{font-size:9px;margin-top:7px}
+  .punch{top:13px;width:28px;height:6px}
+
+  /* ficha: hoja que sube desde abajo */
+  .overlay{align-items:flex-end;padding:0}
+  .sheet{
+    max-width:none;border-radius:20px 20px 0 0;
+    max-height:92dvh;max-height:92vh;
+    animation:slideUp .28s cubic-bezier(.2,.85,.25,1);
+    overscroll-behavior:contain;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .sheet .strap{border-radius:20px 20px 0 0}
+  .sheet::after{
+    content:"";position:absolute;top:13px;left:50%;transform:translateX(-50%);
+    width:38px;height:4px;border-radius:99px;background:rgba(23,26,33,.16);pointer-events:none;
+  }
+  .close{top:32px;right:12px;width:36px;height:36px}
+  .sheet-body{padding:34px 18px 22px;gap:16px}
+  .sheet-photo{flex:0 0 132px;width:132px}
+  .sheet-info{flex:1 1 150px;min-width:0}
+  .sheet-info h3{font-size:21px}
+  .sheet-info .full{font-size:12.5px}
+  .sheet-info .cargo{font-size:13px}
+  .kv{margin-top:14px;padding-top:12px}
+  .actions{
+    position:sticky;bottom:0;margin:16px -18px -22px;padding:14px 18px calc(14px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg,rgba(255,255,255,0) 0%,var(--card) 26%);
+    flex-wrap:nowrap;
+  }
+  .actions .btn{flex:1 1 0;justify-content:center;padding:13px 12px;font-size:14px}
+
+  footer{padding:18px 0 calc(28px + env(safe-area-inset-bottom))}
+  .foot-row{flex-direction:column;align-items:stretch;gap:12px;text-align:center}
+  .foot-row .btn{justify-content:center;padding:12px}
+  .toast{bottom:calc(20px + env(safe-area-inset-bottom));width:calc(100% - 32px);text-align:center}
+}
+
+@media (max-width:400px){
+  .sheet-body{flex-direction:column;align-items:center;text-align:center}
+  .sheet-photo{flex:0 0 auto;width:158px}
+  .sheet-info{width:100%}
+  .kv div{font-size:12.5px}
+}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+.sheet.dragging{transition:none}
+.sheet.closing{transition:transform .2s ease, opacity .2s ease;transform:translateY(100%);opacity:0}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="eyebrow"><span class="dot"></span> Iglesia FCAQ · Producción de carnets <span class="dot"></span> Temporada 2026</div>
+    <h1>Carnets 2026 <em>— control de fotos</em></h1>
+
+    <div class="headline-row">
+      <div class="meter-block">
+        <div class="meter-top">
+          <span class="meter-num mono" id="mProgress">0%</span>
+          <span class="meter-label" id="mText">cargando…</span>
+        </div>
+        <div class="meter">
+          <span class="s-listas" id="barListas" style="width:0"></span>
+          <span class="s-edicion" id="barEdicion" style="width:0"></span>
+        </div>
+        <div class="meter-legend">
+          <span><i style="background:var(--accent)"></i>Foto lista</span>
+          <span><i style="background:#F0C24B"></i>Tomada, en edición</span>
+          <span><i style="background:#EAEDF3"></i>Sin foto</span>
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="wrap controls-inner">
+    <div class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Buscar por nombre o cargo…" autocomplete="off">
+    </div>
+    <div class="filters">
+      <div class="combo" id="comboGrupo"></div>
+      <div class="combo" id="comboEstado"></div>
+      <button class="reset" id="limpiarTodo" hidden>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        Limpiar filtros
+      </button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="lista"></main>
+
+<footer>
+  <div class="wrap foot-row">
+    <div>Las fotos se leen de la carpeta <code class="mono">fotos/</code>, al lado de este archivo.</div>
+    <div><button class="btn" id="exportar">Descargar CSV actualizado</button></div>
+  </div>
+</footer>
+
+<div class="combo-backdrop" id="comboBackdrop"></div>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="shTitle">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================================
+   CONFIGURACIÓN — lo único que normalmente vas a tocar
+   ========================================================================= */
+const FOTOS_DIR = "fotos/";   // carpeta con las imágenes, al lado de este index.html
+
+/* Grupos y su color de cinta */
+const GRUPOS = {
+  pastores:    { label:"Pastores",       color:"var(--g-pastores)" },
+  ancianos:    { label:"Ancianos",       color:"var(--g-ancianos)" },
+  voluntarios: { label:"Voluntarios",    color:"var(--g-voluntarios)" },
+  equipo:      { label:"Equipo & Staff", color:"var(--g-equipo)" }
+};
+
+/* PERSONAS
+   foto      → nombre exacto del archivo dentro de fotos/  (null = todavía no hay arte final)
+   tomada    → ya le tomaron la foto
+   entregado → ya recibió su carnet físico                                        */
+const PERSONAS = [
+  { id:1,  apodo:"Popín",           nombre:"Celso J. Pérez Flores",              cargo:"Pastor Principal",                  tel:"+1(829) 292-1537", grupo:"pastores",    tomada:true,  foto:"Popin_DONE.png",           entregado:false },
+  { id:2,  apodo:"Andy",            nombre:"Andy Jesús Feliz García",            cargo:"Pastor de Jóvenes",                 tel:"+1(829) 401-1162", grupo:"pastores",    tomada:true,  foto:"Andy_DONE.png",            entregado:false },
+  { id:3,  apodo:"Frank Tiburcio",  nombre:"Francisco Alberto Tiburcio Diloné",  cargo:"Pastor de Ujieres",                 tel:"+1(809) 874-6753", grupo:"pastores",    tomada:true,  foto:"FrankTiburcio_DONE.png",   entregado:false },
+  { id:4,  apodo:"Frank Maranatha", nombre:"Francisco Castillo Araujo",          cargo:"Pastor",                            tel:"+1(829) 292-0981", grupo:"pastores",    tomada:true,  foto:"FrankMaranatha_DONE.png",  entregado:false },
+  { id:5,  apodo:"Dr. Liendo",      nombre:"José Gregorio Liendo Rodríguez",     cargo:"Pastor",                            tel:"+1(829) 546-9610", grupo:"pastores",    tomada:true,  foto:"Liendo_DONE.png",          entregado:false },
+  { id:6,  apodo:"Amaury",          nombre:"Amaury Antonio Brito Hernández",     cargo:"Pastor San Francisco",              tel:"+1(829) 901-6658", grupo:"pastores",    tomada:true,  foto:null,                       entregado:false },
+  { id:7,  apodo:"Erick",           nombre:"Eric Jeison Tyson Morales",          cargo:"Pastor de Integración Envejecientes",tel:"+1(829) 491-2629",grupo:"pastores",    tomada:true,  foto:"Eric_DONE.png",            entregado:false },
+  { id:8,  apodo:"Elvis",           nombre:"Elvis Alexander Victoriano Delgado", cargo:"Pastor de Escuela de Niños",        tel:"+1(829) 292-0983", grupo:"pastores",    tomada:true,  foto:"Elvis_DONE.png",           entregado:false },
+  { id:9,  apodo:"Katherine",       nombre:"Katherine Manuela Batista Montás",   cargo:"Pastora de Niños",                  tel:"+1(809) 283-7957", grupo:"pastores",    tomada:true,  foto:"Katherine_DONE.png",       entregado:false },
+  { id:10, apodo:"Leo",             nombre:"Leandro Rafael Escalante Ortiz",     cargo:"Pastor de Integración",             tel:"+1(829) 292-1539", grupo:"pastores",    tomada:true,  foto:"Leo_DONE.png",             entregado:false },
+  { id:11, apodo:"Elizabeth",       nombre:"Elizabeth Anne Escalante",           cargo:"Pastora de Alabanza",               tel:"+1(809) 705-4514", grupo:"pastores",    tomada:true,  foto:"Elizabeth_DONE.png",       entregado:false },
+  { id:12, apodo:"Yancarlos",       nombre:"Yancarlos Manuel Hernández",         cargo:"Pastor de Finanzas",                tel:"+1(829) 292-1540", grupo:"pastores",    tomada:true,  foto:"Yancarlos_DONE.png",       entregado:false },
+  { id:13, apodo:"Nojean",          nombre:"Nojean Prosper Petit Compère",       cargo:"Pastor Casa Ebenezer",              tel:"+1(809) 520-0992", grupo:"pastores",    tomada:true,  foto:"Nojean_DONE.png",          entregado:false },
+  { id:14, apodo:"Valentín",        nombre:"",                                   cargo:"Pastor Cotuí",                      tel:"+1(809) 783-5598", grupo:"pastores",    tomada:false, foto:null,                       entregado:false },
+  { id:15, apodo:"Sandra",          nombre:"Alexandra del Pilar Escalante",      cargo:"Pastora Mi Casa Online",            tel:"+1(829) 922-3993", grupo:"pastores",    tomada:false, foto:null,                       entregado:false },
+
+  { id:16, apodo:"Gregory",         nombre:"Gregory José Torres Abreu",          cargo:"Anciano y Pastor de Jóvenes",       tel:"+1(829) 421-1087", grupo:"ancianos",    tomada:true,  foto:"Gregory_DONE.png",         entregado:false },
+  { id:17, apodo:"Maribel",         nombre:"Maribel Abreu Tejada",               cargo:"Anciana",                           tel:"+1(809) 299-6277", grupo:"ancianos",    tomada:false, foto:null,                       entregado:false },
+  { id:18, apodo:"Heidy",           nombre:"",                                   cargo:"Anciana / Pastora",                 tel:"+1(829) 345-4527", grupo:"ancianos",    tomada:false, foto:null,                       entregado:false },
+
+  { id:19, apodo:"Natán",           nombre:"Rembrand Natanael Castillo Grullón", cargo:"Voluntario",                        tel:"+1(809) 889-1175", grupo:"voluntarios", tomada:true,  foto:"Natan_DONE.png",           entregado:false },
+  { id:20, apodo:"Catalina Torres", nombre:"",                                   cargo:"Voluntaria",                        tel:"+1(849) 360-2680", grupo:"voluntarios", tomada:true,  foto:"Catalina_DONE.png",        entregado:false },
+  { id:21, apodo:"Nena",            nombre:"Digna Emerita Coronado López",       cargo:"Voluntaria",                        tel:"+1(829) 921-0067", grupo:"voluntarios", tomada:false, foto:null,                       entregado:false },
+  { id:22, apodo:"Ney",             nombre:"José Ramón Feliz Placencia",         cargo:"Voluntario",                        tel:"+1(809) 865-0571", grupo:"voluntarios", tomada:false, foto:null,                       entregado:false },
+
+  { id:23, apodo:"Jeffry",          nombre:"Jeffry Marte Bonifacio",             cargo:"Director de Producción",            tel:"+1(809) 952-5334", grupo:"equipo",      tomada:false, foto:null,                       entregado:false },
+  { id:24, apodo:"Gaby",            nombre:"Ana Gabriela Pérez Santiago",        cargo:"Productora Ejecutiva",              tel:"+1(829) 924-8657", grupo:"equipo",      tomada:true,  foto:"Gaby_DONE.jpg",            entregado:false },
+  { id:25, apodo:"Anabel",          nombre:"Anabel Santiago Escobales",          cargo:"Por confirmar",                     tel:"+1(829) 292-1536", grupo:"equipo",      tomada:true,  foto:"Ana_DONE.png",             entregado:false },
+  { id:26, apodo:"Javier",          nombre:"José Javier Reyes Rosario",          cargo:"Mensajero",                         tel:"+1(809) 463-2797", grupo:"equipo",      tomada:true,  foto:"Javier_DONE.png",          entregado:false },
+  { id:27, apodo:"Caty",            nombre:"Catalina Ospina de García",          cargo:"Contable",                          tel:"+1(829) 292-0988", grupo:"equipo",      tomada:true,  foto:"Caty_DONE.png",            entregado:false },
+  { id:28, apodo:"Anny",            nombre:"Anny Luz Trinidad Quelix",           cargo:"Conserje",                          tel:"+1(809) 708-8223", grupo:"equipo",      tomada:false, foto:null,                       entregado:false },
+  { id:29, apodo:"José Frank",      nombre:"José Francisco García Rodríguez",    cargo:"Sereno / Vigilante",                tel:"",                 grupo:"equipo",      tomada:false, foto:null,                       entregado:true  },
+  { id:30, apodo:"Miranda",         nombre:"La bebé del local",                  cargo:"Dar alegría",                       tel:"",                 grupo:"equipo",      tomada:true,  foto:null,                       entregado:false }
+];
+
+const MENSAJE_RECORDATORIO = (p) =>
+  `Hola ${p.apodo}, saludos de parte de Producción FCAQ 🙌 Nos falta tu foto para el carnet 2026. ¿Cuándo puedes pasar para tomarla?`;
+
+/* =========================================================================
+   Lógica
+   ========================================================================= */
+const store = (() => {
+  const mem = {};
+  return {
+    get(k){ try{ return localStorage.getItem(k); }catch(e){ return mem[k] ?? null; } },
+    set(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k]=v; } }
+  };
+})();
+
+const KEY = "fcaq_carnets_2026_entregados";
+(function cargarEntregas(){
+  try{
+    const raw = store.get(KEY);
+    if(!raw) return;
+    const ids = JSON.parse(raw);
+    PERSONAS.forEach(p => { if(ids.includes(p.id)) p.entregado = true; });
+  }catch(e){}
+})();
+function guardarEntregas(){
+  store.set(KEY, JSON.stringify(PERSONAS.filter(p=>p.entregado).map(p=>p.id)));
+}
+
+const estadoDe = p => p.foto ? "lista" : (p.tomada ? "edicion" : "falta");
+const ETIQUETA = { lista:"Foto lista", edicion:"En edición", falta:"Falta foto" };
+const codigo = p => "FCAQ-26-" + String(p.id).padStart(2,"0");
+const iniciales = p => (p.apodo || "?").split(/\s+/).slice(0,2).map(s=>s[0]).join("").toUpperCase();
+const telLimpio = t => (t||"").replace(/\D/g,"");
+const rutaFoto = p => FOTOS_DIR + p.foto;
+
+/* Selección múltiple: conjunto vacío = "Todos" */
+const filtros = { grupo:new Set(), estado:new Set() };
+let busqueda = "";
+
+const ESTADOS = [
+  { v:"lista",     label:"Foto lista",  color:"var(--ok)"    },
+  { v:"edicion",   label:"En edición",  color:"var(--warn)"  },
+  { v:"falta",     label:"Falta foto",  color:"var(--miss)"  },
+  { v:"entregado", label:"Entregados",  color:"var(--accent)"}
+];
+
+const pasaGrupo    = (p,s=filtros.grupo)  => !s.size || s.has(p.grupo);
+const pasaBusqueda = p => {
+  const q = busqueda.trim().toLowerCase();
+  return !q || `${p.apodo} ${p.nombre} ${p.cargo}`.toLowerCase().includes(q);
+};
+const cumpleEstado = (p,v) => v==="entregado" ? p.entregado : estadoDe(p)===v;
+const pasaEstado   = (p,s=filtros.estado) => !s.size || [...s].some(v=>cumpleEstado(p,v));
+
+/* --- combobox de filtros --- */
+const combos = [];
+
+function crearCombo({ nodo, etiqueta, seleccion, opciones }){
+  const combo = {
+    nodo, etiqueta, seleccion, opciones,
+    abierto:false, cursor:-1,
+    btn:null, panel:null
+  };
+
+  nodo.innerHTML = `
+    <button class="combo-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+      <span class="combo-dot"></span>
+      <span class="combo-txt"><small>${etiqueta}</small><b></b></span>
+      <span class="combo-count" hidden></span>
+      <svg class="combo-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <div class="combo-panel" role="listbox" aria-multiselectable="true" tabindex="-1">
+      <div class="combo-head"><span>${etiqueta}</span><button type="button" class="combo-clear">Limpiar</button></div>
+      <div class="combo-opts"></div>
+    </div>`;
+
+  combo.btn = nodo.querySelector(".combo-btn");
+  combo.panel = nodo.querySelector(".combo-panel");
+
+  combo.btn.addEventListener("click", ()=> combo.abierto ? cerrarCombos() : abrirCombo(combo));
+  combo.btn.addEventListener("keydown", e=>{
+    if(e.key==="ArrowDown" || e.key==="Enter" || e.key===" "){ e.preventDefault(); abrirCombo(combo); }
+  });
+  nodo.querySelector(".combo-clear").addEventListener("click", e=>{
+    e.stopPropagation();
+    combo.seleccion.clear();
+    aplicar();
+  });
+  combo.panel.addEventListener("keydown", e=>navegar(e, combo));
+
+  combos.push(combo);
+  return combo;
+}
+
+function abrirCombo(combo){
+  cerrarCombos(combo);
+  combo.abierto = true;
+  combo.cursor = -1;
+  combo.nodo.classList.add("open");
+  combo.btn.setAttribute("aria-expanded","true");
+  if(window.innerWidth <= 760) document.getElementById("comboBackdrop").classList.add("show");
+  combo.panel.focus({preventScroll:true});
+}
+
+function cerrarCombos(excepto){
+  combos.forEach(c=>{
+    if(c === excepto || !c.abierto) return;
+    c.abierto = false;
+    c.nodo.classList.remove("open");
+    c.btn.setAttribute("aria-expanded","false");
+  });
+  if(!combos.some(c=>c.abierto)) document.getElementById("comboBackdrop").classList.remove("show");
+}
+
+function navegar(e, combo){
+  const opts = [...combo.panel.querySelectorAll(".opt")];
+  if(e.key==="Escape"){ cerrarCombos(); combo.btn.focus(); return; }
+  if(e.key==="Tab"){ cerrarCombos(); return; }
+  if(e.key==="ArrowDown" || e.key==="ArrowUp"){
+    e.preventDefault();
+    combo.cursor = e.key==="ArrowDown"
+      ? (combo.cursor + 1) % opts.length
+      : (combo.cursor - 1 + opts.length) % opts.length;
+    opts.forEach((o,i)=>o.classList.toggle("cursor", i===combo.cursor));
+    opts[combo.cursor].scrollIntoView({block:"nearest"});
+  }
+  if((e.key==="Enter" || e.key===" ") && combo.cursor >= 0){
+    e.preventDefault();
+    opts[combo.cursor].click();
+  }
+}
+
+/* Los conteos son cruzados: cada eje cuenta con los filtros del otro ya aplicados */
+function opcionesGrupo(){
+  return Object.entries(GRUPOS).map(([v,g])=>({
+    v, label:g.label, color:g.color,
+    n: PERSONAS.filter(p=>p.grupo===v && pasaEstado(p) && pasaBusqueda(p)).length
+  }));
+}
+function opcionesEstado(){
+  return ESTADOS.map(e=>({
+    ...e,
+    n: PERSONAS.filter(p=>cumpleEstado(p,e.v) && pasaGrupo(p) && pasaBusqueda(p)).length
+  }));
+}
+
+function pintarCombo(combo){
+  const opts = combo.opciones();
+  const sel = combo.seleccion;
+
+  combo.panel.querySelector(".combo-opts").innerHTML = opts.map(o=>`
+    <div class="opt ${o.n?"":"vacio"}" role="option" data-v="${o.v}" aria-selected="${sel.has(o.v)}">
+      <span class="tick">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </span>
+      <span class="opt-label"><i class="swatch" style="background:${o.color}"></i><span>${o.label}</span></span>
+      <span class="opt-n">${o.n}</span>
+    </div>`).join("");
+
+  combo.panel.querySelectorAll(".opt").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      const v = el.dataset.v;
+      sel.has(v) ? sel.delete(v) : sel.add(v);
+      aplicar();
+    });
+  });
+
+  const elegidas = opts.filter(o=>sel.has(o.v));
+  const texto = elegidas.length === 0 ? "Todos"
+              : elegidas.length === 1 ? elegidas[0].label
+              : `${elegidas.length} seleccionados`;
+  combo.btn.querySelector(".combo-txt b").textContent = texto;
+  combo.btn.querySelector(".combo-dot").style.setProperty(
+    "--dot", elegidas.length === 1 ? elegidas[0].color : "var(--accent)"
+  );
+
+  const badge = combo.btn.querySelector(".combo-count");
+  badge.hidden = elegidas.length < 2;
+  badge.textContent = elegidas.length;
+
+  combo.panel.querySelector(".combo-clear").disabled = sel.size === 0;
+}
+
+function pintarFiltros(){
+  combos.forEach(pintarCombo);
+  document.getElementById("limpiarTodo").hidden =
+    !(filtros.grupo.size || filtros.estado.size || busqueda.trim());
+}
+
+function aplicar(){
+  pintarFiltros();
+  pintarLista();
+}
+
+function limpiarFiltros(){
+  filtros.grupo.clear();
+  filtros.estado.clear();
+  busqueda = "";
+  document.getElementById("q").value = "";
+  aplicar();
+}
+
+document.addEventListener("click", e=>{
+  if(!e.target.closest(".combo")) cerrarCombos();
+});
+document.getElementById("comboBackdrop").addEventListener("click", ()=>cerrarCombos());
+document.getElementById("limpiarTodo").addEventListener("click", limpiarFiltros);
+
+/* --- resumen --- */
+function pintarResumen(){
+  const total = PERSONAS.length;
+  const listas = PERSONAS.filter(p=>estadoDe(p)==="lista").length;
+  const edicion = PERSONAS.filter(p=>estadoDe(p)==="edicion").length;
+  const falta = PERSONAS.filter(p=>estadoDe(p)==="falta").length;
+  const entregados = PERSONAS.filter(p=>p.entregado).length;
+
+  const pct = Math.round(listas/total*100);
+  document.getElementById("mProgress").textContent = pct + "%";
+  document.getElementById("mText").textContent = `${listas} de ${total} carnets con la foto lista`;
+  document.getElementById("barListas").style.width = (listas/total*100) + "%";
+  document.getElementById("barEdicion").style.width = (edicion/total*100) + "%";
+
+  document.getElementById("stats").innerHTML = `
+    <div class="stat"><b>${listas+edicion}</b><small>Fotos tomadas</small></div>
+    <div class="stat"><b>${listas}</b><small>Arte terminado</small></div>
+    <div class="stat is-miss"><b>${falta}</b><small>Falta foto</small></div>
+    <div class="stat is-ok"><b>${entregados}</b><small>Entregados</small></div>`;
+}
+
+/* --- tarjetas --- */
+function tarjeta(p, i){
+  const est = estadoDe(p);
+  const color = GRUPOS[p.grupo].color;
+  const visual = p.foto
+    ? `<img src="${rutaFoto(p)}" alt="Foto de ${p.apodo}" loading="lazy"
+         onerror="this.parentNode.innerHTML='<div class=&quot;slot&quot;><span class=&quot;ini&quot;>${iniciales(p)}</span><small>archivo no encontrado</small></div>'">`
+    : `<div class="slot"><span class="ini">${iniciales(p)}</span><small>${p.tomada?"en edición":"sin foto"}</small></div>`;
+
+  return `
+  <button class="badge ${p.entregado?"entregado":""}" style="--gc:${color};animation-delay:${Math.min(i*22,420)}ms" data-id="${p.id}">
+    <span class="strap"></span>
+    <span class="punch"></span>
+    <div class="photo">
+      ${visual}
+      <span class="flag ${est}"><i></i>${ETIQUETA[est]}</span>
+      <span class="deliv" title="Carnet entregado">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </span>
+    </div>
+    <div class="meta">
+      <div class="name">${p.apodo}</div>
+      <div class="role">${p.cargo}</div>
+      <div class="id"><span>${codigo(p)}</span><span class="grp">${GRUPOS[p.grupo].label}</span></div>
+    </div>
+  </button>`;
+}
+
+function filtrar(){
+  return PERSONAS.filter(p => pasaGrupo(p) && pasaEstado(p) && pasaBusqueda(p));
+}
+
+function pintarLista(){
+  const cont = document.getElementById("lista");
+  const datos = filtrar();
+
+  if(!datos.length){
+    cont.innerHTML = `<div class="empty">
+      <strong>Sin resultados</strong>
+      Ningún carnet coincide con los filtros activos.
+      <div style="margin-top:14px"><button class="btn" id="vaciarFiltros">Limpiar filtros</button></div>
+    </div>`;
+    document.getElementById("vaciarFiltros").onclick = limpiarFiltros;
+    return;
+  }
+
+  const orden = Object.keys(GRUPOS);
+  let html = "", n = 0;
+  orden.forEach(g=>{
+    const del = datos.filter(p=>p.grupo===g);
+    if(!del.length) return;
+    const pend = del.filter(p=>estadoDe(p)==="falta").length;
+    html += `
+    <section class="group">
+      <div class="group-head">
+        <h2><span class="bar" style="background:${GRUPOS[g].color}"></span>${GRUPOS[g].label}</h2>
+        <span class="count">${del.length} ${pend?`· ${pend} sin foto`:""}</span>
+        <span class="rule"></span>
+      </div>
+      <div class="grid">${del.map(p=>tarjeta(p,n++)).join("")}</div>
+    </section>`;
+  });
+  cont.innerHTML = html;
+  cont.querySelectorAll(".badge").forEach(b=>b.onclick=()=>abrir(+b.dataset.id));
+}
+
+/* --- ficha --- */
+let abiertoId = null;
+let scrollY = 0;
+
+function bloquearScroll(){
+  scrollY = window.scrollY;
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.overflow = "hidden";
+}
+function liberarScroll(){
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.overflow = "";
+  window.scrollTo(0, scrollY);
+}
+
+function abrir(id, sinAnimacion){
+  const p = PERSONAS.find(x=>x.id===id);
+  const yaAbierto = abiertoId !== null;
+  abiertoId = id;
+  const est = estadoDe(p);
+  const color = GRUPOS[p.grupo].color;
+  const tel = telLimpio(p.tel);
+  const wa = tel ? `https://wa.me/${tel}` : null;
+  const waRecordar = tel ? `https://wa.me/${tel}?text=${encodeURIComponent(MENSAJE_RECORDATORIO(p))}` : null;
+
+  const visual = p.foto
+    ? `<img src="${rutaFoto(p)}" alt="Foto de ${p.apodo}"
+         onerror="this.parentNode.innerHTML='<div class=&quot;slot&quot;><span class=&quot;ini&quot;>${iniciales(p)}</span><small>archivo no encontrado</small></div>'">`
+    : `<div class="slot"><span class="ini">${iniciales(p)}</span><small>${p.tomada?"en edición":"sin foto"}</small></div>`;
+
+  document.getElementById("sheet").innerHTML = `
+    <span class="strap" style="background:${color};display:block"></span>
+    <button class="close" id="cerrar" aria-label="Cerrar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="sheet-body" style="--gc:${color}">
+      <div class="sheet-photo">${visual}</div>
+      <div class="sheet-info">
+        <div class="kicker">${GRUPOS[p.grupo].label} · ${codigo(p)}</div>
+        <h3 id="shTitle">${p.apodo}</h3>
+        <div class="full">${p.nombre || "Nombre completo pendiente"}</div>
+        <div class="cargo">${p.cargo}</div>
+
+        <div class="kv">
+          <div><span>Foto tomada</span><span class="state ${p.tomada?"lista":"falta"}"><i></i>${p.tomada?"Sí":"No"}</span></div>
+          <div><span>Arte del carnet</span><span class="state ${est==="lista"?"lista":est==="edicion"?"edicion":"falta"}"><i></i>${ETIQUETA[est]}</span></div>
+          <div><span>Carnet entregado</span><span class="state ${p.entregado?"lista":"no"}"><i></i>${p.entregado?"Sí":"Pendiente"}</span></div>
+          <div><span>Archivo</span><span class="val">${p.foto || "—"}</span></div>
+          <div><span>Contacto</span><span class="val">${p.tel || "sin teléfono"}</span></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn pri" id="toggleEntrega">${p.entregado?"Marcar como pendiente":"Marcar como entregado"}</button>
+          ${est==="falta" && waRecordar ? `<a class="btn wa" href="${waRecordar}" target="_blank" rel="noopener">Pedir la foto</a>`
+            : wa ? `<a class="btn wa" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>`
+            : `<button class="btn" disabled>Sin WhatsApp</button>`}
+        </div>
+      </div>
+    </div>`;
+
+  const ov = document.getElementById("overlay");
+  const sheet = document.getElementById("sheet");
+  if(sinAnimacion || yaAbierto) sheet.style.animation = "none";
+  else sheet.style.animation = "";
+
+  if(!yaAbierto){ ov.classList.add("open"); bloquearScroll(); }
+
+  document.getElementById("cerrar").onclick = cerrar;
+  document.getElementById("toggleEntrega").onclick = ()=>{
+    p.entregado = !p.entregado;
+    guardarEntregas();
+    aviso(p.entregado ? `Carnet de ${p.apodo}: entregado` : `Carnet de ${p.apodo}: pendiente`);
+    pintarResumen(); pintarFiltros(); pintarLista(); abrir(id, true);
+  };
+  if(!yaAbierto) document.getElementById("cerrar").focus();
+}
+
+function cerrar(){
+  const ov = document.getElementById("overlay");
+  const sheet = document.getElementById("sheet");
+  sheet.style.transform = "";
+  sheet.classList.remove("dragging","closing");
+  ov.classList.remove("open");
+  liberarScroll();
+  abiertoId = null;
+}
+
+document.getElementById("overlay").addEventListener("click", e=>{ if(e.target.id==="overlay") cerrar(); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && abiertoId!==null) cerrar(); });
+
+/* arrastrar hacia abajo para cerrar la ficha en móvil */
+(function gestoCerrar(){
+  const sheet = document.getElementById("sheet");
+  let y0 = 0, dy = 0, activo = false;
+
+  sheet.addEventListener("touchstart", e=>{
+    if(window.innerWidth > 760 || e.touches.length !== 1) return;
+    if(sheet.scrollTop > 0) return;          // solo si la ficha está arriba del todo
+    y0 = e.touches[0].clientY; dy = 0; activo = true;
+    sheet.classList.add("dragging");
+  }, {passive:true});
+
+  sheet.addEventListener("touchmove", e=>{
+    if(!activo) return;
+    dy = e.touches[0].clientY - y0;
+    if(dy < 0) dy = 0;
+    sheet.style.transform = `translateY(${dy}px)`;
+  }, {passive:true});
+
+  sheet.addEventListener("touchend", ()=>{
+    if(!activo) return;
+    activo = false;
+    sheet.classList.remove("dragging");
+    if(dy > 110){
+      sheet.classList.add("closing");
+      setTimeout(cerrar, 190);
+    }else{
+      sheet.style.transition = "transform .22s cubic-bezier(.2,.8,.2,1)";
+      sheet.style.transform = "";
+      setTimeout(()=>{ sheet.style.transition = ""; }, 240);
+    }
+  });
+})();
+
+/* --- buscar --- */
+document.getElementById("q").addEventListener("input", e=>{ busqueda = e.target.value; aplicar(); });
+
+/* --- exportar --- */
+document.getElementById("exportar").onclick = ()=>{
+  const filas = [["Codigo","Apodo","Nombre Completo","Cargo","Grupo","Contacto","Foto Tomada","Foto Editada","Archivo","Entregado"]];
+  PERSONAS.forEach(p=>filas.push([
+    codigo(p), p.apodo, p.nombre, p.cargo, GRUPOS[p.grupo].label, p.tel,
+    p.tomada?"TRUE":"FALSE", p.foto?"TRUE":"FALSE", p.foto||"", p.entregado?"TRUE":"FALSE"
+  ]));
+  const csv = filas.map(f=>f.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\r\n");
+  const url = URL.createObjectURL(new Blob(["\uFEFF"+csv], {type:"text/csv;charset=utf-8"}));
+  const a = document.createElement("a");
+  a.href = url; a.download = "Carnets_2026_FCAQ.csv"; a.click();
+  URL.revokeObjectURL(url);
+  aviso("CSV descargado");
+};
+
+let tid;
+function aviso(txt){
+  const t = document.getElementById("toast");
+  t.textContent = txt; t.classList.add("show");
+  clearTimeout(tid); tid = setTimeout(()=>t.classList.remove("show"), 2200);
+}
+
+crearCombo({ nodo:document.getElementById("comboGrupo"),  etiqueta:"Grupo",  seleccion:filtros.grupo,  opciones:opcionesGrupo  });
+crearCombo({ nodo:document.getElementById("comboEstado"), etiqueta:"Estado", seleccion:filtros.estado, opciones:opcionesEstado });
+
+pintarResumen();
+pintarFiltros();
+pintarLista();
+</script>
+</body>
+</html>
