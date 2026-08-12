@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light">
+<meta name="theme-color" content="#EDEFF1">
+<title>Tiempo para Hombres — Programa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light only;
+    forced-color-adjust: none;
+    --paper:#EDEFF1;
+    --surface:#FFFFFF;
+    --ink:#0F1418;
+    --slate:#68737F;
+    --rule:#D5DBE0;
+    --accent:#1B44D8;
+    --ppm:3;              /* píxeles por minuto: la altura ES la duración */
+    --gap:6px;
+  }
+
+  *{box-sizing:border-box; forced-color-adjust:none;}
+  html{
+    -webkit-text-size-adjust:100%;
+    color-scheme:light only;
+    background:#EDEFF1;
+    background-color:#EDEFF1 !important;
+    min-height:100%;
+  }
+  body{
+    margin:0;
+    min-height:100vh;
+    background:#EDEFF1;
+    background-color:#EDEFF1 !important;
+    color:var(--ink);
+    font-family:"Inter Tight",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    font-size:16px;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    max-width:820px;
+    margin:0 auto;
+    padding:40px 24px 80px;
+  }
+
+  /* ---------- Encabezado ---------- */
+  .eyebrow{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--slate);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--rule);
+  }
+
+  h1{
+    font-family:"Archivo","Archivo Black",Impact,sans-serif;
+    font-variation-settings:"wdth" 118,"wght" 800;
+    font-weight:800;
+    text-transform:uppercase;
+    font-size:clamp(38px,10.5vw,86px);
+    line-height:.9;
+    letter-spacing:-.02em;
+    margin:22px 0 0;
+  }
+  h1 span{display:block;}
+  h1 .thin{
+    font-variation-settings:"wdth" 118,"wght" 400;
+    font-weight:400;
+    color:var(--slate);
+  }
+
+  .meta{
+    margin-top:26px;
+    padding-top:14px;
+    border-top:1px solid var(--rule);
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 28px;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12px;
+    letter-spacing:.04em;
+    color:var(--slate);
+  }
+  .meta b{color:var(--ink);font-weight:500;}
+
+  /* ---------- Programa ---------- */
+  .schedule{
+    margin-top:44px;
+    display:grid;
+    grid-template-columns:56px 1fr;
+    gap:0 16px;
+  }
+
+  .ruler{
+    position:relative;
+    border-right:1px solid var(--rule);
+  }
+  .tick{
+    position:absolute;
+    right:0;
+    width:100%;
+    transform:translateY(-50%);
+    text-align:right;
+    padding-right:10px;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12px;
+    color:var(--slate);
+  }
+  .tick::after{
+    content:"";
+    position:absolute;
+    right:-1px;
+    top:50%;
+    width:7px;
+    height:1px;
+    background:var(--slate);
+  }
+  .tick.minor{opacity:0;}
+  .tick.minor::after{width:4px;background:var(--rule);opacity:1;}
+
+  .blocks{
+    display:flex;
+    flex-direction:column;
+    gap:var(--gap);
+  }
+
+  .block{
+    position:relative;
+    height:calc(var(--min) * var(--ppm) * 1px - var(--gap));
+    background:var(--surface);
+    border:1px solid var(--rule);
+    border-radius:3px;
+    padding:12px 16px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    overflow:hidden;
+  }
+
+  .title{
+    font-size:17px;
+    font-weight:600;
+    letter-spacing:-.01em;
+    margin:0;
+  }
+  .speaker{
+    margin-top:3px;
+    font-size:14px;
+    color:var(--slate);
+  }
+  .time{
+    position:absolute;
+    top:11px;
+    right:16px;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12px;
+    color:var(--slate);
+    white-space:nowrap;
+  }
+  .dur{
+    position:absolute;
+    bottom:11px;
+    right:16px;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;
+    color:var(--slate);
+    opacity:.75;
+  }
+
+  /* Conferencias: los bloques de enseñanza */
+  .block.talk{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--surface);
+  }
+  .block.talk .title{font-size:20px;}
+  .block.talk .speaker{color:#A6B0BB;}
+  .block.talk .time,
+  .block.talk .dur{color:#8D98A4;}
+
+  /* Panel: el único bloque de formato distinto */
+  .block.panel{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  .block.panel .title{font-size:20px;}
+  .block.panel .kicker{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:#B9C6FF;
+    margin-bottom:4px;
+  }
+  .block.panel .time,
+  .block.panel .dur{color:#B9C6FF;}
+  /* fuego cruzado: dos trazos que se cruzan */
+  .block.panel::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      repeating-linear-gradient(45deg,rgba(255,255,255,.11) 0 1px,transparent 1px 13px),
+      repeating-linear-gradient(-45deg,rgba(255,255,255,.11) 0 1px,transparent 1px 13px);
+    pointer-events:none;
+  }
+
+  /* Recesos y logística */
+  .block.pause{
+    background:#E4E8EB;
+    border-style:dashed;
+  }
+  .block.pause .title{font-size:15px;font-weight:500;color:var(--slate);}
+
+  .block.beat .title{font-size:15px;font-weight:500;}
+
+  /* ---------- Leyenda ---------- */
+  .legend{
+    margin-top:38px;
+    padding-top:16px;
+    border-top:1px solid var(--rule);
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 24px;
+    font-size:12.5px;
+    color:var(--slate);
+  }
+  .legend span{display:flex;align-items:center;gap:8px;}
+  .sw{width:12px;height:12px;border-radius:2px;border:1px solid var(--rule);}
+  .sw.a{background:var(--ink);border-color:var(--ink);}
+  .sw.b{background:var(--accent);border-color:var(--accent);}
+  .sw.c{background:#E4E8EB;border-style:dashed;}
+  .legend .note{
+    flex-basis:100%;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;
+    letter-spacing:.05em;
+    color:var(--slate);
+    opacity:.8;
+  }
+
+  /* ---------- Entrada ---------- */
+  @media (prefers-reduced-motion:no-preference){
+    .block,.tick,.meta,h1{
+      animation:rise .55s cubic-bezier(.2,.7,.3,1) both;
+      animation-delay:calc(var(--i,0) * 55ms);
+    }
+    @keyframes rise{
+      from{opacity:0;transform:translateY(10px);}
+      to{opacity:1;transform:none;}
+    }
+    .tick{animation-name:fade;}
+    @keyframes fade{from{opacity:0;}to{opacity:1;}}
+    .tick.minor{animation:none;}
+  }
+
+  @media (max-width:560px){
+    :root{--ppm:2.7;}
+    .wrap{padding:28px 16px 60px;}
+    .schedule{grid-template-columns:38px 1fr;gap:0 12px;}
+    .block{padding:10px 12px;}
+    .title{font-size:15.5px;}
+    .block.talk .title,.block.panel .title{font-size:17px;}
+    .time{top:9px;right:12px;font-size:11px;}
+    .dur{display:none;}
+    .speaker{font-size:13px;}
+    .tick{font-size:10px;padding-right:7px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Programa · Borrador</p>
+    <h1 style="--i:0">
+      <span>Tiempo</span>
+      <span class="thin">para</span>
+      <span>Hombres</span>
+    </h1>
+    <div class="meta" style="--i:1">
+      <span><b>3:00 p.m. – 8:00 p.m.</b></span>
+      <span>5 horas</span>
+      <span>9 bloques</span>
+      <span>3 conferencias · 1 panel</span>
+    </div>
+  </header>
+
+  <main class="schedule">
+    <div class="ruler" aria-hidden="true">
+      <div class="tick"       style="top:0;--i:2">3</div>
+      <div class="tick minor" style="top:calc(30 * var(--ppm) * 1px)"></div>
+      <div class="tick"       style="top:calc(60 * var(--ppm) * 1px);--i:3">4</div>
+      <div class="tick minor" style="top:calc(90 * var(--ppm) * 1px)"></div>
+      <div class="tick"       style="top:calc(120 * var(--ppm) * 1px);--i:4">5</div>
+      <div class="tick minor" style="top:calc(150 * var(--ppm) * 1px)"></div>
+      <div class="tick"       style="top:calc(180 * var(--ppm) * 1px);--i:5">6</div>
+      <div class="tick minor" style="top:calc(210 * var(--ppm) * 1px)"></div>
+      <div class="tick"       style="top:calc(240 * var(--ppm) * 1px);--i:6">7</div>
+      <div class="tick minor" style="top:calc(270 * var(--ppm) * 1px)"></div>
+      <div class="tick"       style="top:calc(300 * var(--ppm) * 1px);--i:7">8</div>
+    </div>
+
+    <div class="blocks">
+
+      <article class="block beat" style="--min:30;--i:2">
+        <p class="title">Apertura / Devocional</p>
+        <p class="time">3:00 – 3:30 p.m.</p>
+        <p class="dur">30 min</p>
+      </article>
+
+      <article class="block talk" style="--min:45;--i:3">
+        <p class="title">Primera Conferencia</p>
+        <p class="speaker">Rey Matos</p>
+        <p class="time">3:30 – 4:15 p.m.</p>
+        <p class="dur">45 min</p>
+      </article>
+
+      <article class="block pause" style="--min:15;--i:4">
+        <p class="title">Receso (merienda)</p>
+        <p class="time">4:15 – 4:30 p.m.</p>
+      </article>
+
+      <article class="block beat" style="--min:15;--i:5">
+        <p class="title">Interludio musical</p>
+        <p class="time">4:30 – 4:45 p.m.</p>
+      </article>
+
+      <article class="block talk" style="--min:45;--i:6">
+        <p class="title">Segunda Conferencia</p>
+        <p class="speaker">Celso J. Pérez</p>
+        <p class="time">4:45 – 5:30 p.m.</p>
+        <p class="dur">45 min</p>
+      </article>
+
+      <article class="block panel" style="--min:45;--i:7">
+        <p class="kicker">Panel</p>
+        <p class="title">Fuego Cruzado</p>
+        <p class="time">5:30 – 6:15 p.m.</p>
+        <p class="dur">45 min</p>
+      </article>
+
+      <article class="block pause" style="--min:45;--i:8">
+        <p class="title">Receso (refrigerio)</p>
+        <p class="time">6:15 – 7:00 p.m.</p>
+        <p class="dur">45 min</p>
+      </article>
+
+      <article class="block talk" style="--min:45;--i:9">
+        <p class="title">Tercera Conferencia</p>
+        <p class="speaker">Rey Matos</p>
+        <p class="time">7:00 – 7:45 p.m.</p>
+        <p class="dur">45 min</p>
+      </article>
+
+      <article class="block beat" style="--min:15;--i:10">
+        <p class="title">Clausura</p>
+        <p class="time">7:45 – 8:00 p.m.</p>
+      </article>
+
+    </div>
+  </main>
+
+  <footer class="legend">
+    <span><i class="sw a"></i>Conferencia</span>
+    <span><i class="sw b"></i>Panel</span>
+    <span><i class="sw c"></i>Receso</span>
+    <span class="note">La altura de cada bloque equivale a su duración real.</span>
+  </footer>
+
+</div>
+</body>
+</html>
