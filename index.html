@@ -35,9 +35,10 @@
 }
 
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
 body{
   margin:0;
+  overflow-x:clip;
   background:var(--paper);
   color:var(--ink);
   font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -55,7 +56,7 @@ body{
     linear-gradient(180deg,#FFFFFF 0%, #FBFCFD 100%);
   border-bottom:1px solid var(--line);
 }
-.top-inner{padding:34px 0 26px}
+.top-inner{padding-top:34px;padding-bottom:26px}
 .eyebrow{
   font-family:"IBM Plex Mono",monospace;
   font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
@@ -104,7 +105,7 @@ h1 em{font-style:normal;color:var(--muted);font-weight:500}
   -webkit-backdrop-filter:saturate(180%) blur(12px);
   border-bottom:1px solid var(--line);
 }
-.controls-inner{padding:12px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.controls-inner{padding-top:12px;padding-bottom:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .search{position:relative;flex:1 1 240px;max-width:340px}
 .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
 .search input{
@@ -208,7 +209,7 @@ h1 em{font-style:normal;color:var(--muted);font-weight:500}
 .reset[hidden]{display:none}
 
 /* ---------- Secciones ---------- */
-main{padding:28px 0 80px}
+main{padding-top:28px;padding-bottom:80px}
 .group{margin-bottom:38px;scroll-margin-top:80px}
 .group-head{display:flex;align-items:center;gap:12px;margin:0 0 16px}
 .group-head h2{
@@ -240,11 +241,6 @@ main{padding:28px 0 80px}
 
 /* cinta del lanyard: color por grupo */
 .badge .strap{height:5px;width:100%;background:var(--gc,var(--accent))}
-.badge .punch{
-  position:absolute;top:15px;left:50%;transform:translateX(-50%);
-  width:34px;height:7px;border-radius:99px;background:#EDF0F5;
-  box-shadow:inset 0 1px 1px rgba(23,26,33,.12);z-index:3;
-}
 .photo{
   position:relative;aspect-ratio:1/1.12;background:#F1F3F7;overflow:hidden;
   border-bottom:1px solid var(--line);
@@ -357,7 +353,7 @@ main{padding:28px 0 80px}
 .btn.wa:hover{background:#0E7C58}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 
-footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);font-size:12.5px}
+footer{border-top:1px solid var(--line);padding-top:22px;padding-bottom:40px;color:var(--muted);font-size:12.5px}
 .foot-row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
 
 .toast{
@@ -370,30 +366,28 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
 /* ---------- Móvil ---------- */
 @media (max-width:760px){
   body{font-size:15px}
-  .wrap{padding:0 14px}
+  .wrap{padding:0 16px}
 
-  .top-inner{padding:20px 0 16px}
+  .top-inner{padding-top:22px;padding-bottom:18px}
   h1{font-size:27px;letter-spacing:-.028em}
   h1 em{display:block;font-size:15px;margin-top:5px}
-  .eyebrow{font-size:10px;letter-spacing:.13em;gap:7px}
-  .headline-row{margin-top:16px;gap:18px}
-  .meter-block{max-width:100%;flex:1 1 100%}
+  .eyebrow{font-size:10px;letter-spacing:.12em;gap:6px;line-height:1.7}
+  .headline-row{margin-top:18px;gap:20px}
+  .meter-block{max-width:100%;flex:1 1 100%;min-width:0}
   .meter-num{font-size:22px}
   .meter-label{font-size:12.5px}
   .meter-legend{gap:12px;font-size:11.5px}
 
-  /* stats: fila deslizable, sin apilarse */
+  /* stats: rejilla 2x2, todo visible y sin scroll lateral */
   .stats{
-    width:calc(100% + 28px);margin:0 -14px;padding:2px 14px 4px;
-    flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x proximity;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    flex:1 1 100%;width:100%;min-width:0;margin:0;padding:0;
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;
   }
-  .stats::-webkit-scrollbar{display:none}
-  .stat{flex:0 0 auto;min-width:98px;scroll-snap-align:start;padding:9px 13px}
-  .stat b{font-size:20px}
+  .stat{min-width:0;padding:10px 13px}
+  .stat b{font-size:21px}
 
   /* controles: dos carriles horizontales */
-  .controls-inner{padding:9px 0 8px;gap:8px;flex-direction:column;align-items:stretch}
+  .controls-inner{padding-top:9px;padding-bottom:8px;gap:8px;flex-direction:column;align-items:stretch}
   .search{max-width:none;flex:1 1 auto}
   .search input{font-size:16px;padding:11px 12px 11px 36px}
   .filters{gap:7px}
@@ -417,7 +411,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
   .opt-label{font-size:14.5px}
   .reset{align-self:center;padding:6px 12px}
 
-  main{padding:20px 0 40px}
+  main{padding-top:20px;padding-bottom:40px}
   .group{margin-bottom:28px}
   .group-head{margin-bottom:12px}
 
@@ -426,7 +420,6 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
   .meta .name{font-size:14px}
   .meta .role{font-size:11px;-webkit-line-clamp:2;min-height:29px}
   .meta .id{font-size:9px;margin-top:7px}
-  .punch{top:13px;width:28px;height:6px}
 
   /* ficha: hoja que sube desde abajo */
   .overlay{align-items:flex-end;padding:0}
@@ -457,7 +450,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
   }
   .actions .btn{flex:1 1 0;justify-content:center;padding:13px 12px;font-size:14px}
 
-  footer{padding:18px 0 calc(28px + env(safe-area-inset-bottom))}
+  footer{padding-top:18px;padding-bottom:calc(28px + env(safe-area-inset-bottom))}
   .foot-row{flex-direction:column;align-items:stretch;gap:12px;text-align:center}
   .foot-row .btn{justify-content:center;padding:12px}
   .toast{bottom:calc(20px + env(safe-area-inset-bottom));width:calc(100% - 32px);text-align:center}
@@ -591,7 +584,7 @@ const PERSONAS = [
   { id:26, apodo:"Javier",          nombre:"José Javier Reyes Rosario",          cargo:"Mensajero",                         tel:"+1(809) 463-2797", grupo:"equipo",      tomada:true,  foto:"Javier_DONE.png",          entregado:false },
   { id:27, apodo:"Caty",            nombre:"Catalina Ospina de García",          cargo:"Contable",                          tel:"+1(829) 292-0988", grupo:"equipo",      tomada:true,  foto:"Caty_DONE.png",            entregado:false },
   { id:28, apodo:"Anny",            nombre:"Anny Luz Trinidad Quelix",           cargo:"Conserje",                          tel:"+1(809) 708-8223", grupo:"equipo",      tomada:false, foto:null,                       entregado:false },
-  { id:29, apodo:"José Frank",      nombre:"José Francisco García Rodríguez",    cargo:"Sereno / Vigilante",                tel:"",                 grupo:"equipo",      tomada:false, foto:"JoseFrank_DONE.png",       entregado:false },
+  { id:29, apodo:"José Frank",      nombre:"José Francisco García Rodríguez",    cargo:"Sereno / Vigilante",                tel:"",                 grupo:"equipo",      tomada:false, foto:"JoseFrank_DONE.png",                       entregado:true  },
   { id:30, apodo:"Miranda",         nombre:"La bebé del local",                  cargo:"Dar alegría",                       tel:"",                 grupo:"equipo",      tomada:true,  foto:null,                       entregado:false }
 ];
 
@@ -835,7 +828,6 @@ function tarjeta(p, i){
   return `
   <button class="badge ${p.entregado?"entregado":""}" style="--gc:${color};animation-delay:${Math.min(i*22,420)}ms" data-id="${p.id}">
     <span class="strap"></span>
-    <span class="punch"></span>
     <div class="photo">
       ${visual}
       <span class="flag ${est}"><i></i>${ETIQUETA[est]}</span>
