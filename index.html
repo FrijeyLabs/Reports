@@ -538,7 +538,8 @@ footer{border-top:1px solid var(--line);padding-top:22px;padding-bottom:40px;col
 /* =========================================================================
    CONFIGURACIÓN — lo único que normalmente vas a tocar
    ========================================================================= */
-const FOTOS_DIR = "fotos/";   // carpeta con las imágenes, al lado de este index.html
+const FOTOS_DIR  = "fotos/";        // carpeta con las imágenes, al lado de este index.html
+const THUMBS_DIR = "fotos/thumb/";  // miniaturas JPEG (400px) que usa la rejilla
 
 /* Grupos y su color de cinta */
 const GRUPOS = {
@@ -553,7 +554,7 @@ const GRUPOS = {
    tomada    → ya le tomaron la foto
    entregado → ya recibió su carnet físico                                        */
 const PERSONAS = [
-  { id:1,  apodo:"Popín",           nombre:"Celso J. Pérez Flores",                         cargo:"Pastor",                   tel:"+1(829) 292-1537", grupo:"pastores",    tomada:true,  foto:"Popin_DONE.png",          entregado:false},
+  { id:1,  apodo:"Popín",           nombre:"Celso J. Pérez Flores",                         cargo:"Pastor Fundador",          tel:"+1(829) 292-1537", grupo:"pastores",    tomada:true,  foto:"Popin_DONE.png",          entregado:false},
   { id:2,  apodo:"Andy",            nombre:"Andy Jesús Feliz García",                       cargo:"Pastor Asociado",          tel:"+1(829) 401-1162", grupo:"pastores",    tomada:true,  foto:"Andy_DONE.png",           entregado:false},
   { id:3,  apodo:"Frank Tiburcio",  nombre:"Francisco Alberto Tiburcio Diloné",             cargo:"Pastor Asociado",          tel:"+1(809) 874-6753", grupo:"pastores",    tomada:true,  foto:"FrankTiburcio_DONE.png",  entregado:false},
   { id:4,  apodo:"Frank Maranatha", nombre:"Francisco Castillo Araujo",                     cargo:"Pastor Asociado",          tel:"+1(829) 292-0981", grupo:"pastores",    tomada:true,  foto:"FrankMaranatha_DONE.png", entregado:false},
@@ -586,7 +587,6 @@ const PERSONAS = [
   { id:26, apodo:"Javier",          nombre:"José Javier Reyes Rosario",                     cargo:"Asistente Administrativo", tel:"+1(809) 463-2797", grupo:"equipo",      tomada:true,  foto:"Javier_DONE.png",         entregado:false},
   { id:27, apodo:"Caty",            nombre:"Catalina Ospina de García",                     cargo:"Contable",                 tel:"+1(829) 292-0988", grupo:"equipo",      tomada:true,  foto:"Caty_DONE.png",           entregado:false},
   { id:28, apodo:"Anny",            nombre:"Anny Luz Trinidad Quelix",                      cargo:"Mantenimiento",            tel:"+1(809) 708-8223", grupo:"equipo",      tomada:true,  foto:"Anny_DONE.png",           entregado:false},
-  { id:29, apodo:"José Frank",      nombre:"José Francisco García Rodríguez",               cargo:"Seguridad",                tel:"",                 grupo:"equipo",      tomada:true,  foto:"JoseFrank_DONE.png",      entregado:true },
   { id:30, apodo:"Miranda",         nombre:"La bebé del local",                             cargo:"Cantante",                 tel:"",                 grupo:"equipo",      tomada:true,  foto:null,                      entregado:false}
 ];
 
@@ -623,6 +623,29 @@ const codigo = p => "FCAQ-26-" + String(p.id).padStart(2,"0");
 const iniciales = p => (p.apodo || "?").split(/\s+/).slice(0,2).map(s=>s[0]).join("").toUpperCase();
 const telLimpio = t => (t||"").replace(/\D/g,"");
 const rutaFoto = p => FOTOS_DIR + p.foto;
+const rutaThumb = p => THUMBS_DIR + p.foto.replace(/\.(png|jpe?g)$/i, ".jpg");
+
+/* Las tarjetas cargan la miniatura. Si falta, cae a la foto completa;
+   si tampoco está, deja el hueco con las iniciales. */
+function fotoFallback(img, ini){
+  if(img.dataset.full && !img.dataset.proboFull){
+    img.dataset.proboFull = "1";
+    img.src = img.dataset.full;
+    return;
+  }
+  img.parentNode.innerHTML =
+    `<div class="slot"><span class="ini">${ini}</span><small>archivo no encontrado</small></div>`;
+}
+
+/* Cambia la miniatura de la ficha por la original cuando termina de bajar.
+   Si la original falla, se queda la miniatura: la ficha nunca se ve vacía. */
+function cargarFotoCompleta(sheet){
+  const img = sheet.querySelector("img[data-full]");
+  if(!img) return;
+  const full = new Image();
+  full.onload = () => { if(img.isConnected) img.src = full.src; };
+  full.src = img.dataset.full;
+}
 
 /* Selección múltiple: conjunto vacío = "Todos" */
 const filtros = { grupo:new Set(), estado:new Set() };
@@ -823,8 +846,8 @@ function tarjeta(p, i){
   const est = estadoDe(p);
   const color = GRUPOS[p.grupo].color;
   const visual = p.foto
-    ? `<img src="${rutaFoto(p)}" alt="Foto de ${p.apodo}" loading="lazy"
-         onerror="this.parentNode.innerHTML='<div class=&quot;slot&quot;><span class=&quot;ini&quot;>${iniciales(p)}</span><small>archivo no encontrado</small></div>'">`
+    ? `<img src="${rutaThumb(p)}" alt="Foto de ${p.apodo}" loading="lazy" decoding="async"
+         data-full="${rutaFoto(p)}" onerror="fotoFallback(this,'${iniciales(p)}')">`
     : `<div class="slot"><span class="ini">${iniciales(p)}</span><small>${p.tomada?"en edición":"sin foto"}</small></div>`;
 
   return `
@@ -914,9 +937,11 @@ function abrir(id, sinAnimacion){
   const wa = tel ? `https://wa.me/${tel}` : null;
   const waRecordar = tel ? `https://wa.me/${tel}?text=${encodeURIComponent(MENSAJE_RECORDATORIO(p))}` : null;
 
+  /* Arranca con la miniatura, que ya está en caché por la rejilla, así la ficha
+     abre sin espera. La original entra por detrás y se cambia al terminar. */
   const visual = p.foto
-    ? `<img src="${rutaFoto(p)}" alt="Foto de ${p.apodo}"
-         onerror="this.parentNode.innerHTML='<div class=&quot;slot&quot;><span class=&quot;ini&quot;>${iniciales(p)}</span><small>archivo no encontrado</small></div>'">`
+    ? `<img src="${rutaThumb(p)}" alt="Foto de ${p.apodo}"
+         data-full="${rutaFoto(p)}" onerror="fotoFallback(this,'${iniciales(p)}')">`
     : `<div class="slot"><span class="ini">${iniciales(p)}</span><small>${p.tomada?"en edición":"sin foto"}</small></div>`;
 
   document.getElementById("sheet").innerHTML = `
@@ -955,6 +980,8 @@ function abrir(id, sinAnimacion){
   else sheet.style.animation = "";
 
   if(!yaAbierto){ ov.classList.add("open"); bloquearScroll(); }
+
+  cargarFotoCompleta(sheet);
 
   document.getElementById("cerrar").onclick = cerrar;
   document.getElementById("toggleEntrega").onclick = ()=>{
