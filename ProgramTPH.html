@@ -1,0 +1,2090 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08081a">
+  <meta name="description" content="Control interno de producción para Tiempo para Hombres.">
+  <title>Tiempo para Hombres · Control de Producción</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #08081a;
+      --ink-2: #0d1027;
+      --ink-3: #13183a;
+      --blue: #0820e7;
+      --blue-bright: #2d5bff;
+      --blue-soft: #3e59c1;
+      --purple: #9775c1;
+      --purple-bright: #bb91f2;
+      --silver: #c2b2c7;
+      --white: #f7f5fb;
+      --muted: #9295ad;
+      --line: rgba(194,178,199,.2);
+      --danger: #ff5770;
+      --warning: #ffbd59;
+      --success: #5de2b2;
+      --radius: 18px;
+      --shadow: 0 24px 70px rgba(0,0,0,.38);
+      --display: Impact, Haettenschweiler, "Arial Narrow Bold", "Franklin Gothic Condensed", sans-serif;
+      --body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { width: 100%; min-height: 100%; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 8% 18%, rgba(8,32,231,.22), transparent 28%),
+        radial-gradient(circle at 82% 82%, rgba(151,117,193,.12), transparent 30%),
+        linear-gradient(145deg, #050512 0%, var(--ink) 48%, #080b22 100%);
+      color: var(--white);
+      font-family: var(--body);
+      font-size: 16px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -12% 0;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent 9%, rgba(19,46,255,.03) 10%, rgba(32,76,255,.42) 10.5%, rgba(8,32,231,.04) 12%, transparent 14%),
+        linear-gradient(90deg, transparent 72%, rgba(19,46,255,.02) 73%, rgba(32,76,255,.3) 74%, rgba(8,32,231,.03) 76%, transparent 78%);
+      filter: blur(10px);
+      animation: beams 12s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: .25;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.35) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 70% 60%, rgba(151,117,193,.4) 0 1px, transparent 1.4px);
+      background-size: 43px 47px, 61px 59px;
+      mask-image: linear-gradient(to bottom, black, transparent 88%);
+    }
+
+    button, textarea { font: inherit; }
+    button { color: inherit; }
+
+    button:focus-visible, textarea:focus-visible, .cue-row:focus-visible {
+      outline: 3px solid var(--purple-bright);
+      outline-offset: 3px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-rows: 88px minmax(0, 1fr) 92px;
+      height: 100vh;
+      min-height: 620px;
+      padding: 0 18px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(315px, 1fr) auto minmax(315px, 1fr);
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-family: var(--display);
+      font-size: clamp(1.45rem, 2.3vw, 2.4rem);
+      line-height: .9;
+      letter-spacing: .045em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .brand .para {
+      display: inline-grid;
+      place-items: center;
+      padding: 4px 7px 3px;
+      border: 1px solid rgba(194,178,199,.65);
+      color: var(--purple-bright);
+      font-family: var(--body);
+      font-size: .43em;
+      font-weight: 900;
+      letter-spacing: .2em;
+      transform: rotate(-2deg);
+    }
+
+    .show-meta {
+      min-width: 0;
+      color: var(--muted);
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      overflow: hidden;
+    }
+
+    .top-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+    }
+
+    .mode-button, .icon-button, .ghost-button, .danger-button, .minute-button {
+      border: 1px solid var(--line);
+      background: rgba(13,16,39,.74);
+      cursor: pointer;
+      transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+
+    .mode-button:hover, .icon-button:hover, .ghost-button:hover, .minute-button:hover {
+      border-color: rgba(151,117,193,.7);
+      background: rgba(30,34,74,.88);
+    }
+
+    .mode-button {
+      min-width: 142px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: var(--silver);
+      font-size: .74rem;
+      font-weight: 900;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .mode-button.event {
+      border-color: rgba(93,226,178,.46);
+      background: rgba(21,82,69,.32);
+      color: var(--success);
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 13px currentColor;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 9px;
+    }
+
+    .icon-button {
+      display: inline-grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      color: var(--silver);
+      font-weight: 900;
+    }
+
+    .master-clock {
+      min-width: 166px;
+      text-align: right;
+    }
+
+    .master-clock .clock {
+      display: block;
+      font-size: 1.35rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      letter-spacing: .05em;
+    }
+
+    .master-clock .zone {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: .65rem;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 292px minmax(440px, 1fr) 344px;
+      gap: 14px;
+      min-height: 0;
+      padding: 14px 0;
+    }
+
+    .panel {
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(160deg, rgba(19,24,58,.86), rgba(8,8,26,.89));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 55px;
+      padding: 0 17px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--purple-bright);
+      font-size: .68rem;
+      font-weight: 950;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .count-label {
+      color: var(--muted);
+      font-size: .72rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+    }
+
+    .timeline-panel { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+
+    .timeline {
+      position: relative;
+      overflow-y: auto;
+      padding: 10px 8px 26px;
+      scrollbar-color: rgba(151,117,193,.5) transparent;
+      scrollbar-width: thin;
+    }
+
+    .phase-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 14px 10px 7px;
+      color: #777c9a;
+      font-size: .64rem;
+      font-weight: 950;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .phase-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(194,178,199,.12);
+    }
+
+    .cue-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      min-height: 57px;
+      margin: 2px 0;
+      padding: 8px 9px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--white);
+      text-align: left;
+      cursor: pointer;
+      transition: background .18s ease, border-color .18s ease, transform .18s ease;
+    }
+
+    .cue-row:hover { background: rgba(151,117,193,.07); }
+
+    .cue-row.active {
+      border-color: rgba(45,91,255,.65);
+      background: linear-gradient(90deg, rgba(8,32,231,.28), rgba(151,117,193,.08));
+      box-shadow: inset 3px 0 0 var(--blue-bright), 0 0 24px rgba(8,32,231,.1);
+    }
+
+    .cue-row.done { opacity: .48; }
+    .cue-row.skipped { opacity: .34; text-decoration: line-through; }
+
+    .cue-time {
+      color: var(--silver);
+      font-size: .72rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 850;
+    }
+
+    .cue-copy { min-width: 0; }
+
+    .cue-title {
+      display: block;
+      overflow: hidden;
+      color: var(--white);
+      font-size: .82rem;
+      font-weight: 800;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .cue-code {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: .6rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+    }
+
+    .cue-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+    .mini-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 18px;
+      padding: 2px 6px;
+      border: 1px solid rgba(151,117,193,.28);
+      border-radius: 999px;
+      color: var(--purple-bright);
+      font-size: .55rem;
+      font-weight: 950;
+      letter-spacing: .09em;
+    }
+
+    .mini-badge.optional { border-color: rgba(255,189,89,.3); color: var(--warning); }
+
+    .center-panel {
+      position: relative;
+      display: grid;
+      grid-template-rows: minmax(228px, .88fr) minmax(250px, 1.12fr);
+      overflow: hidden;
+    }
+
+    .center-panel::before {
+      content: "";
+      position: absolute;
+      top: 24px;
+      right: -34px;
+      width: 145px;
+      height: 35px;
+      z-index: 3;
+      border: 1px solid rgba(194,178,199,.18);
+      background: linear-gradient(110deg, rgba(194,178,199,.08), rgba(194,178,199,.2), rgba(194,178,199,.05));
+      transform: rotate(9deg);
+      pointer-events: none;
+    }
+
+    .current-cue {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 184px;
+      gap: 20px;
+      min-height: 0;
+      padding: clamp(22px, 3vw, 38px);
+      border-bottom: 1px dashed rgba(194,178,199,.27);
+      background:
+        linear-gradient(110deg, rgba(8,32,231,.12), transparent 48%),
+        radial-gradient(circle at 80% 25%, rgba(62,89,193,.15), transparent 32%);
+    }
+
+    .current-copy {
+      align-self: center;
+      min-width: 0;
+    }
+
+    .status-line {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .live-status, .phase-chip, .risk-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: .62rem;
+      font-weight: 950;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .live-status {
+      border: 1px solid rgba(93,226,178,.42);
+      background: rgba(93,226,178,.08);
+      color: var(--success);
+    }
+
+    .live-status.ready {
+      border-color: rgba(151,117,193,.38);
+      background: rgba(151,117,193,.08);
+      color: var(--purple-bright);
+    }
+
+    .live-status.paused {
+      border-color: rgba(255,189,89,.38);
+      background: rgba(255,189,89,.09);
+      color: var(--warning);
+    }
+
+    .phase-chip { border: 1px solid var(--line); color: var(--silver); }
+    .risk-chip { border: 1px solid rgba(255,87,112,.45); color: #ff899b; }
+
+    .current-title {
+      max-width: 760px;
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(2.75rem, 5vw, 5.8rem);
+      font-weight: 900;
+      line-height: .92;
+      letter-spacing: .015em;
+      text-transform: uppercase;
+      text-wrap: balance;
+    }
+
+    .current-subtitle {
+      max-width: 720px;
+      margin: 15px 0 0;
+      color: var(--silver);
+      font-size: clamp(.92rem, 1.35vw, 1.12rem);
+      font-weight: 620;
+      line-height: 1.45;
+    }
+
+    .scheduled {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      margin-top: 17px;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .schedule-delta { color: var(--success); }
+    .schedule-delta.late { color: var(--danger); }
+    .schedule-delta.early { color: var(--warning); }
+
+    .timer-wrap {
+      display: grid;
+      place-items: center;
+      align-self: center;
+    }
+
+    .timer-ring {
+      --progress: 0deg;
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 174px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: conic-gradient(var(--blue-bright) var(--progress), rgba(194,178,199,.1) 0);
+      box-shadow: 0 0 45px rgba(8,32,231,.18);
+    }
+
+    .timer-ring::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      background: #0a0c22;
+      box-shadow: inset 0 0 25px rgba(0,0,0,.38);
+    }
+
+    .timer-ring.warning { background: conic-gradient(var(--warning) var(--progress), rgba(194,178,199,.1) 0); }
+    .timer-ring.overtime { background: conic-gradient(var(--danger) 360deg, rgba(194,178,199,.1) 0); animation: dangerPulse 1.2s infinite; }
+
+    .timer-inner { position: relative; z-index: 1; text-align: center; }
+
+    .timer-label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: .61rem;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .timer-value {
+      display: block;
+      font-size: 2.05rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+      letter-spacing: -.04em;
+    }
+
+    .timer-adjust {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .minute-button {
+      padding: 6px 9px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: .65rem;
+      font-weight: 850;
+    }
+
+    .actions-area {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      min-height: 0;
+      padding: 18px clamp(20px, 2.5vw, 34px) 23px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: .74rem;
+      font-weight: 950;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .section-title span { color: var(--muted); font-size: .67rem; }
+
+    .action-list {
+      display: grid;
+      align-content: start;
+      gap: 8px;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 3px;
+      scrollbar-color: rgba(151,117,193,.5) transparent;
+      scrollbar-width: thin;
+    }
+
+    .action-item {
+      display: grid;
+      grid-template-columns: 28px 66px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      min-height: 54px;
+      padding: 8px 11px;
+      border: 1px solid rgba(194,178,199,.12);
+      border-radius: 12px;
+      background: rgba(5,6,19,.38);
+      cursor: pointer;
+      transition: opacity .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .action-item:hover { border-color: rgba(151,117,193,.35); }
+    .action-item.checked { opacity: .42; background: rgba(93,226,178,.04); }
+    .action-item.checked .action-text { text-decoration: line-through; }
+
+    .check-box {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border: 1px solid rgba(194,178,199,.28);
+      border-radius: 7px;
+      color: transparent;
+      font-size: .75rem;
+      font-weight: 950;
+    }
+
+    .checked .check-box {
+      border-color: rgba(93,226,178,.55);
+      background: rgba(93,226,178,.13);
+      color: var(--success);
+    }
+
+    .action-type {
+      color: var(--purple-bright);
+      font-size: .61rem;
+      font-weight: 950;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .action-text {
+      color: #ded9e7;
+      font-size: .8rem;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+
+    .right-column {
+      display: grid;
+      grid-template-rows: minmax(190px, .8fr) minmax(212px, 1fr) minmax(130px, .58fr);
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .next-panel, .overview-panel, .notes-panel { padding: 18px; }
+
+    .next-panel {
+      position: relative;
+      border-color: rgba(151,117,193,.3);
+      background:
+        linear-gradient(145deg, rgba(151,117,193,.11), rgba(8,8,26,.9)),
+        var(--ink-2);
+    }
+
+    .next-panel::after {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border: 1px dashed rgba(194,178,199,.13);
+      border-radius: 13px;
+      pointer-events: none;
+    }
+
+    .next-content { position: relative; z-index: 1; }
+
+    .next-time {
+      display: block;
+      margin-top: 14px;
+      color: var(--purple-bright);
+      font-size: .77rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+      letter-spacing: .1em;
+    }
+
+    .next-title {
+      margin: 8px 0 7px;
+      font-family: var(--display);
+      font-size: clamp(1.5rem, 2.2vw, 2.35rem);
+      line-height: .96;
+      letter-spacing: .025em;
+      text-transform: uppercase;
+    }
+
+    .next-subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: .75rem;
+      font-weight: 650;
+      line-height: 1.4;
+    }
+
+    .next-prepare {
+      display: grid;
+      gap: 6px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(194,178,199,.12);
+    }
+
+    .prepare-line {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 8px;
+      color: var(--silver);
+      font-size: .68rem;
+      line-height: 1.35;
+    }
+
+    .prepare-line strong {
+      color: var(--purple-bright);
+      font-size: .58rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .overview-panel { overflow-y: auto; scrollbar-width: thin; }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .metric {
+      min-height: 70px;
+      padding: 11px;
+      border: 1px solid rgba(194,178,199,.11);
+      border-radius: 11px;
+      background: rgba(5,6,19,.3);
+    }
+
+    .metric-label {
+      display: block;
+      color: var(--muted);
+      font-size: .57rem;
+      font-weight: 900;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      display: block;
+      margin-top: 6px;
+      color: var(--white);
+      font-size: 1rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 850;
+    }
+
+    .show-progress {
+      height: 7px;
+      margin-top: 17px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: rgba(194,178,199,.1);
+    }
+
+    .show-progress > span {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue-bright), var(--purple-bright));
+      box-shadow: 0 0 14px rgba(45,91,255,.65);
+      transition: width .35s ease;
+    }
+
+    .progress-copy {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .62rem;
+      font-weight: 800;
+    }
+
+    .run-note {
+      margin: 15px 0 0;
+      padding: 11px 12px;
+      border-left: 3px solid var(--warning);
+      background: rgba(255,189,89,.06);
+      color: #d7cfbf;
+      font-size: .69rem;
+      font-weight: 650;
+      line-height: 1.45;
+    }
+
+    .notes-panel { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+
+    .notes-panel textarea {
+      width: 100%;
+      min-height: 0;
+      margin-top: 10px;
+      resize: none;
+      border: 1px solid rgba(194,178,199,.13);
+      border-radius: 10px;
+      background: rgba(5,6,19,.38);
+      color: var(--silver);
+      padding: 10px;
+      font-size: .72rem;
+      line-height: 1.4;
+    }
+
+    .controlbar {
+      display: grid;
+      grid-template-columns: 1fr minmax(360px, 1.2fr) 1fr;
+      align-items: center;
+      gap: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .control-group { display: flex; align-items: center; gap: 8px; }
+    .control-group.right { justify-content: flex-end; }
+
+    .nav-button, .go-button, .pause-button {
+      min-height: 54px;
+      border-radius: 14px;
+      font-size: .78rem;
+      font-weight: 950;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .nav-button, .pause-button {
+      min-width: 142px;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      background: rgba(13,16,39,.72);
+      color: var(--silver);
+    }
+
+    .nav-button:disabled, .pause-button:disabled { opacity: .32; cursor: not-allowed; }
+
+    .go-button {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border: 1px solid rgba(99,126,255,.92);
+      background: linear-gradient(120deg, #0a25d7, #315eff 56%, #704cb4);
+      color: white;
+      box-shadow: 0 9px 30px rgba(8,32,231,.34), inset 0 1px 0 rgba(255,255,255,.24);
+    }
+
+    .go-button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 20%, rgba(255,255,255,.22) 44%, transparent 68%);
+      transform: translateX(-110%);
+      animation: buttonSweep 4.2s ease-in-out infinite;
+    }
+
+    .go-button span { position: relative; z-index: 1; }
+    .go-button:hover { filter: brightness(1.12); }
+    .go-button:active, .nav-button:active, .pause-button:active { transform: translateY(1px); }
+
+    .danger-button {
+      min-height: 40px;
+      padding: 0 13px;
+      border-color: rgba(255,87,112,.28);
+      border-radius: 11px;
+      color: #ff8d9e;
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .danger-button:hover { border-color: rgba(255,87,112,.58); background: rgba(255,87,112,.1); }
+
+    .shortcut {
+      margin-left: 4px;
+      padding: 2px 6px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 5px;
+      color: rgba(255,255,255,.58);
+      font-size: .56rem;
+      letter-spacing: 0;
+    }
+
+    dialog {
+      width: min(540px, calc(100vw - 30px));
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(151,117,193,.45);
+      border-radius: 18px;
+      background: #0c0e25;
+      color: var(--white);
+      box-shadow: 0 35px 100px rgba(0,0,0,.72);
+    }
+
+    dialog::backdrop { background: rgba(2,3,12,.8); backdrop-filter: blur(6px); }
+
+    .dialog-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .dialog-head h2 {
+      margin: 0;
+      font-family: var(--display);
+      font-size: 1.65rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .dialog-body { padding: 20px; color: var(--silver); font-size: .9rem; line-height: 1.55; }
+    .dialog-body p:first-child { margin-top: 0; }
+    .dialog-body p:last-child { margin-bottom: 0; }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      padding: 15px 20px 19px;
+      border-top: 1px solid var(--line);
+    }
+
+    .ghost-button {
+      min-height: 41px;
+      padding: 0 15px;
+      border-radius: 10px;
+      color: var(--silver);
+      font-size: .73rem;
+      font-weight: 850;
+    }
+
+    .confirm-button {
+      min-height: 41px;
+      padding: 0 17px;
+      border: 1px solid rgba(99,126,255,.75);
+      border-radius: 10px;
+      background: var(--blue);
+      color: white;
+      font-size: .73rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .contingency-list {
+      display: grid;
+      gap: 9px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .contingency-list li {
+      padding: 10px 12px;
+      border: 1px solid rgba(255,87,112,.15);
+      border-radius: 10px;
+      background: rgba(255,87,112,.05);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 106px;
+      z-index: 20;
+      max-width: min(520px, calc(100vw - 32px));
+      padding: 11px 15px;
+      border: 1px solid rgba(151,117,193,.4);
+      border-radius: 11px;
+      background: rgba(13,16,39,.96);
+      color: var(--silver);
+      box-shadow: 0 18px 55px rgba(0,0,0,.5);
+      font-size: .76rem;
+      font-weight: 750;
+      transform: translate(-50%, 30px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .cue-enter { animation: cueIn .38s cubic-bezier(.2,.75,.25,1); }
+
+    @keyframes beams {
+      from { transform: translate3d(-1.5%, -1%, 0) scale(1); opacity: .58; }
+      to { transform: translate3d(1.5%, 1%, 0) scale(1.04); opacity: .9; }
+    }
+
+    @keyframes buttonSweep {
+      0%, 65% { transform: translateX(-110%); }
+      88%, 100% { transform: translateX(110%); }
+    }
+
+    @keyframes cueIn {
+      from { opacity: .25; transform: translateY(8px); filter: blur(3px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    @keyframes dangerPulse {
+      50% { box-shadow: 0 0 55px rgba(255,87,112,.42); }
+    }
+
+    @media (max-width: 1260px) {
+      .workspace { grid-template-columns: 255px minmax(420px, 1fr) 300px; }
+      .current-cue { grid-template-columns: minmax(0, 1fr) 150px; }
+      .timer-ring { width: 145px; }
+      .timer-value { font-size: 1.72rem; }
+      .right-column { grid-template-rows: minmax(180px, .8fr) minmax(200px, 1fr) minmax(120px, .55fr); }
+    }
+
+    @media (max-width: 1020px) {
+      body { overflow: auto; }
+      .app { height: auto; min-height: 100vh; grid-template-rows: auto auto auto; }
+      .topbar { min-height: 92px; grid-template-columns: 1fr auto; }
+      .top-center { display: none; }
+      .workspace { grid-template-columns: 230px minmax(0, 1fr); min-height: 700px; }
+      .right-column { grid-column: 1 / -1; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 240px; }
+      .controlbar { position: sticky; bottom: 0; z-index: 10; min-height: 88px; padding: 0 8px; background: rgba(5,6,19,.94); backdrop-filter: blur(16px); }
+      .notes-panel textarea { min-height: 120px; }
+    }
+
+    @media (max-width: 760px) {
+      .app { padding: 0 10px; }
+      .topbar { grid-template-columns: 1fr; gap: 9px; padding: 14px 0; }
+      .top-actions { justify-content: space-between; }
+      .master-clock { min-width: 0; text-align: left; }
+      .workspace { grid-template-columns: 1fr; }
+      .timeline-panel { max-height: 310px; }
+      .center-panel { grid-template-rows: auto auto; }
+      .current-cue { grid-template-columns: 1fr; }
+      .timer-wrap { justify-self: start; }
+      .right-column { grid-template-columns: 1fr; grid-template-rows: auto auto 190px; }
+      .controlbar { grid-template-columns: 1fr 1.5fr; gap: 7px; }
+      .control-group.right { display: none; }
+      .nav-button { min-width: 0; width: 100%; }
+      .pause-button { display: none; }
+      .shortcut { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <div class="brand" aria-label="Tiempo para Hombres">
+          <span>Tiempo</span><span class="para">para</span><span>Hombres</span>
+        </div>
+        <div class="show-meta">Sábado 5 de septiembre · 3:00–8:00 p. m. · Amor a Quisqueya</div>
+      </div>
+
+      <div class="top-center">
+        <button class="mode-button" id="modeButton" type="button" aria-label="Cambiar modo de operación"></button>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-button" id="fullscreenButton" type="button" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
+        <button class="icon-button" id="helpButton" type="button" aria-label="Ayuda y atajos" title="Ayuda y atajos">?</button>
+        <div class="master-clock" aria-live="off">
+          <span class="clock" id="masterClock">--:--:--</span>
+          <span class="zone">Hora Santo Domingo</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="panel timeline-panel" aria-label="Rundown completo">
+        <div class="panel-head">
+          <p class="eyebrow">Rundown</p>
+          <span class="count-label" id="cueCount">0 / 0</span>
+        </div>
+        <div class="timeline" id="timeline"></div>
+      </section>
+
+      <section class="panel center-panel" aria-label="Cue actual">
+        <div class="current-cue" id="currentCue">
+          <div class="current-copy">
+            <div class="status-line">
+              <span class="live-status ready" id="liveStatus"><span class="status-dot"></span>Listo</span>
+              <span class="phase-chip" id="phaseChip">Previa</span>
+              <span class="risk-chip" id="riskChip" hidden>Tiempo crítico</span>
+            </div>
+            <h1 class="current-title" id="currentTitle">Chequeo general</h1>
+            <p class="current-subtitle" id="currentSubtitle"></p>
+            <div class="scheduled">
+              <span id="scheduledTime">Plan · 1:30 p. m.</span>
+              <span id="cueDuration">Duración · 30 min</span>
+              <span class="schedule-delta" id="scheduleDelta">Modo ensayo</span>
+            </div>
+          </div>
+
+          <div class="timer-wrap">
+            <div class="timer-ring" id="timerRing">
+              <div class="timer-inner">
+                <span class="timer-label" id="timerLabel">Duración</span>
+                <span class="timer-value" id="timerValue">30:00</span>
+              </div>
+            </div>
+            <div class="timer-adjust" aria-label="Ajustes del cronómetro">
+              <button class="minute-button" id="minusMinute" type="button">−1 min</button>
+              <button class="minute-button" id="plusMinute" type="button">+1 min</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions-area">
+          <div class="section-title">
+            <h2>Acciones de este cue</h2>
+            <span>Marca cada acción al completarla</span>
+          </div>
+          <div class="action-list" id="actionList"></div>
+        </div>
+      </section>
+
+      <aside class="right-column" aria-label="Preparación y estado general">
+        <section class="panel next-panel">
+          <div class="next-content">
+            <p class="eyebrow">A continuación</p>
+            <span class="next-time" id="nextTime">2:00 p. m.</span>
+            <h2 class="next-title" id="nextTitle">Ensayo cue-to-cue</h2>
+            <p class="next-subtitle" id="nextSubtitle"></p>
+            <div class="next-prepare" id="nextPrepare"></div>
+          </div>
+        </section>
+
+        <section class="panel overview-panel">
+          <p class="eyebrow">Estado del show</p>
+          <div class="metric-grid">
+            <div class="metric"><span class="metric-label">Cue actual</span><span class="metric-value" id="metricCue">PRE-01</span></div>
+            <div class="metric"><span class="metric-label">Final previsto</span><span class="metric-value">8:00 p. m.</span></div>
+            <div class="metric"><span class="metric-label">Desfase</span><span class="metric-value" id="metricDelta">Ensayo</span></div>
+            <div class="metric"><span class="metric-label">VO pendientes</span><span class="metric-value" id="metricVo">0</span></div>
+          </div>
+          <div class="show-progress" aria-label="Progreso del programa"><span id="showProgress"></span></div>
+          <div class="progress-copy"><span id="progressLabel">0% completado</span><span id="showWindow">3:00–8:00</span></div>
+          <p class="run-note" id="runNote">La rifa y la oración final comparten los últimos cinco minutos. Mantener el cierre estrictamente cronometrado.</p>
+        </section>
+
+        <section class="panel notes-panel">
+          <p class="eyebrow">Notas rápidas</p>
+          <textarea id="quickNotes" aria-label="Notas rápidas de producción" placeholder="Escribe aquí un cambio, pendiente o instrucción…"></textarea>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="controlbar">
+      <div class="control-group">
+        <button class="nav-button" id="previousButton" type="button">← Anterior <span class="shortcut">←</span></button>
+        <button class="pause-button" id="pauseButton" type="button" disabled>Pausar <span class="shortcut">P</span></button>
+      </div>
+      <button class="go-button" id="goButton" type="button"><span>Iniciar cue <span class="shortcut">Espacio</span></span></button>
+      <div class="control-group right">
+        <button class="danger-button" id="skipButton" type="button" hidden>Omitir opcional</button>
+        <button class="danger-button" id="contingencyButton" type="button">Contingencia</button>
+      </div>
+    </footer>
+  </div>
+
+  <dialog id="confirmDialog">
+    <div class="dialog-head"><h2 id="confirmTitle">Confirmar cambio</h2><button class="icon-button" type="button" data-close-dialog aria-label="Cerrar">×</button></div>
+    <div class="dialog-body"><p id="confirmMessage"></p></div>
+    <div class="dialog-actions"><button class="ghost-button" type="button" data-close-dialog>Cancelar</button><button class="confirm-button" id="confirmAction" type="button">Confirmar</button></div>
+  </dialog>
+
+  <dialog id="helpDialog">
+    <div class="dialog-head"><h2>Atajos y operación</h2><button class="icon-button" type="button" data-close-dialog aria-label="Cerrar">×</button></div>
+    <div class="dialog-body">
+      <p><strong>Espacio</strong> inicia el cue o avanza al siguiente. <strong>←</strong> vuelve al cue anterior. <strong>P</strong> pausa o reanuda el cronómetro. <strong>F</strong> activa pantalla completa.</p>
+      <p><strong>Modo ensayo</strong> permite practicar sin comparar el cue con la hora oficial. En <strong>modo evento</strong>, el sistema registra la hora real de cada entrada y muestra el desfase.</p>
+      <p>El progreso, los checks y las notas quedan guardados en esta computadora aunque se actualice la página.</p>
+      <p><button class="danger-button" id="resetButton" type="button">Reiniciar todo el programa</button></p>
+    </div>
+  </dialog>
+
+  <dialog id="contingencyDialog">
+    <div class="dialog-head"><h2>Protocolo de contingencia</h2><button class="icon-button" type="button" data-close-dialog aria-label="Cerrar">×</button></div>
+    <div class="dialog-body">
+      <p>El cronómetro del cue se pausará mientras se atiende la situación.</p>
+      <ul class="contingency-list">
+        <li><strong>Proyección:</strong> lanzar la lámina “En breves momentos continuaremos”.</li>
+        <li><strong>Audio:</strong> bajar o detener la fuente afectada; tener disponible la VO de contingencia.</li>
+        <li><strong>Escenario:</strong> mantener al próximo conferencista en espera hasta recibir GO.</li>
+        <li><strong>Producción:</strong> documentar el retraso y reanudar desde este mismo cue.</li>
+      </ul>
+    </div>
+    <div class="dialog-actions"><button class="ghost-button" type="button" data-close-dialog>Cancelar</button><button class="confirm-button" id="activateContingency" type="button">Activar pausa técnica</button></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    "use strict";
+
+    const EVENT = {
+      date: "2026-09-05",
+      timeZone: "America/Santo_Domingo",
+      start: "15:00",
+      end: "20:00"
+    };
+
+    const cues = [
+      {
+        code: "PRE-01", phase: "Previa", time: "13:30", duration: 30,
+        title: "Chequeo general",
+        subtitle: "Encendido, respaldo y confirmación de toda la cadena de producción.",
+        actions: [
+          ["CONTROL", "Abrir este rundown y confirmar que esté en modo ensayo para las pruebas."],
+          ["PROY", "Verificar la carpeta completa de artes, videos y PowerPoint en la computadora de proyección."],
+          ["AUDIO", "Probar todas las voces en off y confirmar niveles uniformes."],
+          ["BACKUP", "Confirmar una segunda copia de todos los recursos en USB o computadora alterna."],
+          ["COMMS", "Validar la vía de comunicación entre control, audio, proyección y escenario."]
+        ]
+      },
+      {
+        code: "PRE-02", phase: "Previa", time: "14:00", duration: 20,
+        title: "Ensayo cue-to-cue",
+        subtitle: "Recorrido técnico de las entradas, salidas y cambios esenciales, sin ejecutar el contenido completo.",
+        actions: [
+          ["CONTROL", "Recorrer desde la apertura hasta la despedida usando los botones Anterior y Siguiente."],
+          ["PROY", "Confirmar que cada recurso abra correctamente y que los PowerPoint estén listos."],
+          ["AUDIO", "Disparar el inicio de cada VO y cada bumper; no es necesario reproducirlos completos."],
+          ["TIEMPO", "Confirmar señas de 5 y 1 minuto para todas las conferencias."],
+          ["CIERRE", "Ensayar especialmente la transición conferencia final → rifa → oración."]
+        ]
+      },
+      {
+        code: "PRE-03", phase: "Previa", time: "14:20", duration: 10,
+        title: "Standby final",
+        subtitle: "Últimos diez minutos internos antes de abrir puertas.",
+        actions: [
+          ["CONTROL", "Cambiar a modo evento y volver al cue Puertas abiertas."],
+          ["AUDIO", "Dejar lista la música ambiental y VO-01."],
+          ["PROY", "Dejar lista la lámina animada de bienvenida."],
+          ["ESCENA", "Confirmar escenario despejado, micrófonos cargados y primer conferencista localizado."]
+        ]
+      },
+      {
+        code: "PRE-04", phase: "Puertas", time: "14:30", duration: 20,
+        title: "Puertas abiertas",
+        subtitle: "Recepción del público con ambiente visual y musical continuo.",
+        voice: "VO-01 · Voz en off de bienvenida y registro",
+        actions: [
+          ["PROY", "Mostrar lámina animada “Bienvenidos a Tiempo para Hombres” con countdown."],
+          ["AUDIO", "Iniciar música ambiental; reproducir VO-01 cuando el ingreso esté estable."],
+          ["LUCES", "Mantener ambiente azul y morado; sala con luz suficiente para el ingreso."],
+          ["PREPARAR", "Dejar cargada VO-02 y el aviso visual de 10 minutos."]
+        ]
+      },
+      {
+        code: "PRE-05", phase: "Puertas", time: "14:50", duration: 5,
+        title: "Aviso · 10 minutos",
+        subtitle: "Primer llamado para completar el registro y ocupar asientos.",
+        voice: "VO-02 · Voz en off “Faltan 10 minutos”",
+        actions: [
+          ["PROY", "Cambiar al aviso visual de 10 minutos."],
+          ["AUDIO", "Reproducir VO-02 sobre la música ambiental con ducking."],
+          ["ESCENA", "Confirmar apertura musical en posición."],
+          ["PREPARAR", "Cargar VO-03 y aviso de 5 minutos."]
+        ]
+      },
+      {
+        code: "PRE-06", phase: "Puertas", time: "14:55", duration: 4,
+        title: "Aviso · 5 minutos",
+        subtitle: "Llamado directo a ocupar asientos y preparar el inicio.",
+        voice: "VO-03 · Voz en off “Faltan 5 minutos”",
+        actions: [
+          ["PROY", "Cambiar al aviso visual de 5 minutos."],
+          ["AUDIO", "Reproducir VO-03 y reducir gradualmente la música ambiental."],
+          ["LUCES", "Iniciar transición suave de sala hacia la escena de apertura."],
+          ["PREPARAR", "Cargar VO-04, aviso final y animación de apertura."]
+        ]
+      },
+      {
+        code: "PRE-07", phase: "Puertas", time: "14:59", duration: 1,
+        title: "Aviso final · 1 minuto",
+        subtitle: "Celulares en silencio, puertas controladas y todas las áreas en standby.",
+        voice: "VO-04 · Voz en off final, celulares en silencio y comienzo inmediato",
+        actions: [
+          ["PROY", "Mostrar aviso final; preparar corte limpio a la animación de apertura."],
+          ["AUDIO", "Reproducir VO-04 y cerrar música ambiental al final de la voz."],
+          ["LUCES", "Bajar sala y dejar escena de apertura lista."],
+          ["CONTROL", "Dar STANDBY a proyección, audio, luces y apertura musical."]
+        ]
+      },
+      {
+        code: "SHOW-01", phase: "Apertura", time: "15:00", duration: 1,
+        title: "Apertura oficial",
+        subtitle: "Inicio sincronizado de la experiencia Tiempo para Hombres.",
+        voice: "VO-05 · Voz en off oficial de apertura",
+        actions: [
+          ["CONTROL", "GO general: proyección, VO, luces y apertura musical en standby."],
+          ["PROY", "Lanzar animación oficial de apertura."],
+          ["AUDIO", "Lanzar VO-05 con su diseño sonoro; al finalizar, tomar música en vivo."],
+          ["LUCES", "Ejecutar escena de apertura y revelar el escenario al cierre del video."]
+        ]
+      },
+      {
+        code: "SHOW-02", phase: "Apertura", time: "15:01", duration: 21,
+        title: "Apertura musical",
+        subtitle: "Bloque musical continuo. La presentación de Rey Matos debe estar lista antes de las 3:22.",
+        actions: [
+          ["PROY", "Mostrar visual ambiental de apertura o contenido musical correspondiente."],
+          ["AUDIO", "Mezcla musical en vivo; mantener VO-06 cargada y silenciada."],
+          ["TIEMPO", "Dar aviso interno de 5 minutos a las 3:17 y 1 minuto a las 3:21."],
+          ["ESCENA", "Confirmar Pastor Rey Matos con micrófono y PowerPoint completamente listo."],
+          ["PREPARAR", "Dejar lámina de presentación y VO-06 en primer plano."]
+        ]
+      },
+      {
+        code: "SHOW-03", phase: "Conferencia 1", time: "15:22", duration: 3,
+        title: "Presentación · Rey Matos",
+        subtitle: "Presentación automatizada y entrada del primer conferencista.",
+        voice: "VO-06 · Voz en off de la biografía del Pastor Rey Matos",
+        actions: [
+          ["PROY", "Lanzar lámina o video de presentación del Pastor Rey Matos."],
+          ["AUDIO", "Reproducir VO-06 completa; abrir aplausos y micrófono al finalizar."],
+          ["LUCES", "Cambiar de escena musical a conferencia durante la entrada."],
+          ["ESCENA", "Dar entrada al Pastor Rey Matos al cierre exacto de la VO."],
+          ["PREPARAR", "PowerPoint “Hombres: diseño y propósito” listo para TAKE."]
+        ]
+      },
+      {
+        code: "SHOW-04", phase: "Conferencia 1", time: "15:25", duration: 45,
+        title: "Diseño y propósito",
+        subtitle: "Primera conferencia · Pastor Rey Matos.",
+        actions: [
+          ["PROY", "TAKE al PowerPoint del Pastor Rey Matos."],
+          ["AUDIO", "Micrófono del conferencista abierto; todas las VO detenidas."],
+          ["TIEMPO", "Aviso interno de 5 minutos a las 4:05 y 1 minuto a las 4:09."],
+          ["PREPARAR", "Cargar lámina de receso, countdown y VO-07 antes de las 4:08."],
+          ["SALIDA", "Al cierre, aplausos; esperar que el conferencista abandone el área activa antes del GO."]
+        ]
+      },
+      {
+        code: "SHOW-05", phase: "Receso 1", time: "16:10", duration: 15,
+        title: "Primer receso",
+        subtitle: "Quince minutos libres antes de iniciar los llamados de regreso.",
+        voice: "VO-07 · Voz en off de salida al primer receso",
+        actions: [
+          ["PROY", "Mostrar lámina de receso con regreso a las 4:30 p. m. y countdown."],
+          ["AUDIO", "Reproducir VO-07; luego iniciar música ambiental."],
+          ["LUCES", "Subir parcialmente la sala y mantener identidad azul/morada."],
+          ["PREPARAR", "Cargar VO-08, visual de 5 minutos e interludio musical."]
+        ]
+      },
+      {
+        code: "SHOW-06", phase: "Receso 1", time: "16:25", duration: 4,
+        title: "Regreso · 5 minutos",
+        subtitle: "Llamado a regresar al salón antes del interludio.",
+        voice: "VO-08 · Voz en off “Regresamos en 5 minutos”",
+        actions: [
+          ["PROY", "Cambiar a visual de 5 minutos."],
+          ["AUDIO", "Reproducir VO-08 sobre música ambiental."],
+          ["ESCENA", "Interludio en posición; localizar al Pastor Popín."],
+          ["PREPARAR", "Cargar VO-09 de 1 minuto."]
+        ]
+      },
+      {
+        code: "SHOW-07", phase: "Receso 1", time: "16:29", duration: 1,
+        title: "Regreso · 1 minuto",
+        subtitle: "Último llamado y transición de sala al interludio musical.",
+        voice: "VO-09 · Voz en off “Regresamos en 1 minuto”",
+        actions: [
+          ["PROY", "Mostrar aviso final de regreso; preparar visual de interludio."],
+          ["AUDIO", "Reproducir VO-09 y cerrar música ambiental."],
+          ["LUCES", "Bajar sala y preparar escena musical."],
+          ["CONTROL", "Dar standby al interludio y a la presentación del Pastor Popín."]
+        ]
+      },
+      {
+        code: "SHOW-08", phase: "Interludio", time: "16:30", duration: 8,
+        title: "Interludio musical",
+        subtitle: "Regreso progresivo del público y preparación inmediata de la segunda conferencia.",
+        actions: [
+          ["PROY", "Lanzar visual del interludio musical."],
+          ["AUDIO", "Tomar música en vivo; VO-10 lista y silenciada."],
+          ["TIEMPO", "Dar aviso de 2 minutos a las 4:36 y 30 segundos a las 4:37:30."],
+          ["ESCENA", "Pastor Popín con micrófono listo fuera del área visible."],
+          ["PREPARAR", "Lámina de presentación y PowerPoint del Pastor Popín listos."]
+        ]
+      },
+      {
+        code: "SHOW-09", phase: "Conferencia 2", time: "16:38", duration: 2,
+        title: "Presentación · Pastor Popín",
+        subtitle: "Presentación automatizada y entrada del segundo conferencista.",
+        voice: "VO-10 · Voz en off de la biografía del Pastor Celso J. Pérez “Popín”",
+        actions: [
+          ["PROY", "Lanzar lámina o video de presentación del Pastor Popín."],
+          ["AUDIO", "Reproducir VO-10 completa; abrir aplausos y micrófono al finalizar."],
+          ["LUCES", "Cambiar de interludio a escena de conferencia."],
+          ["ESCENA", "Dar entrada al Pastor Popín al cierre exacto de la VO."],
+          ["PREPARAR", "PowerPoint “Hombres: influencia y relevancia” listo para TAKE."]
+        ]
+      },
+      {
+        code: "SHOW-10", phase: "Conferencia 2", time: "16:40", duration: 45,
+        title: "Influencia y relevancia",
+        subtitle: "Segunda conferencia · Pastor Celso J. Pérez “Popín”.",
+        actions: [
+          ["PROY", "TAKE al PowerPoint del Pastor Popín."],
+          ["AUDIO", "Micrófono del conferencista abierto; todas las VO detenidas."],
+          ["TIEMPO", "Aviso interno de 5 minutos a las 5:20 y 1 minuto a las 5:24."],
+          ["ESCENA", "Preparar discretamente los elementos necesarios para Fuego Cruzado."],
+          ["PREPARAR", "Cargar sting, lámina de Fuego Cruzado y VO-11 antes de las 5:23."]
+        ]
+      },
+      {
+        code: "SHOW-11", phase: "Panel", time: "17:25", duration: 3,
+        title: "Entrada · Fuego Cruzado",
+        subtitle: "Cambio rápido desde la segunda conferencia hacia el panel.",
+        voice: "VO-11 · Voz en off de introducción a Fuego Cruzado",
+        actions: [
+          ["PROY", "Cortar del PowerPoint al sting y lámina de Fuego Cruzado."],
+          ["AUDIO", "Reproducir sting + VO-11; abrir los micrófonos del panel al cierre."],
+          ["ESCENA", "Entrada directa de los participantes y ubicación inmediata."],
+          ["LUCES", "Abrir escena amplia para panel."],
+          ["CONTROL", "No esperar una presentación en tarima; la VO conduce toda la transición."]
+        ]
+      },
+      {
+        code: "SHOW-12", phase: "Panel", time: "17:28", duration: 44,
+        title: "Panel · Fuego Cruzado",
+        subtitle: "Conversación directa. Reservar los últimos minutos para una pregunta final y conclusión.",
+        actions: [
+          ["PROY", "Mantener arte del panel, cámaras o preguntas según el recurso definido."],
+          ["AUDIO", "Micrófonos del panel abiertos y monitoreados; mantener VO-12 cargada."],
+          ["TIEMPO", "Aviso de 10 minutos a las 6:02, 5 minutos a las 6:07 y 1 minuto a las 6:11."],
+          ["PREPARAR", "Lámina de refrigerio, countdown y VO-12 listas."],
+          ["CIERRE", "A las 6:10 iniciar pregunta final; concluir a más tardar a las 6:12."]
+        ]
+      },
+      {
+        code: "SHOW-13", phase: "Panel", time: "18:12", duration: 3,
+        title: "Cierre del panel",
+        subtitle: "Última respuesta, agradecimiento y salida ordenada del escenario.",
+        actions: [
+          ["TIEMPO", "Indicar cierre definitivo al responsable del panel."],
+          ["AUDIO", "Mantener micrófonos hasta la última frase; cerrarlos durante aplausos."],
+          ["PROY", "Mantener Fuego Cruzado hasta recibir GO para el refrigerio."],
+          ["ESCENA", "Despejar el escenario durante los aplausos."],
+          ["PREPARAR", "VO-12 y lámina de refrigerio en primer plano."]
+        ]
+      },
+      {
+        code: "SHOW-14", phase: "Refrigerio", time: "18:15", duration: 35,
+        title: "Receso con refrigerio",
+        subtitle: "Treinta y cinco minutos libres antes de los llamados escalonados de regreso.",
+        voice: "VO-12 · Voz en off de salida al refrigerio e instrucciones",
+        actions: [
+          ["PROY", "Mostrar lámina de refrigerio con regreso a las 7:00 p. m. y countdown."],
+          ["AUDIO", "Reproducir VO-12; luego iniciar música ambiental."],
+          ["LUCES", "Subir sala y habilitar ambiente de circulación."],
+          ["ESCENA", "Confirmar interludio final y Pastor Rey Matos localizados."],
+          ["PREPARAR", "Cargar avisos de 10, 5 y 1 minuto."]
+        ]
+      },
+      {
+        code: "SHOW-15", phase: "Refrigerio", time: "18:50", duration: 5,
+        title: "Regreso · 10 minutos",
+        subtitle: "Primer aviso para regresar al salón.",
+        voice: "VO-13 · Voz en off “Regresamos en 10 minutos”",
+        actions: [
+          ["PROY", "Cambiar a visual de 10 minutos."],
+          ["AUDIO", "Reproducir VO-13 sobre música ambiental."],
+          ["ESCENA", "Confirmar apertura musical en posición."],
+          ["PREPARAR", "Cargar VO-14 y aviso de 5 minutos."]
+        ]
+      },
+      {
+        code: "SHOW-16", phase: "Refrigerio", time: "18:55", duration: 4,
+        title: "Regreso · 5 minutos",
+        subtitle: "Llamado directo a ocupar asientos.",
+        voice: "VO-14 · Voz en off “Regresamos en 5 minutos”",
+        actions: [
+          ["PROY", "Cambiar a visual de 5 minutos."],
+          ["AUDIO", "Reproducir VO-14 y reducir gradualmente la música ambiental."],
+          ["LUCES", "Iniciar transición suave hacia el interludio."],
+          ["PREPARAR", "Cargar VO-15 y aviso final."]
+        ]
+      },
+      {
+        code: "SHOW-17", phase: "Refrigerio", time: "18:59", duration: 1,
+        title: "Regreso · 1 minuto",
+        subtitle: "Último llamado y standby del bloque final.",
+        voice: "VO-15 · Voz en off “Regresamos en 1 minuto”",
+        actions: [
+          ["PROY", "Mostrar aviso final y preparar visual de interludio."],
+          ["AUDIO", "Reproducir VO-15 y cerrar música ambiental."],
+          ["LUCES", "Bajar sala y preparar escena musical."],
+          ["CONTROL", "Dar standby al interludio y a VO-16."]
+        ]
+      },
+      {
+        code: "SHOW-18", phase: "Interludio", time: "19:00", duration: 8,
+        title: "Interludio musical",
+        subtitle: "Reentrada con energía y preparación de la conferencia final.",
+        actions: [
+          ["PROY", "Lanzar visual del interludio musical."],
+          ["AUDIO", "Tomar música en vivo; VO-16 lista y silenciada."],
+          ["TIEMPO", "Aviso de 2 minutos a las 7:06 y 30 segundos a las 7:07:30."],
+          ["ESCENA", "Pastor Rey Matos listo con micrófono."],
+          ["PREPARAR", "Lámina y PowerPoint “Hombres: batallas y desafíos” listos."]
+        ]
+      },
+      {
+        code: "SHOW-19", phase: "Conferencia 3", time: "19:08", duration: 2,
+        title: "Reentrada · Rey Matos",
+        subtitle: "Transición temática hacia el último mensaje, sin repetir la biografía completa.",
+        voice: "VO-16 · Voz en off de transición y reentrada del Pastor Rey Matos",
+        actions: [
+          ["PROY", "Lanzar lámina o video de la tercera conferencia."],
+          ["AUDIO", "Reproducir VO-16; abrir aplausos y micrófono al finalizar."],
+          ["LUCES", "Cambiar de interludio a escena final de conferencia."],
+          ["ESCENA", "Dar entrada al Pastor Rey Matos al cierre exacto de la VO."],
+          ["PREPARAR", "PowerPoint de la tercera conferencia listo para TAKE."]
+        ]
+      },
+      {
+        code: "SHOW-20", phase: "Conferencia 3", time: "19:10", duration: 45,
+        title: "Batallas y desafíos",
+        subtitle: "Tercera conferencia · Pastor Rey Matos.",
+        risk: "Cierre inmediato",
+        actions: [
+          ["PROY", "TAKE al PowerPoint del Pastor Rey Matos."],
+          ["AUDIO", "Micrófono del conferencista abierto; VO-17 y VO-18 cargadas."],
+          ["TIEMPO", "Aviso de 10 minutos a las 7:45, 5 minutos a las 7:50 y 1 minuto a las 7:54."],
+          ["RIFA", "Confirmar mecanismo, premio y responsable completamente listos antes de las 7:50."],
+          ["PREPARAR", "Lámina de rifa, VO-17 y escena de oración listas para salida inmediata."]
+        ]
+      },
+      {
+        code: "SHOW-21", phase: "Cierre", time: "19:55", duration: 3,
+        title: "Rifa",
+        subtitle: "Ejecución breve: explicación, selección, anuncio y entrega sin pausas.",
+        voice: "VO-17 · Voz en off de introducción e instrucciones de la rifa",
+        risk: "3 minutos",
+        actions: [
+          ["PROY", "Cortar del PowerPoint a la lámina o animación de rifa."],
+          ["AUDIO", "Reproducir VO-17; mantener música de tensión muy breve si aplica."],
+          ["RIFA", "Ejecutar selección y anunciar ganador sin explicación adicional."],
+          ["ESCENA", "Realizar entrega o indicación de reclamación de forma inmediata."],
+          ["PREPARAR", "VO-18, escena de oración y lámina de agradecimiento listas."]
+        ]
+      },
+      {
+        code: "SHOW-22", phase: "Cierre", time: "19:58", duration: 2,
+        title: "Oración final",
+        subtitle: "Cue opcional. Si se confirma, debe comenzar inmediatamente después de la rifa.",
+        voice: "VO-18 · Voz en off de transición a la oración final",
+        optional: true,
+        risk: "2 minutos",
+        actions: [
+          ["PROY", "Mostrar lámina de cierre limpia o mantener visual ambiental."],
+          ["AUDIO", "Reproducir VO-18; abrir el micrófono de quien realizará la oración."],
+          ["LUCES", "Escena sobria de cierre; sala baja."],
+          ["TIEMPO", "Oración máxima de 90 segundos para permitir el cierre a las 8:00."],
+          ["PREPARAR", "Lámina “Gracias por ser parte” y música de salida listas."]
+        ]
+      },
+      {
+        code: "POST-01", phase: "Posterior", time: "20:00", duration: 20,
+        title: "Despedida y salida",
+        subtitle: "Cierre oficial, música de salida e indicaciones posteriores.",
+        voice: "VO-19 · Voz en off de agradecimiento y despedida",
+        actions: [
+          ["PROY", "Mostrar lámina “Gracias por ser parte de Tiempo para Hombres”."],
+          ["AUDIO", "Reproducir VO-19 y tomar música de salida."],
+          ["LUCES", "Subir sala de forma gradual sin perder el ambiente del evento."],
+          ["ESCENA", "Despejar el área principal y orientar el flujo hacia fotografías o salida."],
+          ["CONTROL", "Mantener el sistema activo hasta confirmar que no habrá otro anuncio."]
+        ]
+      },
+      {
+        code: "POST-02", phase: "Posterior", time: "20:20", duration: 20,
+        title: "Fotos y convivencia",
+        subtitle: "Ambiente posterior mientras disminuye el flujo de asistentes.",
+        actions: [
+          ["PROY", "Mantener loop de agradecimiento, redes o próximo paso definido."],
+          ["AUDIO", "Continuar música de salida a nivel moderado."],
+          ["ESCENA", "Coordinar fotografías sin bloquear pasillos ni desmontaje."],
+          ["CONTROL", "Confirmar con el responsable general cuándo finalizar contenido público."]
+        ]
+      },
+      {
+        code: "POST-03", phase: "Posterior", time: "20:40", duration: 20,
+        title: "Cierre técnico",
+        subtitle: "Respaldo del evento, apagado ordenado y verificación final.",
+        actions: [
+          ["PROY", "Cerrar presentaciones y respaldar cualquier archivo actualizado durante el evento."],
+          ["AUDIO", "Detener música, guardar grabaciones y apagar siguiendo el orden técnico."],
+          ["CONTROL", "Guardar notas, revisar incidentes y confirmar que el rundown quedó completo."],
+          ["BACKUP", "Duplicar grabaciones y archivos importantes antes de desmontar."],
+          ["FINAL", "Confirmar cierre con producción general."]
+        ]
+      }
+    ];
+
+    const STORAGE_KEY = "tiempo-para-hombres-control-v1";
+    const defaultState = {
+      currentIndex: 0,
+      mode: "rehearsal",
+      startedAt: null,
+      pausedAt: null,
+      pauseTotal: 0,
+      extraSeconds: 0,
+      completed: [],
+      skipped: [],
+      checks: {},
+      actualStarts: {},
+      notes: ""
+    };
+
+    let state = loadState();
+    let pendingAction = null;
+    let toastTimer = null;
+    let primaryLocked = false;
+
+    const el = id => document.getElementById(id);
+    const timeline = el("timeline");
+    const currentCueCard = el("currentCue");
+    const confirmDialog = el("confirmDialog");
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return { ...defaultState, ...saved, currentIndex: Math.min(Math.max(saved?.currentIndex ?? 0, 0), cues.length - 1) };
+      } catch {
+        return { ...defaultState };
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function formatTime(time) {
+      const [hourText, minute] = time.split(":");
+      let hour = Number(hourText);
+      const suffix = hour >= 12 ? "p. m." : "a. m.";
+      hour = hour % 12 || 12;
+      return `${hour}:${minute} ${suffix}`;
+    }
+
+    function formatClock(date = new Date()) {
+      return new Intl.DateTimeFormat("es-DO", {
+        timeZone: EVENT.timeZone,
+        hour: "numeric", minute: "2-digit", second: "2-digit", hour12: true
+      }).format(date);
+    }
+
+    function plannedDate(cue) {
+      return new Date(`${EVENT.date}T${cue.time}:00-04:00`);
+    }
+
+    function formatDuration(minutes) {
+      if (minutes === 1) return "1 min";
+      return `${minutes} min`;
+    }
+
+    function formatSeconds(total, overtime = false) {
+      const value = Math.max(0, Math.round(Math.abs(total)));
+      const minutes = Math.floor(value / 60);
+      const seconds = value % 60;
+      return `${overtime ? "+" : ""}${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    function humanDelta(ms) {
+      const minutes = Math.round(Math.abs(ms) / 60000);
+      if (minutes < 1) return { text: "A tiempo", className: "" };
+      if (ms > 0) return { text: `${minutes} min tarde`, className: "late" };
+      return { text: `${minutes} min temprano`, className: "early" };
+    }
+
+    function isStarted() { return Number.isFinite(state.startedAt); }
+    function isPaused() { return Number.isFinite(state.pausedAt); }
+
+    function elapsedSeconds() {
+      if (!isStarted()) return 0;
+      const end = isPaused() ? state.pausedAt : Date.now();
+      return Math.max(0, (end - state.startedAt - state.pauseTotal) / 1000);
+    }
+
+    function renderTimeline() {
+      const fragment = document.createDocumentFragment();
+      let previousPhase = null;
+      cues.forEach((cue, index) => {
+        if (cue.phase !== previousPhase) {
+          const label = document.createElement("div");
+          label.className = "phase-label";
+          label.textContent = cue.phase;
+          fragment.appendChild(label);
+          previousPhase = cue.phase;
+        }
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "cue-row";
+        button.dataset.index = index;
+        if (index === state.currentIndex) button.classList.add("active");
+        if (state.completed.includes(cue.code)) button.classList.add("done");
+        if (state.skipped.includes(cue.code)) button.classList.add("skipped");
+        button.setAttribute("aria-label", `Ir a ${formatTime(cue.time)}: ${cue.title}`);
+        button.innerHTML = `
+          <span class="cue-time">${formatTime(cue.time).replace(" p. m.", "p").replace(" a. m.", "a")}</span>
+          <span class="cue-copy"><span class="cue-title">${cue.title}</span><span class="cue-code">${cue.code}</span></span>
+          <span class="cue-badges">${cue.voice ? '<span class="mini-badge">VO</span>' : ''}${cue.optional ? '<span class="mini-badge optional">OPC</span>' : ''}</span>`;
+        button.addEventListener("click", () => requestJump(index));
+        fragment.appendChild(button);
+      });
+      timeline.replaceChildren(fragment);
+    }
+
+    function renderActions(cue) {
+      const list = el("actionList");
+      const checked = state.checks[cue.code] || [];
+      list.innerHTML = "";
+
+      if (cue.voice) {
+        cue = { ...cue, actions: [["VO", cue.voice], ...cue.actions] };
+      }
+
+      cue.actions.forEach(([type, text], index) => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "action-item";
+        if (checked.includes(index)) item.classList.add("checked");
+        item.setAttribute("aria-pressed", checked.includes(index) ? "true" : "false");
+        item.innerHTML = `<span class="check-box">✓</span><span class="action-type">${type}</span><span class="action-text">${text}</span>`;
+        item.addEventListener("click", () => toggleCheck(cue.code, index));
+        list.appendChild(item);
+      });
+    }
+
+    function renderNext() {
+      const next = cues[state.currentIndex + 1];
+      if (!next) {
+        el("nextTime").textContent = "Programa completado";
+        el("nextTitle").textContent = "Fin del rundown";
+        el("nextSubtitle").textContent = "Guarda las notas y confirma el cierre con producción general.";
+        el("nextPrepare").innerHTML = "";
+        return;
+      }
+      el("nextTime").textContent = `${formatTime(next.time)} · ${next.code}`;
+      el("nextTitle").textContent = next.title;
+      el("nextSubtitle").textContent = next.subtitle;
+      const prep = [];
+      if (next.voice) prep.push(["VO", next.voice.replace(/^VO-\d+ · /, "")]);
+      next.actions.slice(0, 2).forEach(action => prep.push(action));
+      el("nextPrepare").innerHTML = prep.slice(0, 3).map(([type, text]) => `<div class="prepare-line"><strong>${type}</strong><span>${text}</span></div>`).join("");
+    }
+
+    function renderStatic() {
+      const cue = cues[state.currentIndex];
+      el("cueCount").textContent = `${state.currentIndex + 1} / ${cues.length}`;
+      el("phaseChip").textContent = cue.phase;
+      el("currentTitle").textContent = cue.title;
+      el("currentSubtitle").textContent = cue.subtitle;
+      el("scheduledTime").textContent = `Plan · ${formatTime(cue.time)}`;
+      el("cueDuration").textContent = `Duración · ${formatDuration(cue.duration)}`;
+      el("riskChip").hidden = !cue.risk;
+      el("riskChip").textContent = cue.risk || "";
+      el("metricCue").textContent = cue.code;
+      el("previousButton").disabled = state.currentIndex === 0;
+      el("pauseButton").disabled = !isStarted();
+      el("pauseButton").textContent = isPaused() ? "Reanudar" : "Pausar";
+      el("skipButton").hidden = !cue.optional;
+      el("goButton").querySelector("span").innerHTML = isStarted()
+        ? `Siguiente cue <span class="shortcut">Espacio</span>`
+        : `Iniciar cue <span class="shortcut">Espacio</span>`;
+      el("modeButton").innerHTML = state.mode === "event"
+        ? '<span class="status-dot"></span>Modo evento'
+        : '<span class="status-dot"></span>Modo ensayo';
+      el("modeButton").classList.toggle("event", state.mode === "event");
+
+      const completedCount = new Set([...state.completed, ...state.skipped]).size;
+      const percentage = Math.round((completedCount / cues.length) * 100);
+      el("showProgress").style.width = `${percentage}%`;
+      el("progressLabel").textContent = `${percentage}% completado`;
+      const remainingVo = cues.slice(state.currentIndex).filter(item => item.voice && !state.skipped.includes(item.code)).length;
+      el("metricVo").textContent = String(remainingVo);
+      el("quickNotes").value = state.notes || "";
+
+      renderTimeline();
+      renderActions(cue);
+      renderNext();
+
+      requestAnimationFrame(() => {
+        const active = timeline.querySelector(".cue-row.active");
+        active?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        currentCueCard.classList.remove("cue-enter");
+        void currentCueCard.offsetWidth;
+        currentCueCard.classList.add("cue-enter");
+      });
+    }
+
+    function renderDynamic() {
+      const cue = cues[state.currentIndex];
+      el("masterClock").textContent = formatClock();
+      const totalSeconds = cue.duration * 60 + state.extraSeconds;
+      const elapsed = elapsedSeconds();
+      const remaining = totalSeconds - elapsed;
+      const progress = isStarted() ? Math.min(1, Math.max(0, elapsed / Math.max(totalSeconds, 1))) : 0;
+      const timerRing = el("timerRing");
+      timerRing.style.setProperty("--progress", `${progress * 360}deg`);
+      timerRing.classList.toggle("warning", isStarted() && remaining > 0 && remaining <= 60);
+      timerRing.classList.toggle("overtime", isStarted() && remaining < 0);
+
+      if (!isStarted()) {
+        el("timerLabel").textContent = "Duración";
+        el("timerValue").textContent = formatSeconds(totalSeconds);
+      } else if (remaining >= 0) {
+        el("timerLabel").textContent = isPaused() ? "Pausado" : "Restante";
+        el("timerValue").textContent = formatSeconds(remaining);
+      } else {
+        el("timerLabel").textContent = "Excedido";
+        el("timerValue").textContent = formatSeconds(remaining, true);
+      }
+
+      const status = el("liveStatus");
+      status.classList.remove("ready", "paused");
+      if (!isStarted()) {
+        status.classList.add("ready");
+        status.innerHTML = '<span class="status-dot"></span>Listo';
+      } else if (isPaused()) {
+        status.classList.add("paused");
+        status.innerHTML = '<span class="status-dot"></span>Pausado';
+      } else {
+        status.innerHTML = '<span class="status-dot"></span>En curso';
+      }
+
+      let deltaInfo = { text: "Modo ensayo", className: "" };
+      if (state.mode === "event" && state.actualStarts[cue.code]) {
+        deltaInfo = humanDelta(state.actualStarts[cue.code] - plannedDate(cue).getTime());
+      } else if (state.mode === "event") {
+        const now = Date.now();
+        const until = plannedDate(cue).getTime() - now;
+        if (until > 0) {
+          const mins = Math.ceil(until / 60000);
+          deltaInfo = { text: `Programado en ${mins} min`, className: "" };
+        } else {
+          deltaInfo = humanDelta(now - plannedDate(cue).getTime());
+        }
+      }
+      const delta = el("scheduleDelta");
+      delta.textContent = deltaInfo.text;
+      delta.className = `schedule-delta ${deltaInfo.className}`.trim();
+      el("metricDelta").textContent = state.mode === "event" ? deltaInfo.text : "Ensayo";
+    }
+
+    function toggleCheck(code, index) {
+      const values = new Set(state.checks[code] || []);
+      values.has(index) ? values.delete(index) : values.add(index);
+      state.checks[code] = [...values];
+      saveState();
+      renderActions(cues[state.currentIndex]);
+    }
+
+    function startCurrent() {
+      const cue = cues[state.currentIndex];
+      const now = Date.now();
+      state.startedAt = now;
+      state.pausedAt = null;
+      state.pauseTotal = 0;
+      state.extraSeconds = 0;
+      state.actualStarts[cue.code] = now;
+      saveState();
+      renderStatic();
+      renderDynamic();
+      toast(`GO · ${cue.code} · ${cue.title}`);
+    }
+
+    function completeAndAdvance() {
+      const cue = cues[state.currentIndex];
+      if (!state.completed.includes(cue.code) && !state.skipped.includes(cue.code)) state.completed.push(cue.code);
+      if (state.currentIndex >= cues.length - 1) {
+        state.startedAt = null;
+        state.pausedAt = null;
+        saveState();
+        renderStatic();
+        toast("Rundown completado");
+        return;
+      }
+      state.currentIndex += 1;
+      state.startedAt = null;
+      state.pausedAt = null;
+      state.pauseTotal = 0;
+      state.extraSeconds = 0;
+      saveState();
+      renderStatic();
+      startCurrent();
+    }
+
+    function primaryAction() {
+      if (primaryLocked) return;
+      primaryLocked = true;
+      el("goButton").disabled = true;
+      setTimeout(() => {
+        primaryLocked = false;
+        el("goButton").disabled = false;
+      }, 650);
+      if (!isStarted()) startCurrent();
+      else completeAndAdvance();
+    }
+
+    function pauseToggle() {
+      if (!isStarted()) return;
+      if (isPaused()) {
+        state.pauseTotal += Date.now() - state.pausedAt;
+        state.pausedAt = null;
+        toast("Cronómetro reanudado");
+      } else {
+        state.pausedAt = Date.now();
+        toast("Cronómetro pausado");
+      }
+      saveState();
+      renderStatic();
+      renderDynamic();
+    }
+
+    function previousCue() {
+      if (state.currentIndex === 0) return;
+      requestConfirmation(
+        "Volver al cue anterior",
+        `¿Quieres regresar a ${cues[state.currentIndex - 1].code} · ${cues[state.currentIndex - 1].title}? El cronómetro quedará listo para iniciar nuevamente.`,
+        () => selectCue(state.currentIndex - 1)
+      );
+    }
+
+    function requestJump(index) {
+      if (index === state.currentIndex) return;
+      requestConfirmation(
+        "Saltar a otro cue",
+        `¿Quieres ir a ${cues[index].code} · ${cues[index].title}?`,
+        () => selectCue(index)
+      );
+    }
+
+    function selectCue(index) {
+      state.currentIndex = index;
+      state.startedAt = null;
+      state.pausedAt = null;
+      state.pauseTotal = 0;
+      state.extraSeconds = 0;
+      saveState();
+      renderStatic();
+      renderDynamic();
+      toast(`Listo · ${cues[index].code}`);
+    }
+
+    function skipOptional() {
+      const cue = cues[state.currentIndex];
+      if (!cue.optional) return;
+      requestConfirmation(
+        "Omitir cue opcional",
+        `¿Confirmas que se omitirá ${cue.title}? El programa avanzará inmediatamente al siguiente cue.`,
+        () => {
+          if (!state.skipped.includes(cue.code)) state.skipped.push(cue.code);
+          state.startedAt = null;
+          completeAndAdvance();
+        }
+      );
+    }
+
+    function requestConfirmation(title, message, action) {
+      pendingAction = action;
+      el("confirmTitle").textContent = title;
+      el("confirmMessage").textContent = message;
+      confirmDialog.showModal();
+    }
+
+    function closeDialogs() {
+      document.querySelectorAll("dialog[open]").forEach(dialog => dialog.close());
+      pendingAction = null;
+    }
+
+    function resetShow() {
+      el("helpDialog").close();
+      requestConfirmation(
+        "Reiniciar programa",
+        "Esto borrará el avance, los checks, los tiempos y las notas guardadas en esta computadora.",
+        () => {
+          state = { ...defaultState, completed: [], skipped: [], checks: {}, actualStarts: {} };
+          saveState();
+          renderStatic();
+          renderDynamic();
+          toast("Programa reiniciado");
+        }
+      );
+    }
+
+    function toggleMode() {
+      const nextMode = state.mode === "event" ? "rehearsal" : "event";
+      requestConfirmation(
+        nextMode === "event" ? "Activar modo evento" : "Activar modo ensayo",
+        nextMode === "event"
+          ? "Las entradas se compararán con el horario oficial y se registrará el desfase real."
+          : "Los cronómetros funcionarán libremente sin medir retrasos contra el horario oficial.",
+        () => {
+          state.mode = nextMode;
+          saveState();
+          renderStatic();
+          renderDynamic();
+          toast(nextMode === "event" ? "Modo evento activado" : "Modo ensayo activado");
+        }
+      );
+    }
+
+    function adjustMinute(amount) {
+      state.extraSeconds = Math.max(-Math.max(0, cues[state.currentIndex].duration * 60 - 60), state.extraSeconds + amount * 60);
+      saveState();
+      renderDynamic();
+      toast(`${amount > 0 ? "+" : "−"}1 minuto en el cue actual`);
+    }
+
+    function activateContingency() {
+      el("contingencyDialog").close();
+      if (isStarted() && !isPaused()) state.pausedAt = Date.now();
+      saveState();
+      renderStatic();
+      renderDynamic();
+      toast("Pausa técnica activa · Ejecutar protocolo");
+    }
+
+    function toast(message) {
+      const node = el("toast");
+      node.textContent = message;
+      node.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => node.classList.remove("show"), 2600);
+    }
+
+    async function toggleFullscreen() {
+      try {
+        if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+        else await document.exitFullscreen();
+      } catch {
+        toast("El navegador no permitió pantalla completa");
+      }
+    }
+
+    el("goButton").addEventListener("click", primaryAction);
+    el("previousButton").addEventListener("click", previousCue);
+    el("pauseButton").addEventListener("click", pauseToggle);
+    el("modeButton").addEventListener("click", toggleMode);
+    el("skipButton").addEventListener("click", skipOptional);
+    el("fullscreenButton").addEventListener("click", toggleFullscreen);
+    el("helpButton").addEventListener("click", () => el("helpDialog").showModal());
+    el("contingencyButton").addEventListener("click", () => el("contingencyDialog").showModal());
+    el("activateContingency").addEventListener("click", activateContingency);
+    el("resetButton").addEventListener("click", resetShow);
+    el("minusMinute").addEventListener("click", () => adjustMinute(-1));
+    el("plusMinute").addEventListener("click", () => adjustMinute(1));
+    el("quickNotes").addEventListener("input", event => {
+      state.notes = event.target.value;
+      saveState();
+    });
+
+    document.querySelectorAll("[data-close-dialog]").forEach(button => button.addEventListener("click", () => button.closest("dialog").close()));
+    el("confirmAction").addEventListener("click", () => {
+      const action = pendingAction;
+      confirmDialog.close();
+      pendingAction = null;
+      action?.();
+    });
+    confirmDialog.addEventListener("close", () => { pendingAction = null; });
+
+    document.addEventListener("keydown", event => {
+      if (event.target.matches("textarea, input") || document.querySelector("dialog[open]")) return;
+      if (event.code === "Space") { event.preventDefault(); primaryAction(); }
+      if (event.key === "ArrowLeft") { event.preventDefault(); previousCue(); }
+      if (event.key.toLowerCase() === "p") { event.preventDefault(); pauseToggle(); }
+      if (event.key.toLowerCase() === "f") { event.preventDefault(); toggleFullscreen(); }
+    });
+
+    renderStatic();
+    renderDynamic();
+    setInterval(renderDynamic, 250);
+  </script>
+</body>
+</html>
