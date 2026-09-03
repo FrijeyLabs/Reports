@@ -4,7 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#08081a">
+  <meta name="application-name" content="TPH Control">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TPH Control">
   <meta name="description" content="Control interno de producción para Tiempo para Hombres.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon-192.png">
   <title>Tiempo para Hombres · Control de Producción</title>
   <style>
     :root {
@@ -920,6 +927,244 @@
     .dialog-body p:first-child { margin-top: 0; }
     .dialog-body p:last-child { margin-bottom: 0; }
 
+    .help-tools {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .help-tool {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      align-items: center;
+      gap: 11px;
+      min-height: 72px;
+      padding: 12px;
+      border: 1px solid rgba(151,117,193,.28);
+      border-radius: 13px;
+      background: linear-gradient(145deg, rgba(8,32,231,.1), rgba(151,117,193,.06));
+      color: var(--white);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+
+    .help-tool:hover {
+      border-color: rgba(151,117,193,.65);
+      background: linear-gradient(145deg, rgba(8,32,231,.18), rgba(151,117,193,.11));
+      transform: translateY(-1px);
+    }
+
+    .help-tool-icon {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(45,91,255,.45);
+      border-radius: 11px;
+      background: rgba(8,32,231,.14);
+      color: var(--purple-bright);
+      font-size: 1rem;
+      font-weight: 950;
+    }
+
+    .help-tool-copy strong {
+      display: block;
+      color: var(--white);
+      font-size: .78rem;
+      line-height: 1.3;
+    }
+
+    .help-tool-copy small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: .66rem;
+      line-height: 1.35;
+    }
+
+    .offline-status {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 38px;
+      padding: 9px 11px;
+      border: 1px solid rgba(255,189,89,.2);
+      border-radius: 10px;
+      background: rgba(255,189,89,.05);
+      color: var(--warning);
+      font-size: .69rem;
+      font-weight: 780;
+    }
+
+    .offline-status.ready {
+      border-color: rgba(93,226,178,.25);
+      background: rgba(93,226,178,.06);
+      color: var(--success);
+    }
+
+    .offline-status .status-dot { flex: 0 0 auto; }
+
+    .reset-zone {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    #resourcesDialog {
+      width: min(820px, calc(100vw - 30px));
+      max-height: min(88vh, 900px);
+    }
+
+    #resourcesDialog .dialog-body {
+      max-height: calc(88vh - 145px);
+      overflow-y: auto;
+      scrollbar-color: rgba(151,117,193,.5) transparent;
+      scrollbar-width: thin;
+    }
+
+    .resource-summary {
+      position: sticky;
+      top: -20px;
+      z-index: 3;
+      margin: -20px -20px 18px;
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(12,14,37,.96);
+      backdrop-filter: blur(14px);
+    }
+
+    .resource-summary-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .resource-summary-line strong {
+      color: var(--white);
+      font-size: .78rem;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .resource-count {
+      color: var(--purple-bright);
+      font-size: .8rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+    }
+
+    .resource-progress {
+      height: 8px;
+      margin-top: 11px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(194,178,199,.1);
+    }
+
+    .resource-progress > span {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue-bright), var(--purple-bright));
+      box-shadow: 0 0 18px rgba(45,91,255,.55);
+      transition: width .28s ease;
+    }
+
+    .resource-group + .resource-group { margin-top: 22px; }
+
+    .resource-group-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      padding: 0 3px;
+    }
+
+    .resource-group-head h3 {
+      margin: 0;
+      color: var(--purple-bright);
+      font-size: .68rem;
+      font-weight: 950;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .resource-group-head span {
+      color: var(--muted);
+      font-size: .63rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+    }
+
+    .resource-list { display: grid; gap: 7px; }
+
+    .resource-item {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 11px;
+      min-height: 58px;
+      padding: 9px 11px;
+      border: 1px solid rgba(194,178,199,.12);
+      border-radius: 11px;
+      background: rgba(5,6,19,.34);
+      cursor: pointer;
+      transition: opacity .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .resource-item:hover { border-color: rgba(151,117,193,.38); }
+    .resource-item.checked { opacity: .48; border-color: rgba(93,226,178,.2); background: rgba(93,226,178,.04); }
+
+    .resource-item input {
+      width: 21px;
+      height: 21px;
+      margin: 0;
+      accent-color: var(--blue-bright);
+      cursor: pointer;
+    }
+
+    .resource-copy strong {
+      display: block;
+      color: var(--white);
+      font-size: .76rem;
+      line-height: 1.3;
+    }
+
+    .resource-copy small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .64rem;
+      line-height: 1.35;
+    }
+
+    .resource-cue {
+      max-width: 118px;
+      color: var(--silver);
+      font-size: .58rem;
+      font-weight: 850;
+      letter-spacing: .05em;
+      text-align: right;
+      text-transform: uppercase;
+    }
+
+    .optional-tag {
+      display: inline-flex;
+      margin-left: 6px;
+      padding: 2px 5px;
+      border: 1px solid rgba(255,189,89,.28);
+      border-radius: 999px;
+      color: var(--warning);
+      font-size: .5rem;
+      letter-spacing: .06em;
+      vertical-align: 1px;
+    }
+
     .dialog-actions {
       display: flex;
       justify-content: flex-end;
@@ -1042,6 +1287,9 @@
       .nav-button { min-width: 0; width: 100%; }
       .pause-button { display: none; }
       .shortcut { display: none; }
+      .help-tools { grid-template-columns: 1fr; }
+      .resource-item { grid-template-columns: 28px minmax(0, 1fr); }
+      .resource-cue { grid-column: 2; max-width: none; text-align: left; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1178,8 +1426,40 @@
       <p><strong>Espacio</strong> inicia el cue o avanza al siguiente. <strong>←</strong> vuelve al cue anterior. <strong>P</strong> pausa o reanuda el cronómetro. <strong>F</strong> activa pantalla completa.</p>
       <p><strong>Modo ensayo</strong> permite practicar sin comparar el cue con la hora oficial. En <strong>modo evento</strong>, el sistema registra la hora real de cada entrada y muestra el desfase.</p>
       <p>El progreso, los checks y las notas quedan guardados en esta computadora aunque se actualice la página.</p>
-      <p><button class="danger-button" id="resetButton" type="button">Reiniciar todo el programa</button></p>
+      <div class="help-tools">
+        <button class="help-tool" id="resourcesButton" type="button">
+          <span class="help-tool-icon">✓</span>
+          <span class="help-tool-copy"><strong>Recursos gráficos</strong><small id="resourceMenuStatus">0 de 29 preparados</small></span>
+        </button>
+        <button class="help-tool" id="installButton" type="button">
+          <span class="help-tool-icon">↓</span>
+          <span class="help-tool-copy"><strong id="installButtonTitle">Instalar aplicación</strong><small id="installButtonCopy">Acceso rápido y funcionamiento sin internet</small></span>
+        </button>
+      </div>
+      <div class="offline-status" id="offlineStatus"><span class="status-dot"></span><span>Preparando funcionamiento offline…</span></div>
+      <div class="reset-zone"><button class="danger-button" id="resetButton" type="button">Reiniciar avance del programa</button></div>
     </div>
+  </dialog>
+
+  <dialog id="resourcesDialog">
+    <div class="dialog-head"><h2>Recursos gráficos</h2><button class="icon-button" type="button" data-close-dialog aria-label="Cerrar">×</button></div>
+    <div class="dialog-body">
+      <div class="resource-summary">
+        <div class="resource-summary-line"><strong>Preparación general</strong><span class="resource-count" id="resourceCount">0 / 29 listos</span></div>
+        <div class="resource-progress" role="progressbar" aria-label="Progreso de recursos gráficos" aria-valuemin="0" aria-valuemax="29" aria-valuenow="0"><span id="resourceProgress"></span></div>
+      </div>
+      <div id="resourceChecklist"></div>
+    </div>
+    <div class="dialog-actions"><button class="danger-button" id="resetResourcesButton" type="button">Restablecer checklist</button><button class="confirm-button" type="button" data-close-dialog>Listo</button></div>
+  </dialog>
+
+  <dialog id="installHelpDialog">
+    <div class="dialog-head"><h2>Instalar aplicación</h2><button class="icon-button" type="button" data-close-dialog aria-label="Cerrar">×</button></div>
+    <div class="dialog-body">
+      <p id="installInstructions">Abre el menú del navegador y selecciona “Instalar Tiempo para Hombres” o “Añadir a pantalla de inicio”. Después de la primera carga, la app funcionará completamente sin internet.</p>
+      <div class="offline-status ready"><span class="status-dot"></span><span>Todos los recursos esenciales se almacenan en este dispositivo.</span></div>
+    </div>
+    <div class="dialog-actions"><button class="confirm-button" type="button" data-close-dialog>Entendido</button></div>
   </dialog>
 
   <dialog id="contingencyDialog">
@@ -1605,7 +1885,45 @@
       }
     ];
 
+    const graphicResources = [
+      { id: "title-master", group: "Identidad y previa", name: "Título maestro · Tiempo para Hombres", detail: "Arte base horizontal · 1920 × 1080", cue: "Uso general" },
+      { id: "welcome-loop", group: "Identidad y previa", name: "Bienvenida y puertas abiertas", detail: "Loop o lámina de recepción", cue: "PRE-04" },
+      { id: "start-countdown", group: "Identidad y previa", name: "Countdown previo al inicio", detail: "Cuenta regresiva hasta las 3:00 p. m.", cue: "PRE-04" },
+      { id: "start-warning-10", group: "Identidad y previa", name: "Aviso · Faltan 10 minutos", detail: "Lámina sincronizada con VO-02", cue: "PRE-05" },
+      { id: "start-warning-5", group: "Identidad y previa", name: "Aviso · Faltan 5 minutos", detail: "Lámina sincronizada con VO-03", cue: "PRE-06" },
+      { id: "start-warning-1", group: "Identidad y previa", name: "Aviso final · 1 minuto", detail: "Incluye celulares en silencio", cue: "PRE-07" },
+
+      { id: "opening-animation", group: "Apertura y conferencia 1", name: "Animación oficial de apertura", detail: "Video o motion graphic con salida limpia", cue: "SHOW-01" },
+      { id: "opening-music-loop", group: "Apertura y conferencia 1", name: "Visual de apertura musical", detail: "Loop ambiental sin texto pequeño", cue: "SHOW-02" },
+      { id: "rey-bio-intro", group: "Apertura y conferencia 1", name: "Presentación · Pastor Rey Matos", detail: "Lámina o video para la VO de biografía", cue: "SHOW-03" },
+      { id: "rey-ppt-1", group: "Apertura y conferencia 1", name: "PowerPoint · Diseño y propósito", detail: "Archivo recibido, abierto y probado", cue: "SHOW-04" },
+      { id: "break-1", group: "Apertura y conferencia 1", name: "Primer receso · Countdown", detail: "Regreso a las 4:30 p. m.", cue: "SHOW-05" },
+      { id: "break-1-warning-5", group: "Apertura y conferencia 1", name: "Primer receso · Faltan 5 minutos", detail: "Lámina sincronizada con VO-08", cue: "SHOW-06" },
+      { id: "break-1-warning-1", group: "Apertura y conferencia 1", name: "Primer receso · Falta 1 minuto", detail: "Lámina sincronizada con VO-09", cue: "SHOW-07" },
+      { id: "interlude-loop", group: "Apertura y conferencia 1", name: "Visual de interludio musical", detail: "Loop reutilizable en ambos interludios", cue: "SHOW-08 / 18" },
+
+      { id: "popin-bio-intro", group: "Conferencia 2 y panel", name: "Presentación · Pastor Popín", detail: "Lámina o video para la VO de biografía", cue: "SHOW-09" },
+      { id: "popin-ppt", group: "Conferencia 2 y panel", name: "PowerPoint · Influencia y relevancia", detail: "Archivo recibido, abierto y probado", cue: "SHOW-10" },
+      { id: "crossfire-sting", group: "Conferencia 2 y panel", name: "Sting · Fuego Cruzado", detail: "Entrada animada y título del panel", cue: "SHOW-11" },
+      { id: "crossfire-background", group: "Conferencia 2 y panel", name: "Fondo de apoyo · Fuego Cruzado", detail: "Lámina fija, loop o composición para cámaras", cue: "SHOW-12 / 13" },
+
+      { id: "snack-break", group: "Refrigerio y retorno", name: "Receso con refrigerio · Countdown", detail: "Regreso a las 7:00 p. m.", cue: "SHOW-14" },
+      { id: "snack-warning-10", group: "Refrigerio y retorno", name: "Refrigerio · Faltan 10 minutos", detail: "Lámina sincronizada con VO-13", cue: "SHOW-15" },
+      { id: "snack-warning-5", group: "Refrigerio y retorno", name: "Refrigerio · Faltan 5 minutos", detail: "Lámina sincronizada con VO-14", cue: "SHOW-16" },
+      { id: "snack-warning-1", group: "Refrigerio y retorno", name: "Refrigerio · Falta 1 minuto", detail: "Lámina sincronizada con VO-15", cue: "SHOW-17" },
+
+      { id: "rey-final-intro", group: "Bloque final y salida", name: "Reentrada · Pastor Rey Matos", detail: "Lámina o video de la tercera conferencia", cue: "SHOW-19" },
+      { id: "rey-ppt-3", group: "Bloque final y salida", name: "PowerPoint · Batallas y desafíos", detail: "Archivo recibido, abierto y probado", cue: "SHOW-20" },
+      { id: "raffle", group: "Bloque final y salida", name: "Rifa", detail: "Lámina, animación o sistema de selección probado", cue: "SHOW-21" },
+      { id: "final-prayer", group: "Bloque final y salida", name: "Oración final", detail: "Visual sobrio de cierre", cue: "SHOW-22", optional: true },
+      { id: "thank-you", group: "Bloque final y salida", name: "Gracias por ser parte", detail: "Lámina de despedida y salida", cue: "POST-01" },
+      { id: "photos-loop", group: "Bloque final y salida", name: "Fotos, redes y convivencia", detail: "Loop posterior al evento", cue: "POST-02" },
+
+      { id: "technical-hold", group: "Contingencia", name: "En breves momentos continuaremos", detail: "Lámina de pausa técnica y respaldo", cue: "Emergencia" }
+    ];
+
     const STORAGE_KEY = "tiempo-para-hombres-control-v1";
+    const RESOURCE_STORAGE_KEY = "tiempo-para-hombres-graphics-v1";
     const defaultState = {
       currentIndex: 0,
       mode: "rehearsal",
@@ -1621,9 +1939,11 @@
     };
 
     let state = loadState();
+    let resourceState = loadResourceState();
     let pendingAction = null;
     let toastTimer = null;
     let primaryLocked = false;
+    let deferredInstallPrompt = null;
 
     const el = id => document.getElementById(id);
     const timeline = el("timeline");
@@ -1641,6 +1961,95 @@
 
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadResourceState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(RESOURCE_STORAGE_KEY));
+        const validIds = new Set(graphicResources.map(resource => resource.id));
+        const completed = Array.isArray(saved?.completed) ? saved.completed.filter(id => validIds.has(id)) : [];
+        return { completed };
+      } catch {
+        return { completed: [] };
+      }
+    }
+
+    function saveResourceState() {
+      localStorage.setItem(RESOURCE_STORAGE_KEY, JSON.stringify(resourceState));
+    }
+
+    function renderResourceChecklist() {
+      const completed = new Set(resourceState.completed);
+      const groups = new Map();
+      graphicResources.forEach(resource => {
+        if (!groups.has(resource.group)) groups.set(resource.group, []);
+        groups.get(resource.group).push(resource);
+      });
+
+      const container = el("resourceChecklist");
+      container.innerHTML = "";
+      groups.forEach((resources, groupName) => {
+        const group = document.createElement("section");
+        group.className = "resource-group";
+        const groupReady = resources.filter(resource => completed.has(resource.id)).length;
+        group.innerHTML = `<div class="resource-group-head"><h3>${groupName}</h3><span>${groupReady} / ${resources.length}</span></div>`;
+        const list = document.createElement("div");
+        list.className = "resource-list";
+
+        resources.forEach(resource => {
+          const label = document.createElement("label");
+          label.className = "resource-item";
+          if (completed.has(resource.id)) label.classList.add("checked");
+          label.innerHTML = `
+            <input type="checkbox" ${completed.has(resource.id) ? "checked" : ""} aria-label="${resource.name}">
+            <span class="resource-copy"><strong>${resource.name}${resource.optional ? '<span class="optional-tag">OPCIONAL</span>' : ""}</strong><small>${resource.detail}</small></span>
+            <span class="resource-cue">${resource.cue}</span>`;
+          label.querySelector("input").addEventListener("change", event => toggleResource(resource.id, event.target.checked));
+          list.appendChild(label);
+        });
+
+        group.appendChild(list);
+        container.appendChild(group);
+      });
+
+      const ready = completed.size;
+      const total = graphicResources.length;
+      const percentage = Math.round((ready / total) * 100);
+      el("resourceCount").textContent = `${ready} / ${total} listos`;
+      el("resourceMenuStatus").textContent = `${ready} de ${total} preparados`;
+      el("resourceProgress").style.width = `${percentage}%`;
+      el("resourceProgress").parentElement.setAttribute("aria-valuemax", String(total));
+      el("resourceProgress").parentElement.setAttribute("aria-valuenow", String(ready));
+    }
+
+    function toggleResource(id, checked) {
+      const completed = new Set(resourceState.completed);
+      checked ? completed.add(id) : completed.delete(id);
+      resourceState.completed = [...completed];
+      saveResourceState();
+      renderResourceChecklist();
+      if (completed.size === graphicResources.length) toast("Todos los recursos gráficos están preparados");
+    }
+
+    function openResources() {
+      el("helpDialog").close();
+      renderResourceChecklist();
+      el("resourcesDialog").showModal();
+    }
+
+    function resetResourceChecklist() {
+      el("resourcesDialog").close();
+      requestConfirmation(
+        "Restablecer recursos gráficos",
+        "Esto desmarcará únicamente el checklist de recursos. El avance del rundown y las notas no cambiarán.",
+        () => {
+          resourceState = { completed: [] };
+          saveResourceState();
+          renderResourceChecklist();
+          el("resourcesDialog").showModal();
+          toast("Checklist de recursos restablecido");
+        }
+      );
     }
 
     function formatTime(time) {
@@ -1987,7 +2396,7 @@
       el("helpDialog").close();
       requestConfirmation(
         "Reiniciar programa",
-        "Esto borrará el avance, los checks, los tiempos y las notas guardadas en esta computadora.",
+        "Esto borrará el avance del rundown, los checks operativos, los tiempos y las notas. El checklist de recursos gráficos se conservará.",
         () => {
           state = { ...defaultState, completed: [], skipped: [], checks: {}, actualStarts: {} };
           saveState();
@@ -2048,6 +2457,73 @@
       }
     }
 
+    function isStandalone() {
+      return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    }
+
+    function updateInstallUI() {
+      const installed = isStandalone();
+      el("installButtonTitle").textContent = installed ? "Aplicación instalada" : "Instalar aplicación";
+      el("installButtonCopy").textContent = installed
+        ? "Acceso directo activo en este dispositivo"
+        : deferredInstallPrompt
+          ? "Instalar ahora y usar completamente offline"
+          : "Acceso rápido y funcionamiento sin internet";
+    }
+
+    async function installApp() {
+      el("helpDialog").close();
+      if (isStandalone()) {
+        toast("La aplicación ya está instalada");
+        return;
+      }
+
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const choice = await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        updateInstallUI();
+        toast(choice.outcome === "accepted" ? "Instalación iniciada" : "Instalación cancelada");
+        return;
+      }
+
+      const appleDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      el("installInstructions").textContent = appleDevice || safari
+        ? "En Safari, abre el botón Compartir y selecciona “Añadir a pantalla de inicio”. Abre la app una vez con internet para completar la copia offline."
+        : "Abre el menú de Chrome o Edge y selecciona “Instalar Tiempo para Hombres”. Si la opción aún no aparece, espera unos segundos y vuelve a abrir este menú. Después de la primera carga, funcionará completamente sin internet.";
+      el("installHelpDialog").showModal();
+    }
+
+    function setOfflineStatus(message, ready = false) {
+      const node = el("offlineStatus");
+      node.classList.toggle("ready", ready);
+      node.querySelector("span:last-child").textContent = message;
+    }
+
+    function updateConnectionStatus() {
+      if (!navigator.onLine) {
+        setOfflineStatus("Sin internet · la app está funcionando offline", true);
+      } else if (navigator.serviceWorker?.controller) {
+        setOfflineStatus("Lista para funcionar completamente sin internet", true);
+      }
+    }
+
+    async function prepareOfflineApp() {
+      if (!("serviceWorker" in navigator) || !/^https?:$/.test(location.protocol)) {
+        setOfflineStatus("El HTML funciona offline; instala la app desde el enlace privado", location.protocol === "file:");
+        return;
+      }
+
+      try {
+        await navigator.serviceWorker.register("./service-worker.js", { scope: "./" });
+        await navigator.serviceWorker.ready;
+        setOfflineStatus("Lista para funcionar completamente sin internet", true);
+      } catch {
+        setOfflineStatus("No se pudo completar la copia offline; vuelve a cargar con internet");
+      }
+    }
+
     el("goButton").addEventListener("click", primaryAction);
     el("previousButton").addEventListener("click", previousCue);
     el("pauseButton").addEventListener("click", pauseToggle);
@@ -2055,9 +2531,12 @@
     el("skipButton").addEventListener("click", skipOptional);
     el("fullscreenButton").addEventListener("click", toggleFullscreen);
     el("helpButton").addEventListener("click", () => el("helpDialog").showModal());
+    el("resourcesButton").addEventListener("click", openResources);
+    el("installButton").addEventListener("click", installApp);
     el("contingencyButton").addEventListener("click", () => el("contingencyDialog").showModal());
     el("activateContingency").addEventListener("click", activateContingency);
     el("resetButton").addEventListener("click", resetShow);
+    el("resetResourcesButton").addEventListener("click", resetResourceChecklist);
     el("minusMinute").addEventListener("click", () => adjustMinute(-1));
     el("plusMinute").addEventListener("click", () => adjustMinute(1));
     el("quickNotes").addEventListener("input", event => {
@@ -2074,6 +2553,20 @@
     });
     confirmDialog.addEventListener("close", () => { pendingAction = null; });
 
+    window.addEventListener("beforeinstallprompt", event => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      updateInstallUI();
+    });
+    window.addEventListener("appinstalled", async () => {
+      deferredInstallPrompt = null;
+      updateInstallUI();
+      if (navigator.storage?.persist) await navigator.storage.persist();
+      toast("Aplicación instalada y lista para uso offline");
+    });
+    window.addEventListener("online", updateConnectionStatus);
+    window.addEventListener("offline", updateConnectionStatus);
+
     document.addEventListener("keydown", event => {
       if (event.target.matches("textarea, input") || document.querySelector("dialog[open]")) return;
       if (event.code === "Space") { event.preventDefault(); primaryAction(); }
@@ -2083,7 +2576,10 @@
     });
 
     renderStatic();
+    renderResourceChecklist();
     renderDynamic();
+    updateInstallUI();
+    prepareOfflineApp();
     setInterval(renderDynamic, 250);
   </script>
 </body>
