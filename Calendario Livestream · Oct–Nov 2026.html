@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1120">
+<title>Calendario Livestream | Octubre – Noviembre 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5fa;--cd:#fff;--sb:#eef1f8;--tx:#0f172a;--mu:#586783;--bd:#dce2ee;--ac:#0369a1;--thu:#1d4ed8;--sun:#be185d;--wa:#b45309;--pt:34%;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1120;--cd:#111c30;--sb:#1a2742;--tx:#f8fafc;--mu:#94a3b8;--bd:#1e2e4a;--ac:#38bdf8;--thu:#60a5fa;--sun:#f472b6;--wa:#fbbf24;--pt:74%;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1120;--cd:#111c30;--sb:#1a2742;--tx:#f8fafc;--mu:#94a3b8;--bd:#1e2e4a;--ac:#38bdf8;--thu:#60a5fa;--sun:#f472b6;--wa:#fbbf24;--pt:74%;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;color:inherit;cursor:pointer}
+.app{max-width:600px;margin:0 auto;padding:0 12px 96px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);margin:0 -12px;padding:10px 12px 8px;border-bottom:1px solid var(--bd)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{font-size:1.15rem;margin:0;font-weight:800;letter-spacing:-.01em}
+.sub{color:var(--mu);font-size:.78rem}
+.ico{width:40px;height:40px;border-radius:12px;border:1px solid var(--bd);background:var(--cd);font-size:1.05rem}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 12px 2px;margin:0 -12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:flex;align-items:center;gap:6px;min-height:40px;padding:0 14px 0 6px;border-radius:99px;border:1px solid var(--bd);background:var(--cd);font-size:.85rem;font-weight:600}
+.chip.all{padding:0 16px}
+.chip.on{background:hsl(var(--h,200) 70% 50%/.2);border-color:hsl(var(--h,200) 70% 50%)}
+.chip.all.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.av{width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;flex:none;font-style:normal;font-weight:800;font-size:.8rem;background:hsl(var(--h) 70% 50%/.22);color:hsl(var(--h) 70% var(--pt))}
+#sum{display:none;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--sb);font-size:.85rem}
+#sum button{border:0;background:none;color:var(--ac);font-weight:700;font-size:.85rem;min-height:36px}
+.hero{margin:14px 0 4px;padding:16px;border-radius:20px;border:1px solid var(--bd);background:linear-gradient(135deg,rgba(56,189,248,.18),rgba(129,140,248,.14))}
+.hero .k{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ac);font-weight:800}
+.hero .d{font-size:1.35rem;font-weight:800;margin:2px 0 12px;letter-spacing:-.01em}
+.mh{display:flex;justify-content:space-between;align-items:baseline;margin:22px 4px 10px}
+.mh h2{margin:0;font-size:1.05rem;font-weight:800}
+.mh span{color:var(--mu);font-size:.78rem}
+.wk{background:var(--cd);border:1px solid var(--bd);border-radius:18px;margin-bottom:12px;overflow:hidden}
+.wh{display:flex;justify-content:space-between;padding:10px 14px;font-size:.78rem;color:var(--mu);border-bottom:1px solid var(--bd)}
+.wh b{color:var(--tx)}
+.svc{display:flex;gap:12px;padding:12px 12px 12px 14px;scroll-margin-top:150px}
+.svc+.svc{border-top:1px dashed var(--bd)}
+.svc.past{opacity:.5}
+.svc.today,.svc.nxt{background:linear-gradient(90deg,rgba(56,189,248,.12),transparent);box-shadow:inset 3px 0 0 var(--ac)}
+.dt{width:50px;flex:none;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0}
+.dt b{font-size:1.4rem;line-height:1}
+.dt small{font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.th .dt{color:var(--thu);background:rgba(96,165,250,.15)}
+.su .dt{color:var(--sun);background:rgba(244,114,182,.15)}
+.rl{flex:1;min-width:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.r{display:flex;flex-direction:column;gap:4px;justify-content:center;min-height:58px;padding:8px 10px;border-radius:12px;border:1px solid transparent;background:var(--sb);text-align:left;font-size:.9rem}
+.r small{font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--mu)}
+.w{display:flex;align-items:center;gap:7px;font-weight:700;min-width:0;overflow-wrap:anywhere}
+button.r .w{color:hsl(var(--h) 70% var(--pt))}
+button.r:active{transform:scale(.97)}
+.r.me{border-color:hsl(var(--h) 70% 50%);background:hsl(var(--h) 70% 50%/.16)}
+.fx,.tbd{background:none;border:1px dashed var(--bd)}
+.fx .w{color:var(--mu);font-style:italic;font-weight:600}
+.tbd{border-color:var(--wa)}.tbd .w{color:var(--wa)}
+.none{text-align:center;color:var(--mu);padding:40px 0}
+details{margin-top:22px;background:var(--cd);border:1px solid var(--bd);border-radius:16px;padding:0 14px}
+summary{min-height:48px;display:flex;align-items:center;font-weight:700;cursor:pointer}
+details ul{margin:0 0 14px;padding-left:18px;color:var(--mu);font-size:.88rem}
+details li{margin-bottom:6px}details li b{color:var(--tx)}
+.fab{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:30;min-height:48px;padding:0 18px;border-radius:99px;border:0;background:var(--ac);color:#fff;font-weight:700;font-size:.9rem;box-shadow:0 8px 24px rgba(2,6,23,.35)}
+@media(max-width:340px){.rl{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="bar">
+      <div><h1>🎥 Producción Livestream</h1><div class="sub">Octubre – Noviembre 2026 · toca un nombre para ver sus turnos</div></div>
+      <button class="ico" id="th" aria-label="Cambiar tema">🌓</button>
+    </div>
+    <div class="chips" id="chips"></div>
+  </header>
+  <div id="sum"></div>
+  <section class="hero" id="hero"></section>
+  <main id="list"></main>
+  <details>
+    <summary>📋 Pautas del calendario</summary>
+    <ul>
+      <li>Quien toca el <b>jueves</b> repite el <b>domingo</b> siguiente.</li>
+      <li>Todos participan <b>2 veces</b>, con al menos <b>4 semanas</b> de descanso entre turnos.</li>
+      <li>Los jueves llevan Dirección + <b>Cámara fija</b>. Quedan <b>por asignar</b> el 22 y 29 de oct y el 26 de nov.</li>
+      <li><b>Solo Dirección:</b> Jordany, Christopher, Herly. <b>Solo Cámara:</b> David, Melanie. <b>Ambos:</b> Laura, Jerdlin, Jeudy.</li>
+      <li><b>Javier:</b> Dirección los jueves, Cámara los domingos.</li>
+    </ul>
+  </details>
+</div>
+<button class="fab" id="fab">📍 Ir a hoy</button>
+<script>
+const D=[['2026-10-01','Laura','Laura','David'],['2026-10-08','Javier','Jerdlin','Javier'],['2026-10-15','Jeudy','Jordany','Jeudy'],['2026-10-22',0,'Christopher','Melanie'],['2026-10-29',0,'Herly','David'],['2026-11-05','Laura','Laura','Jerdlin'],['2026-11-12','Jeudy','Jordany','Jeudy'],['2026-11-19','Javier','Christopher','Javier'],['2026-11-26',0,'Herly','Melanie']];
+const MN=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const pd=s=>{const[a,b,c]=s.split('-');return new Date(a,b-1,c)};
+const add=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const $=id=>document.getElementById(id);
+const today=ymd(new Date());
+const P=[...new Set(D.flatMap(r=>r.slice(1)).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+const H=n=>P.indexOf(n)*40+10;
+const W=D.map((r,i)=>{const t=pd(r[0]),s=add(t,3);return{n:i+1,t,s,svc:[{d:t,k:'th',L:r[1],C:0},{d:s,k:'su',L:r[2],C:r[3]}]}});
+let F=null;
+const has=(s,p)=>s.L===p||s.C===p;
+const av=p=>`<i class="av" style="--h:${H(p)}">${p[0]}</i>`;
+const who=(p,l)=>`<button class="r${F===p?' me':''}" data-p="${p}" style="--h:${H(p)}" aria-label="${l}: ${p}. Ver sus turnos"><small>${l}</small><span class="w">${av(p)}${p}</span></button>`;
+const ph=(l,t,c)=>`<div class="r ${c}"><small>${l}</small><span class="w">${t}</span></div>`;
+const roles=s=>(s.L?who(s.L,'Dirección'):ph('Dirección','Por asignar','tbd'))+(s.C?who(s.C,'Cámara'):ph('Cámara','Cámara fija','fx'));
+const lab=d=>`${d.getDate()} de ${MN[d.getMonth()]}`;
+function render(){
+  const all=W.flatMap(w=>w.svc).filter(s=>!F||has(s,F));
+  const nx=all.find(s=>ymd(s.d)>=today);
+  $('chips').innerHTML=`<button class="chip all${F?'':' on'}" data-p="">Todos</button>`+P.map(p=>`<button class="chip${F===p?' on':''}" data-p="${p}" style="--h:${H(p)}">${av(p)}${p}</button>`).join('');
+  const sm=$('sum');
+  if(F){const t=all.filter(s=>s.k=='th').length;sm.style.display='flex';sm.innerHTML=`<span><b>${F}</b> · ${t} jueves · ${all.length-t} domingos</span><button data-p="">Quitar filtro</button>`}else sm.style.display='none';
+  $('hero').innerHTML=nx?`<div class="k">${F?F+' · próximo turno':ymd(nx.d)===today?'Hoy':'Próximo servicio'}</div><div class="d">${nx.k=='th'?'Jueves':'Domingo'} ${lab(nx.d)}</div><div class="rl">${roles(nx)}</div>`:`<div class="k">Calendario finalizado</div><div class="d">No hay más servicios</div>`;
+  let h='';
+  [9,10].forEach(m=>{
+    const ws=W.filter(w=>w.s.getMonth()===m&&w.svc.some(s=>!F||has(s,F)));
+    if(!ws.length)return;
+    const c=ws.reduce((a,w)=>a+w.svc.filter(s=>!F||has(s,F)).length,0);
+    h+=`<div class="mh"><h2>${MN[m][0].toUpperCase()+MN[m].slice(1)} 2026</h2><span>${F?c+' servicios':ws.length+' semanas'}</span></div>`;
+    ws.forEach(w=>{
+      h+=`<article class="wk"><div class="wh"><b>Semana ${w.n}</b><span>${add(w.s,-6).getDate()} ${MN[add(w.s,-6).getMonth()].slice(0,3)} – ${w.s.getDate()} ${MN[w.s.getMonth()].slice(0,3)}</span></div>`;
+      w.svc.filter(s=>!F||has(s,F)).forEach(s=>{
+        const t=ymd(s.d);
+        h+=`<div class="svc ${s.k}${t<today?' past':''}${t===today?' today':''}${s===nx?' nxt':''}"><div class="dt"><b>${s.d.getDate()}</b><small>${t===today?'Hoy':s.k=='th'?'Jue':'Dom'}</small></div><div class="rl">${roles(s)}</div></div>`});
+      h+='</article>'});
+  });
+  $('list').innerHTML=h;
+  $('fab').style.display=nx?'':'none';
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-p]');
+  if(!b)return;
+  const p=b.dataset.p;
+  F=p&&p!==F?p:null;
+  render();
+  if(!b.classList.contains('chip'))window.scrollTo({top:0});
+});
+$('fab').onclick=()=>{
+  const el=document.querySelector('.svc.nxt');
+  if(el)el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
+};
+$('th').onclick=()=>{
+  const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme=dark?'light':'dark';
+};
+render();
+</script>
+</body>
+</html>
