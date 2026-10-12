@@ -300,7 +300,18 @@ p{font-size:clamp(13px,1.45vw,16px);line-height:1.62;color:var(--ink-soft);margi
   .flip{transition:opacity var(--turn) ease;}
   .flip.turning .shade{animation:none;}
   .hint .arw{animation:none;}
+  .scroll-cue{animation:none;}
 }
+
+/* floating "scroll for more" cue on the Guiones page */
+.scroll-cue{position:absolute;left:50%;bottom:4px;margin-left:-15px;z-index:3;
+  width:30px;height:30px;border-radius:50%;background:var(--coral);color:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 6px 14px rgba(201,64,63,.35);transition:opacity .3s;
+  animation:cueBob 1.8s ease-in-out infinite;}
+.scroll-cue svg{width:14px;height:14px;}
+.scroll-cue:hover{background:var(--coral-deep);}
+@keyframes cueBob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
 
 /* ---------- READ BUTTON + SCRIPT MODAL ---------- */
 .read-btn{display:inline-block;font:600 10px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;
@@ -1299,12 +1310,15 @@ const pages = [
     <p class="eyebrow">Proyecto 05 · Guiones</p>
     <h2 class="h-lg">Guiones<br>Cinematográficos</h2>
     <div class="rule"></div>
-    <div style="flex:1;min-height:0;overflow-y:auto;padding-right:4px">
+    <div style="position:relative;flex:1;min-height:0;display:flex;flex-direction:column">
+    <div class="scroll-body" style="flex:1;min-height:0;overflow-y:auto;padding-right:4px;padding-bottom:36px" onscroll="var c=this.nextElementSibling;c.style.opacity=(this.scrollHeight-this.scrollTop-this.clientHeight<8)?0:1">
 
       <p style="margin:0 0 10px"><b style="color:var(--ink)">La Ministra de la Soledad (2024)</b> <button class="read-btn" onclick="openScript('ministra')">Leer</button><br><span style="font-size:12.5px">Si por las noches te sientes solitario y aislado, puedes llamar a la Ministra de la Soledad. Ella te puede leer una historia, cantarte una canción, o simplemente escuchar tus desahogos. Pero, en las silenciosas horas de la madrugada, ¿quién está ahí para la Ministra cuando ella está sola?</span></p>
       <p style="margin:0 0 10px"><b style="color:var(--ink)">Azulito (2025)</b> <button class="read-btn" onclick="openScript('azulito')">Leer</button><br><span style="font-size:12.5px">Para acortar el camino después de su práctica de fútbol, unos adolescentes se meten en una propiedad privada llena de matas de mangos, mientras comparten las dificultades ocultas de sus vidas.</span></p>
       <p style="margin:0 0 10px"><b style="color:var(--ink)">Viren (2023)</b> <button class="read-btn" onclick="openScript('viren')">Leer</button><br><span style="font-size:12.5px">En las profundidades del Océano Atlántico, la droga Mondo se elabora a base de la sangre de los seres mitad humanos mitad sirena, conocidos como Viren. La caza y explotación de estos individuos alimenta el miedo y la paranoia en el pueblo. Pero una joven viren intentará desmantelar esta institución desde el interior.</span></p>
       <p style="margin:0"><b style="color:var(--ink)">Huella (2023)</b> <a class="read-btn" href="Huella-Guion.pdf" target="_blank" rel="noopener" style="text-decoration:none">Leer</a><br><span style="font-size:12.5px">En medio de la obsesión y el furor por el medioambiente en una sociedad distópica, un grupo de amigos desenmascaran sus propias verdades. ¿Lo perderán todo? (Ganador al premio Mejor Guión de Semana +Corta 2023)</span></p>
+    </div>
+    <span class="scroll-cue" role="button" tabindex="0" aria-label="Desplazar para ver más guiones" onclick="this.previousElementSibling.scrollBy({top:140,behavior:'smooth'})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
     </div>
     <p style="font-size:11px;margin-top:10px;color:var(--ink-soft)">Guiones registrados en la Oficina Nacional de Derechos de Autor (ONDA).</p>
     <span class="folio">09</span>`,
