@@ -1,0 +1,48 @@
+Página 1
+- Eliminar el 2025
+
+Página 2
+- Cambia la foto de portada por la que te voy a enviar
+- New page layout attached too
+
+Página 3
+- Cambiar foto por la que te voy a enviar, y centrarla
+- Eliminar el “Hola, soy Laura”
+- Cambiar texto: Laura Matías es una comunicadora audiovisual, residente de Jarabacoa, La Vega. Graduada con honores en la Pontificia Universidad Católica Madre y Maestra, con una licenciatura en Comunicación Audiovisual y Artes Cinematográficas, Laura tiene una vasta experiencia en el area de la creación. Ha participado en producción de cortometrajes y largometrajes, específicamente en los departamentos de dirección, producción y guión. También, ha trabajado en la edición de vídeos para redes sociales, tanto para proyectos personales, como empresariales (Instagram, TikTok y Youtube). Además, habla inglés con fluidez, y tiene expericnia traduciendo de forma oral y escrita. Laura es una joven apasionada por las historia, la creatividad, y el arte, que busca la excelencia en todos sus trabajos. 
+- Elimina la cita de la parte de abajo
+
+Página 5
+- Poner la pestaña con el vídeo más pequeño
+- Cambiar el vídeo por este: https://youtu.be/FmMac1450Kg?si=iFA4i863XZb-npTF
+- Agregar logo del podcast
+- Cambiar Texto: Acompaña a Laura Matías —o Lala, para los amigos— mientras recomienda, analiza, expresa su entusiasmo y comenta apasionadamente libros de muy diversos géneros y estilos. Si necesitas ayuda para crear un hábito de lectura o simplemente te encanta hablar de libros, ¡has llegado al lugar indicado!
+
+Página 6
+- Cambiar logo del blog
+- Cambiar texto: Why is a Raven like a writing desk? es mi pequeño rincón para explorar, reflexionar y dialogar sobre todo aquello que despierte mi curiosidad... y la lista no es corta.
+
+Página 7
+- Cambiar título: Fotografía
+- Cambiar texto: Fotografía para cumpleaños, bodas y eventos corporativos. 
+
+Página 8
+- Cambiar título: Creadora de Contenido
+- Cambiar texto: Creadora de contenido (transmisión en vivo para Youtube y Facebook, edición de videos, y manejo de redes) para Tropicalísima 104.1 FM, una estación del Grupo Medrano.
+- Minimizar la pestaña del video y agregar un segundo video (https://youtu.be/milfBgZMkQk?si=4JVNKce27IL7fXDF)
+
+Página 9: 
+- Cambiar título: Guiones Cinematográficos
+- Agregar el Guión Huella
+- Cambiar textos
+    - La Ministra de la Soledad (2024): Si por las noches te sientes solitario y aislado, puedes llamar a la Ministra de la Soledad. Ella te puede leer una historia, cantarte una canción, o simplemente escuchar tus desahogos. Pero, en las silenciosas horas de la madrugada, ¿quién está ahí para la Ministra cuando ella está sola?
+    - Azulito (2025): Para acortar el camino después de su práctica de fútbol, unos adolescentes se meten en una propiedad privada llena de matas de mangos, mientras comparten las dificultades ocultas de sus vidas.
+    - Viren (2023): En las profundidades del Océano Atlántico, la droga Mondo se elabora a base de la sangre de los seres mitad humanos mitad sirena, conocidos como Viren. La caza y explotación de estos individuos alimenta el miedo y la paranoia en el pueblo. Pero una joven viren intentará desmantelar esta institución desde el interior. 
+    - Huella (2023): En medio de la obsesión y el furor por el medioambiente en una sociedad distopica, un grupo de amigos desenmascaran sus propias verdades. ¿Lo perderán todo? (Ganador al premio Mejor Guión de Semana +Corta 2023)
+
+Pagina 10
+- Quitar la frase de abajo
+- Cambiar IG: laura_matias_cruz
+
+Página 11
+- Centrar texto
+- Cambiar IG
